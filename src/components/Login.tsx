@@ -12,11 +12,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
-import {Result} from "ts-results";
 
-import {Failure, UserLogin} from "../model/responseBodies.ts";
+import {UserLogin} from "../model/responseBodies.ts";
 import {login} from "../model/api.ts";
 import {useNavigate} from "react-router-dom";
+import {AxiosResponse} from "axios";
 
 
 // The majority of this code was taken from the Material-UI example at
@@ -30,28 +30,15 @@ export default function Login() {
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        const result: Result<UserLogin, Failure> = await login(
-            data.get('email') as string, data.get('password') as string
-        );
-        if (result.ok) {
-            console.log(result.val);
-            navigate('/users');
-        } else {
-            switch (result.val.status) {
-                case 400:
-                    console.log("Bad request");
-                    break;
-                case 401:
-                    console.log("Unauthorized");
-                    break;
-                case 404:
-                    console.log("Not found");
-                    break;
-                case 500:
-                    console.log("Internal server error");
-                    break;
-            }
-        }
+        login(data.get('email') as string, data.get('password') as string)
+            .then((response: AxiosResponse<UserLogin>) => {
+                console.log(response.data);
+                navigate('/users');
+            })
+            .catch((error) => {
+                console.log(error.response.status);
+                console.log(error.response.statusText);
+            });
     }
 
     return (

@@ -10,10 +10,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
-import {Result} from "ts-results";
 
-import {Failure, UserRegister} from "../model/responseBodies.ts";
+import {UserRegister} from "../model/responseBodies.ts";
 import {register} from "../model/api.ts";
+import {AxiosResponse} from "axios";
 
 
 // The majority of this code was taken from the Material-UI example at
@@ -25,17 +25,16 @@ export default function Register() {
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        const result: Result<UserRegister, Failure> = await register(
+        register(
             data.get('email') as string,
             data.get('firstName') as string,
             data.get('lastName') as string,
             data.get('password') as string
-        );
-        if (result.ok) {
-            console.log(result.val);
-        } else {
-            console.log(result.val);
-        }
+        ).then(((response: AxiosResponse<UserRegister>) => {
+            console.log(response.data);
+        })).catch((error) => {
+            console.log(error.response);
+        });
     }
 
     return (

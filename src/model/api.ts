@@ -1,7 +1,6 @@
 import Axios, {AxiosResponse} from "axios";
-import {Err, Ok, Result} from "ts-results";
 
-import {Failure, UserLogin, UserRegister} from "./responseBodies";
+import {UserLogin, UserRegister} from "./responseBodies";
 
 
 const rootUrl: string = "http://localhost:4941/api/v1";
@@ -13,16 +12,20 @@ const rootUrl: string = "http://localhost:4941/api/v1";
  * @param password The user's password to log in with.
  * @returns The user's login details if result was ok, otherwise status code and status message.
  */
-export async function login(email: string, password: string): Promise<Result<UserLogin, Failure>> {
-    return await Axios.post(rootUrl + "/users/login", {email, password})
-        .then((response: AxiosResponse<UserLogin>) => new Ok(response.data))
-        .catch((error) => new Err({status: error.response.status, message: error.response.statusText}));
+export function login(email: string, password: string): Promise<AxiosResponse<UserLogin>> {
+    return Axios.post(rootUrl + "/users/login", {email, password});
 }
 
-export async function register(
+/**
+ * Registers a new user with the given details.
+ *
+ * @param email The user's email address to register with.
+ * @param firstName The user's first name to register with.
+ * @param lastName The user's last name to register with.
+ * @param password The user's password to register with.
+ */
+export function register(
     email: string, firstName: string, lastName: string, password: string
-): Promise<Result<UserRegister, Failure>> {
-    return await Axios.post(rootUrl + "/users/register", {email, firstName, lastName, password})
-        .then((response: AxiosResponse<UserRegister>) => new Ok(response.data))
-        .catch((error) => new Err({status: error.response.status, message: error.response.statusText}));
+): Promise<AxiosResponse<UserRegister>> {
+    return Axios.post(rootUrl + "/users/register", {email, firstName, lastName, password});
 }
