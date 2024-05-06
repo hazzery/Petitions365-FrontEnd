@@ -21,7 +21,7 @@ import {register} from "../model/api.ts";
 
 const defaultTheme = createTheme();
 
-export default function SignUp() {
+export default function Register() {
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const data = new FormData(event.currentTarget);

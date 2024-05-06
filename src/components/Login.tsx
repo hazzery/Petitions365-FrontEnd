@@ -24,7 +24,7 @@ import {useNavigate} from "react-router-dom";
 
 const defaultTheme = createTheme();
 
-export default function SignIn() {
+export default function Login() {
     const navigate = useNavigate();
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
