@@ -1,18 +1,36 @@
-import React, {useState} from 'react';
-import {Button, TextField} from '@mui/material';
-import {register} from "../model/api.ts";
-import {Failure, UserRegister} from "../model/responseBodies.ts";
+import * as React from 'react';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {Result} from "ts-results";
 
-export default function Register() {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+import {Failure, UserRegister} from "../model/responseBodies.ts";
+import {register} from "../model/api.ts";
 
-    async function onSubmit(event: React.FormEvent): Promise<void> {
+
+// The majority of this code was taken from the Material-UI example at
+// https://github.com/mui/material-ui/blob/v5.15.16/docs/data/material/getting-started/templates/sign-up/SignUp.tsx
+
+const defaultTheme = createTheme();
+
+export default function SignUp() {
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        const result: Result<UserRegister, Failure> = await register(email, firstName, lastName, password);
+        const data = new FormData(event.currentTarget);
+        const result: Result<UserRegister, Failure> = await register(
+            data.get('email') as string,
+            data.get('firstName') as string,
+            data.get('lastName') as string,
+            data.get('password') as string
+        );
         if (result.ok) {
             console.log(result.val);
         } else {
@@ -21,38 +39,86 @@ export default function Register() {
     }
 
     return (
-        <div>
-            <h1>Register for SENG365 Petition Site</h1>
-            <form onSubmit={onSubmit}>
-                <TextField
-                    label="First Name"
-                    variant="outlined"
-                    value={firstName}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => setFirstName(event.target.value)}
-                />
-                <TextField
-                    label="Last Name"
-                    variant="outlined"
-                    value={lastName}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => setLastName(event.target.value)}
-                />
-                <TextField
-                    label="Email"
-                    variant="outlined"
-                    value={email}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
-                />
-                <TextField
-                    label="Password"
-                    variant="outlined"
-                    type="password"
-                    value={password}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
-                />
-                <Button variant="contained" color="primary" type="submit">
-                    Login
-                </Button>
-            </form>
-        </div>
+        <ThemeProvider theme={defaultTheme}>
+            <Container component="main" maxWidth="xs">
+                <CssBaseline/>
+                <Box
+                    sx={{
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+                        <LockOutlinedIcon/>
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Register
+                    </Typography>
+                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    autoComplete="given-name"
+                                    name="firstName"
+                                    required
+                                    fullWidth
+                                    id="firstName"
+                                    label="First Name"
+                                    autoFocus
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="lastName"
+                                    label="Last Name"
+                                    name="lastName"
+                                    autoComplete="family-name"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email Address"
+                                    name="email"
+                                    autoComplete="email"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="new-password"
+                                />
+                            </Grid>
+                        </Grid>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{mt: 3, mb: 2}}
+                        >
+                            Register
+                        </Button>
+                        <Grid container justifyContent="flex-end">
+                            <Grid item>
+                                <Link href="/Login" variant="body2">
+                                    Already have an account? Log in
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </Box>
+            </Container>
+        </ThemeProvider>
     );
 }
