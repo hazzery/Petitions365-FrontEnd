@@ -1,6 +1,6 @@
 import Axios, {AxiosResponse} from "axios";
 
-import {PetitionDetails, UserLogin, UserRegister} from "./responseBodies";
+import {Category, PetitionDetails, UserLogin, UserRegister} from "./responseBodies";
 
 
 const rootUrl: string = "http://localhost:4941/api/v1";
@@ -46,4 +46,11 @@ export function getPetitionDetails(petitionID: number): Promise<AxiosResponse<Pe
  */
 export function petitionImageUrl(petitionID: number): string {
     return rootUrl + "/petitions/" + petitionID + "/image";
+}
+
+/**
+ * Fetches all categories.
+ */
+export function getAllCategories(): Promise<AxiosResponse<Array<Category>>> {
+    return Axios.get(rootUrl + "/petitions/categories");
 }

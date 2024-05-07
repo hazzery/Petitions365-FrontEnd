@@ -38,3 +38,8 @@ export interface PetitionDetails {
     numberOfSupporters: number
     creationDate: string
 }
+
+export interface Category {
+    categoryId: number,
+    name: string
+}
