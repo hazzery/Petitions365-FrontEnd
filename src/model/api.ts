@@ -1,6 +1,6 @@
 import Axios, {AxiosResponse} from "axios";
 
-import {Category, PetitionDetails, UserLogin, UserRegister} from "./responseBodies";
+import {Category, PetitionDetails, PetitionsList, UserLogin, UserRegister} from "./responseBodies";
 
 
 const rootUrl: string = "http://localhost:4941/api/v1";
@@ -31,6 +31,13 @@ export function register(
 }
 
 /**
+ * Fetches all petitions.
+ */
+export function getAllPetitions(): Promise<AxiosResponse<PetitionsList>> {
+    return Axios.get(rootUrl + "/petitions");
+}
+
+/**
  * Fetches the details of a petition.
  *
  * @param petitionID
@@ -46,6 +53,15 @@ export function getPetitionDetails(petitionID: number): Promise<AxiosResponse<Pe
  */
 export function petitionImageUrl(petitionID: number): string {
     return rootUrl + "/petitions/" + petitionID + "/image";
+}
+
+/**
+ * Builds the URL for a user's image.
+ *
+ * @param userID The ID of the user to get the image URL for.
+ */
+export function userImageUrl(userID: number): string {
+    return rootUrl + "/users/" + userID + "/image";
 }
 
 /**

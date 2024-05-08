@@ -1,8 +1,3 @@
-export interface Failure {
-    status: number,
-    message: string
-}
-
 export interface UserLogin {
     userId: number,
     token: string
@@ -16,6 +11,23 @@ export interface UserDetails {
     email?: string,
     firstName: string,
     lastName: string
+}
+
+export interface PetitionOverview {
+    petitionId: number,
+    title: string,
+    categoryId: number,
+    ownerId: number,
+    ownerFirstName: string,
+    ownerLastName: string,
+    numberOfSupporters: number
+    creationDate: string
+    supportingCost: number
+}
+
+export interface PetitionsList {
+    petitions: Array<PetitionOverview>
+    count: number
 }
 
 export interface SupportTier {
