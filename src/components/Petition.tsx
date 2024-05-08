@@ -1,42 +1,60 @@
 import React from "react";
-import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import {createTheme, ThemeProvider} from '@mui/material/styles';
-import {CardMedia} from "@mui/material";
 
-import {getPetitionDetails, petitionImageUrl} from "../model/api.ts";
-import {PetitionDetails} from "../model/responseBodies.ts";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import CssBaseline from "@mui/material/CssBaseline";
+import GroupIcon from "@mui/icons-material/Group";
 import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
+import {Card, CardMedia} from "@mui/material";
+import {useParams} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
+import {getPetitionDetails, petitionImageUrl, userImageUrl} from "../model/api.ts";
+import {PetitionDetails, SupportTier} from "../model/responseBodies.ts";
+import {formatDate} from "../model/util.ts";
+import Grid from "@mui/material/Grid";
+import SupportTierCard from "./SupportTierCard.tsx";
 
-// The majority of this code was taken from the Material-UI example at
-// https://github.com/mui/material-ui/blob/v5.15.16/docs/data/material/getting-started/templates/sign-in/SignIn.tsx
 
 const defaultTheme = createTheme();
 
-interface PetitionProps {
-    petitionID: number
-}
+export default function Petition() {
+    const {petitionId} = useParams();
 
-
-export default function Petition({petitionID}: PetitionProps) {
+    const [creationDate, setCreationDate] = React.useState<string>("");
+    const [imageURL, setImageURL] = React.useState<string>("");
     const [title, setTitle] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
+    const [ownerImageUrl, setOwnerImageUrl] = React.useState<string>("");
     const [ownerFirstName, setOwnerFirstName] = React.useState<string>("");
     const [ownerLastName, setOwnerLastName] = React.useState<string>("");
-    const [imageURL, setImageURL] = React.useState<string>("");
+    const [numberOfSupporters, setNumberOfSupporters] = React.useState<number>(NaN);
+    const [moneyRaised, setMoneyRaised] = React.useState<number>(NaN);
+    const [supportTiers, setSupportTiers] = React.useState<Array<SupportTier>>([]);
+
+
+    const petitionIdNumber = parseInt(petitionId as string);
+    // if (isNaN(petitionIdNumber)) {
+    //     return <NotFound/>;
+    // }
 
     React.useEffect(() => {
         async function fetchPetition(): Promise<void> {
-            getPetitionDetails(petitionID)
+            getPetitionDetails(petitionIdNumber)
                 .then((response: AxiosResponse<PetitionDetails>) => {
+                    setCreationDate(response.data.creationDate);
+                    setImageURL(petitionImageUrl(petitionIdNumber));
                     setTitle(response.data.title);
                     setDescription(response.data.description);
+                    setOwnerImageUrl(userImageUrl(response.data.ownerId));
                     setOwnerFirstName(response.data.ownerFirstName);
                     setOwnerLastName(response.data.ownerLastName);
-                    setImageURL(petitionImageUrl(petitionID));
+                    setNumberOfSupporters(response.data.numberOfSupporters);
+                    setMoneyRaised(response.data.moneyRaised);
+                    setSupportTiers(response.data.supportTiers);
                 })
                 .catch((error) => {
                     setTitle(error.response.status.toString());
@@ -45,12 +63,17 @@ export default function Petition({petitionID}: PetitionProps) {
         }
 
         fetchPetition();
-    }, [petitionID]);
+    }, [petitionId, petitionIdNumber]);
 
+    function supportTierCards() {
+        return supportTiers.map(
+            (supportTier: SupportTier) => <SupportTierCard supportTier={supportTier}/>
+        );
+    }
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Container component="main" maxWidth="xs">
+            <Container component="main">
                 <CssBaseline/>
                 <Box
                     sx={{
@@ -61,22 +84,75 @@ export default function Petition({petitionID}: PetitionProps) {
 
                     }}
                 >
-                    <Box component="image" sx={{mt: 1}}>
-                        <CardMedia
-                            component="img"
-                            image={imageURL}
-                            alt="petition"
-                        />
-                        <Typography variant="h5" component="div">
-                            {title}
-                        </Typography>
-                        <Typography variant="subtitle1" color="text.secondary">
-                            {description}
-                        </Typography>
-                        <Typography variant="body1" color="text.secondary">
-                            {`By ${ownerFirstName} ${ownerLastName}`}
-                        </Typography>
-                    </Box>
+                    <Typography variant="h5" component="div">
+                        {title}
+                    </Typography>
+                    <Grid container spacing={8}>
+                        <Grid item xs={12} sm={6}>
+                            <Card sx={{padding: 2}}>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} sm={8} sx={{display: 'flex', justifyContent: 'center'}}>
+                                        <CardMedia
+                                            component="img"
+                                            image={imageURL}
+                                            alt="petition"
+                                            sx={{
+                                                width: '80%',
+                                                objectFit: 'cover'
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={4} sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}>
+                                        <Avatar
+                                            src={ownerImageUrl}
+                                            alt="User profile image"
+                                            sx={{
+                                                width: 60,
+                                                height: 60,
+                                                borderRadius: '50%',
+                                            }}
+                                        />
+                                        <Typography variant="body2" color="text.primary" sx={{ml: 1}}>
+                                            {`${ownerFirstName} ${ownerLastName}`}
+                                        </Typography>
+                                        <Typography variant="body2" component="div">
+                                            {formatDate(creationDate)}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Typography variant="body1" component="div">
+                                    {description}
+                                </Typography>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Card sx={{padding: 2}}>
+                                <Box sx={{left: 16, bottom: 16, alignItems: 'center', display: 'flex'}}>
+                                    <GroupIcon/>
+                                    <Typography variant="body1" color="text.primary" sx={{ml: 1}}>
+                                        {`Supporters: ${numberOfSupporters}`}
+                                    </Typography>
+                                </Box>
+                                <Box sx={{left: 16, bottom: 16, alignItems: 'center', display: 'flex'}}>
+                                    <AttachMoneyIcon/>
+                                    <Typography variant="body1" color="text.primary" sx={{ml: 1}}>
+                                        {`Money Raised: ${moneyRaised}`}
+                                    </Typography>
+                                </Box>
+                                <Typography variant="h6" component="div">
+                                    Support Tiers
+                                </Typography>
+                                <Box sx={{alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
+                                    {supportTierCards()}
+                                </Box>
+                            </Card>
+                        </Grid>
+                    </Grid>
                 </Box>
             </Container>
         </ThemeProvider>
