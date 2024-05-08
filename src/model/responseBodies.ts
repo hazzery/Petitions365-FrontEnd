@@ -20,13 +20,13 @@ export interface PetitionOverview {
     ownerId: number,
     ownerFirstName: string,
     ownerLastName: string,
-    numberOfSupporters: number
-    creationDate: string
+    numberOfSupporters: number,
+    creationDate: string,
     supportingCost: number
 }
 
 export interface PetitionsList {
-    petitions: Array<PetitionOverview>
+    petitions: Array<PetitionOverview>,
     count: number
 }
 
@@ -44,10 +44,10 @@ export interface PetitionDetails {
     petitionId: number,
     title: string,
     categoryId: number,
-    ownerId: number
+    ownerId: number,
     ownerFirstName: string,
     ownerLastName: string,
-    numberOfSupporters: number
+    numberOfSupporters: number,
     creationDate: string
 }
 
