@@ -1,6 +1,6 @@
 import Axios, {AxiosResponse} from "axios";
 
-import {Category, PetitionDetails, PetitionsList, UserLogin, UserRegister} from "./responseBodies";
+import {Category, PetitionDetails, PetitionsList, Supporter, UserLogin, UserRegister} from "./responseBodies";
 
 
 const rootUrl: string = "http://localhost:4941/api/v1";
@@ -69,4 +69,13 @@ export function userImageUrl(userID: number): string {
  */
 export function getAllCategories(): Promise<AxiosResponse<Array<Category>>> {
     return Axios.get(rootUrl + "/petitions/categories");
+}
+
+/**
+ * Fetches all supporters of a petition.
+ *
+ * @param petitionId
+ */
+export function getSupportersOfPetition(petitionId: number): Promise<AxiosResponse<Array<Supporter>>> {
+    return Axios.get(rootUrl + "/petitions/" + petitionId + "/supporters");
 }

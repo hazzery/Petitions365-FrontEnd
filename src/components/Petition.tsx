@@ -1,6 +1,6 @@
 import React from "react";
 
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import PaidIcon from "@mui/icons-material/Paid";
 import CssBaseline from "@mui/material/CssBaseline";
 import GroupIcon from "@mui/icons-material/Group";
 import Typography from "@mui/material/Typography";
@@ -12,11 +12,12 @@ import {Card, CardMedia} from "@mui/material";
 import {useParams} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
-import {getPetitionDetails, petitionImageUrl, userImageUrl} from "../model/api.ts";
-import {PetitionDetails, SupportTier} from "../model/responseBodies.ts";
+import {getPetitionDetails, getSupportersOfPetition, petitionImageUrl, userImageUrl} from "../model/api.ts";
+import {PetitionDetails, Supporter, SupportTier} from "../model/responseBodies.ts";
 import {formatDate} from "../model/util.ts";
 import Grid from "@mui/material/Grid";
 import SupportTierCard from "./SupportTierCard.tsx";
+import SupporterCard from "./SupporterCard.tsx";
 
 
 const defaultTheme = createTheme();
@@ -34,7 +35,8 @@ export default function Petition() {
     const [numberOfSupporters, setNumberOfSupporters] = React.useState<number>(NaN);
     const [moneyRaised, setMoneyRaised] = React.useState<number>(NaN);
     const [supportTiers, setSupportTiers] = React.useState<Array<SupportTier>>([]);
-
+    const [supporters, setSupporters] = React.useState<Array<Supporter>>([]);
+    const [supportTierMap, setSupportTierMap] = React.useState<Map<number, string>>(new Map());
 
     const petitionIdNumber = parseInt(petitionId as string);
     // if (isNaN(petitionIdNumber)) {
@@ -42,7 +44,7 @@ export default function Petition() {
     // }
 
     React.useEffect(() => {
-        async function fetchPetition(): Promise<void> {
+        function fetchPetition(): void {
             getPetitionDetails(petitionIdNumber)
                 .then((response: AxiosResponse<PetitionDetails>) => {
                     setCreationDate(response.data.creationDate);
@@ -55,6 +57,22 @@ export default function Petition() {
                     setNumberOfSupporters(response.data.numberOfSupporters);
                     setMoneyRaised(response.data.moneyRaised);
                     setSupportTiers(response.data.supportTiers);
+                    const map = new Map<number, string>();
+                    for (const supportTier of response.data.supportTiers) {
+                        map.set(supportTier.supportTierId, supportTier.title);
+                    }
+                    setSupportTierMap(map);
+                })
+                .catch((error) => {
+                    setTitle(error.response.status.toString());
+                    setDescription(error.response.statusText);
+                });
+        }
+
+        function fetchSupporters(): void {
+            getSupportersOfPetition(petitionIdNumber)
+                .then((response: AxiosResponse<Array<Supporter>>) => {
+                    setSupporters(response.data);
                 })
                 .catch((error) => {
                     setTitle(error.response.status.toString());
@@ -63,11 +81,18 @@ export default function Petition() {
         }
 
         fetchPetition();
-    }, [petitionId, petitionIdNumber]);
+        fetchSupporters();
+    }, [petitionId, petitionIdNumber, supportTierMap]);
 
-    function supportTierCards() {
+    function supportTierCards(): React.ReactElement[] {
         return supportTiers.map(
             (supportTier: SupportTier) => <SupportTierCard supportTier={supportTier}/>
+        );
+    }
+
+    function supporterCards(): React.ReactElement[] {
+        return supporters.map(
+            (supporter: Supporter) => <SupporterCard supporter={supporter} supportTierMap={supportTierMap}/>
         );
     }
 
@@ -84,12 +109,12 @@ export default function Petition() {
 
                     }}
                 >
-                    <Typography variant="h5" component="div">
+                    <Typography variant="h2" component="div">
                         {title}
                     </Typography>
-                    <Grid container spacing={8}>
-                        <Grid item xs={12} sm={6}>
-                            <Card sx={{padding: 2}}>
+                    <Grid container spacing={5}>
+                        <Grid item xs={12} sm={6} sx={{display: 'flex'}}>
+                            <Card sx={{padding: 2, flex: 1}}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={8} sx={{display: 'flex', justifyContent: 'center'}}>
                                         <CardMedia
@@ -130,8 +155,8 @@ export default function Petition() {
                                 </Typography>
                             </Card>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Card sx={{padding: 2}}>
+                        <Grid item xs={12} sm={6} sx={{display: 'flex'}}>
+                            <Card sx={{padding: 2, flex: 1}}>
                                 <Box sx={{left: 16, bottom: 16, alignItems: 'center', display: 'flex'}}>
                                     <GroupIcon/>
                                     <Typography variant="body1" color="text.primary" sx={{ml: 1}}>
@@ -139,7 +164,7 @@ export default function Petition() {
                                     </Typography>
                                 </Box>
                                 <Box sx={{left: 16, bottom: 16, alignItems: 'center', display: 'flex'}}>
-                                    <AttachMoneyIcon/>
+                                    <PaidIcon/>
                                     <Typography variant="body1" color="text.primary" sx={{ml: 1}}>
                                         {`Money Raised: ${moneyRaised}`}
                                     </Typography>
@@ -153,6 +178,14 @@ export default function Petition() {
                             </Card>
                         </Grid>
                     </Grid>
+                    <Card sx={{padding: 2, marginTop: 4}}>
+                        <Typography variant="h6" component="div">
+                            Supporters
+                        </Typography>
+                        <Box sx={{alignItems: 'center', display: 'flex', flexDirection: 'row'}}>
+                            {supporterCards()}
+                        </Box>
+                    </Card>
                 </Box>
             </Container>
         </ThemeProvider>

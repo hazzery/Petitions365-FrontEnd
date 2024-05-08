@@ -25,10 +25,10 @@ export default function SupportTierCard({supportTier}: SupportTierCardProps): Re
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Container component="main" maxWidth="xs">
+            <Container component="main" maxWidth="sm">
                 <CssBaseline/>
                 <Card sx={{
-                    marginTop: 8,
+                    marginTop: 3,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
