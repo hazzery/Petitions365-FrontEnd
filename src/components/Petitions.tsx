@@ -43,7 +43,9 @@ export default function Petitions() {
     return (
         <div>
             <h1>Petitions</h1>
-            {petitionCards()}
+            <div className="petitions-grid">
+                {petitionCards()}
+            </div>
         </div>
-    )
+    );
 }
