@@ -1,13 +1,17 @@
 import React, {useCallback} from "react";
-import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import SearchIcon from "@mui/icons-material/Search";
+import TextField from "@mui/material/TextField";
+import TuneIcon from "@mui/icons-material/Tune";
+import Checkbox from "@mui/material/Checkbox";
+import Button from "@mui/material/Button";
+import {Paper, Select} from "@mui/material";
 import {AxiosResponse} from "axios";
 
 
-import {Category, PetitionOverview, PetitionsList} from "../model/responseBodies.ts";
+import PetitionsGrid from "./PetitionsGrid.tsx";
 import {getAllCategories, getAllPetitions, getFilteredPetitions} from "../model/api.ts";
-import PetitionCard from "./PetitionCard.tsx";
-import Button from "@mui/material/Button";
+import {Category, PetitionOverview, PetitionsList} from "../model/responseBodies.ts";
 
 
 export default function Petitions() {
@@ -43,16 +47,6 @@ export default function Petitions() {
         submitSearchQuery();
     }, [submitSearchQuery]);
 
-    function petitionCards() {
-        return petitions.map(
-            (petition: PetitionOverview) => <PetitionCard
-                key={petition.petitionId}
-                petitionOverview={petition}
-                categoryMap={categoryMap}
-            />
-        );
-    }
-
     return (
         <div>
             <h1>Petitions</h1>
@@ -61,6 +55,9 @@ export default function Petitions() {
                 onSubmit={() => setSearchQuery(searchInput)}
                 method="dialog"
             >
+                <Button>
+                    <TuneIcon sx={{fontSize: 30}}/>
+                </Button>
                 <TextField
                     id="search"
                     label="Search"
@@ -73,9 +70,12 @@ export default function Petitions() {
                     <SearchIcon sx={{fontSize: 30}}/>
                 </Button>
             </form>
-            <div className="petitions-grid">
-                {petitionCards()}
-            </div>
+            <Paper>
+                <Select label={"Hello"}>
+                    <FormControlLabel control={<Checkbox/>} label="Show only my petitions"/>
+                </Select>
+            </Paper>
+            <PetitionsGrid petitions={petitions} categoryMap={categoryMap}/>
         </div>
     );
 }
