@@ -1,13 +1,12 @@
-import React from "react";
+import React, {useCallback} from "react";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import {AxiosResponse} from "axios";
 
 
 import {Category, PetitionOverview, PetitionsList} from "../model/responseBodies.ts";
-import {getAllCategories, getAllPetitions} from "../model/api.ts";
+import {getAllCategories, getAllPetitions, getFilteredPetitions} from "../model/api.ts";
 import PetitionCard from "./PetitionCard.tsx";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
 
@@ -15,9 +14,10 @@ export default function Petitions() {
     const [petitions, setPetitions] = React.useState<Array<PetitionOverview>>([]);
     const [categoryMap, setCategoryMap] = React.useState<Map<number, string>>(new Map<number, string>());
     const [searchQuery, setSearchQuery] = React.useState<string>("");
+    const [searchInput, setSearchInput] = React.useState<string>("");
 
-    React.useEffect(() => {
-        getAllPetitions()
+    const submitSearchQuery = useCallback(() => {
+        (searchQuery.length == 0 ? getAllPetitions() : getFilteredPetitions({q: searchQuery}))
             .then((response: AxiosResponse<PetitionsList>) => {
                 setPetitions(response.data.petitions);
             })
@@ -25,7 +25,9 @@ export default function Petitions() {
                 console.log(error.response.status);
                 console.log(error.response.statusText);
             });
+    }, [searchQuery]);
 
+    React.useEffect(() => {
         getAllCategories()
             .then((response: AxiosResponse<Array<Category>>) => {
                 const map = new Map<number, string>();
@@ -38,11 +40,8 @@ export default function Petitions() {
                 console.log(error.response.status);
                 console.log(error.response.statusText);
             });
-    }, []);
-
-    function submitSearchQuery(event: React.FormEvent<HTMLDivElement>) {
-        console.log(event);
-    }
+        submitSearchQuery();
+    }, [submitSearchQuery]);
 
     function petitionCards() {
         return petitions.map(
@@ -57,20 +56,23 @@ export default function Petitions() {
     return (
         <div>
             <h1>Petitions</h1>
-            <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <form
+                style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+                onSubmit={() => setSearchQuery(searchInput)}
+                method="dialog"
+            >
                 <TextField
                     id="search"
                     label="Search"
                     variant="outlined"
                     sx={{width: '50%'}}
-                    value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                    onSubmit={submitSearchQuery}
+                    value={searchInput}
+                    onChange={(event) => setSearchInput(event.target.value)}
                 />
-                <Button variant="contained" color="primary" sx={{marginLeft: 1}}>
+                <Button variant="contained" color="primary" type="submit" sx={{marginLeft: 1}}>
                     <SearchIcon sx={{fontSize: 30}}/>
                 </Button>
-            </Box>
+            </form>
             <div className="petitions-grid">
                 {petitionCards()}
             </div>
