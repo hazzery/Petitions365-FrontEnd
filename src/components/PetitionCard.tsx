@@ -40,48 +40,51 @@ export default function PetitionCard(
         <ThemeProvider theme={defaultTheme}>
             <Container component="main" maxWidth="xs">
                 <CssBaseline/>
-                <Box sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
+                <Card sx={{
+                    marginTop: 3,
+                    padding: 2,
+                    width: '100%',
+                    height: '100%',
+                    position: 'relative',
                 }}>
-                    <Card sx={{padding: 2, width: '100%', boxSizing: 'border-box'}}>
-                        <Box component="image" sx={{mt: 1}}>
-                            <CardMedia
-                                component="img"
-                                image={petitionImageUrl(petitionId)}
-                                alt="petition"
-                            />
-                            <Typography variant="h5" component="div">
-                                {title}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                {formatDate(creationDate)}
-                            </Typography>
-                            <Typography variant="body1" color="text.secondary">
-                                {`Category: ${categoryMap.get(categoryId)}`}
-                            </Typography>
-                            <Typography variant="body1" color="text.secondary">
-                                {`Supporting cost: ${supportingCost === 0 ? 'Free' : supportingCost}`}
-                            </Typography>
-                            <Box sx={{left: 16, bottom: 16, alignItems: 'center', display: 'flex'}}>
-                                <Avatar
-                                    src={userImageUrl(ownerId)}
-                                    alt="User profile image"
-                                    sx={{
-                                        width: 60,
-                                        height: 60,
-                                        borderRadius: '50%',
-                                    }}
-                                />
-                                <Typography variant="body1" color="text.primary" sx={{ml: 1}}>
-                                    {`${ownerFirstName} ${ownerLastName}`}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Card>
-                </Box>
+                    <CardMedia
+                        component="img"
+                        image={petitionImageUrl(petitionId)}
+                        alt="petition"
+                    />
+                    <Typography variant="h5" component="div">
+                        {title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        {formatDate(creationDate)}
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                        {`Category: ${categoryMap.get(categoryId)}`}
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                        {`Supporting cost: ${supportingCost === 0 ? 'Free' : supportingCost}`}
+                    </Typography>
+                    <Box sx={{
+                        left: 0,
+                        bottom: 0,
+                        alignItems: 'center',
+                        display: 'flex',
+                        position: 'relative',
+                    }}>
+                        <Avatar
+                            src={userImageUrl(ownerId)}
+                            alt="User profile image"
+                            sx={{
+                                width: 60,
+                                height: 60,
+                                borderRadius: '50%',
+                            }}
+                        />
+                        <Typography variant="body1" color="text.primary" sx={{ml: 1}}>
+                            {`${ownerFirstName} ${ownerLastName}`}
+                        </Typography>
+                    </Box>
+                </Card>
             </Container>
         </ThemeProvider>
     );
