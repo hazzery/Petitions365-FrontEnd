@@ -62,7 +62,7 @@ export default function PetitionCard(
                         {`Category: ${categoryMap.get(categoryId)}`}
                     </Typography>
                     <Typography variant="body1" color="text.secondary">
-                        {`Supporting cost: ${supportingCost === 0 ? 'Free' : supportingCost}`}
+                        {`Supporting cost: ${supportingCost === 0 ? 'Free' : '$' + supportingCost}`}
                     </Typography>
                     <Box sx={{
                         left: 0,
