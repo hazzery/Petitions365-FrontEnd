@@ -45,6 +45,7 @@ export default function Petitions() {
     const [selectedCategories, setSelectedCategories] = React.useState<number[]>([]);
     const [selectedCost, setSelectedCost] = React.useState<number | "">("");
     const [selectedSortOrder, setSelectedSortOrder] = React.useState<SortOrder>("CREATED_ASC");
+    const [showFilterBar, setShowFilterBar] = React.useState<boolean>(false);
 
     const submitSearchQuery = useCallback(() => {
         function buildQueryParams(): GetFilteredPetitionsParams {
@@ -135,7 +136,7 @@ export default function Petitions() {
         <div>
             <h1>Petitions</h1>
             <form
-                style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+                style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20}}
                 onSubmit={() => setSearchQuery(searchInput)}
                 method="dialog"
             >
@@ -147,6 +148,7 @@ export default function Petitions() {
                         color: 'primary.main',
                         marginRight: 1
                     }}
+                    onClick={() => setShowFilterBar(!showFilterBar)}
                 >
                     <Typography variant="body2">Filter</Typography>
                     <TuneIcon sx={{fontSize: 30}}/>
@@ -163,7 +165,7 @@ export default function Petitions() {
                     <SearchIcon sx={{fontSize: 30}}/>
                 </Button>
             </form>
-            <Paper sx={{marginY: 3, display: 'inline-flex', flexDirection: 'row'}}>
+            {showFilterBar && <Paper sx={{marginBottom: 3, display: 'inline-flex', flexDirection: 'row'}}>
                 <FormControl sx={{margin: 2, width: 300}}>
                     <InputLabel id="demo-multiple-checkbox-label">Categories</InputLabel>
                     <Select
@@ -199,7 +201,7 @@ export default function Petitions() {
                 >
                     {sortOrderOptions()}
                 </TextField>
-            </Paper>
+            </Paper>}
             <PetitionsGrid petitions={petitions} categoryMap={categoryMap}/>
         </div>
     );
