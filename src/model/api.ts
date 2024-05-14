@@ -37,9 +37,15 @@ export function getAllPetitions(): Promise<AxiosResponse<PetitionsList>> {
     return Axios.get(rootUrl + "/petitions");
 }
 
-type SortOrder = "ALPHABETICAL_ASC" | "ALPHABETICAL_DESC" | "COST_ASC" | "COST_DESC" | "CREATED_ASC" | "CREATED_DESC";
+export type SortOrder =
+    "ALPHABETICAL_ASC"
+    | "ALPHABETICAL_DESC"
+    | "COST_ASC"
+    | "COST_DESC"
+    | "CREATED_ASC"
+    | "CREATED_DESC";
 
-interface GetFilteredPetitionsParams {
+export interface GetFilteredPetitionsParams {
     startIndex?: number,
     count?: number,
     q?: string,

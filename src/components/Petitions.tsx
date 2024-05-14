@@ -19,9 +19,21 @@ import {AxiosResponse} from "axios";
 
 
 import PetitionsGrid from "./PetitionsGrid.tsx";
-import {getAllCategories, getAllPetitions, getFilteredPetitions} from "../model/api.ts";
+import {getAllCategories, getFilteredPetitions, GetFilteredPetitionsParams, SortOrder} from "../model/api.ts";
 import {Category, PetitionOverview, PetitionsList} from "../model/responseBodies.ts";
+import Typography from "@mui/material/Typography";
 
+
+const petitionSortOrdersMap = new Map<SortOrder, string>([
+    ["CREATED_ASC", "Chronological (Oldest first)"],
+    ["CREATED_DESC", "Chronological (Newest first)"],
+    ["ALPHABETICAL_ASC", "Alphabetical (A-Z)"],
+    ["ALPHABETICAL_DESC", "Alphabetical (Z-A)"],
+    ["COST_ASC", "Cost (Lowest first)"],
+    ["COST_DESC", "Cost (Highest first)"]
+]);
+
+const petitionSortOrders = Array.from(petitionSortOrdersMap.keys());
 
 export default function Petitions() {
     const [petitions, setPetitions] = React.useState<Array<PetitionOverview>>([]);
@@ -32,9 +44,25 @@ export default function Petitions() {
     const [supportingCostIsFocused, setSupportingCostIsFocused] = React.useState<boolean>(false);
     const [selectedCategories, setSelectedCategories] = React.useState<number[]>([]);
     const [selectedCost, setSelectedCost] = React.useState<number | "">("");
+    const [selectedSortOrder, setSelectedSortOrder] = React.useState<SortOrder>("CREATED_ASC");
 
     const submitSearchQuery = useCallback(() => {
-        (searchQuery.length == 0 ? getAllPetitions() : getFilteredPetitions({q: searchQuery}))
+        function buildQueryParams(): GetFilteredPetitionsParams {
+            const params: GetFilteredPetitionsParams = {};
+            if (searchQuery.length > 0) {
+                params.q = searchQuery;
+            }
+            if (selectedCategories.length > 0) {
+                params.categoryIds = selectedCategories;
+            }
+            if (selectedCost !== "") {
+                params.supportingCost = selectedCost;
+            }
+            params.sortBy = selectedSortOrder;
+            return params;
+        }
+
+        getFilteredPetitions(buildQueryParams())
             .then((response: AxiosResponse<PetitionsList>) => {
                 setPetitions(response.data.petitions);
             })
@@ -42,7 +70,7 @@ export default function Petitions() {
                 console.log(error.response.status);
                 console.log(error.response.statusText);
             });
-    }, [searchQuery]);
+    }, [searchQuery, selectedCategories, selectedCost, selectedSortOrder]);
 
     React.useEffect(() => {
         getAllCategories()
@@ -96,9 +124,9 @@ export default function Petitions() {
     }
 
     function sortOrderOptions(): React.ReactElement[] {
-        return ["CREATED_ASC", "CREATED_DESC"].map((option: string) => (
+        return petitionSortOrders.map((option: SortOrder) => (
             <MenuItem key={option} value={option}>
-                {option.toLowerCase()}
+                {petitionSortOrdersMap.get(option)}
             </MenuItem>
         ));
     }
@@ -111,7 +139,16 @@ export default function Petitions() {
                 onSubmit={() => setSearchQuery(searchInput)}
                 method="dialog"
             >
-                <Button>
+                <Button
+                    variant="contained"
+                    color="inherit"
+                    sx={{
+                        backgroundColor: '#fff',
+                        color: 'primary.main',
+                        marginRight: 1
+                    }}
+                >
+                    <Typography variant="body2">Filter</Typography>
                     <TuneIcon sx={{fontSize: 30}}/>
                 </Button>
                 <TextField
@@ -147,7 +184,7 @@ export default function Petitions() {
                     sx={{margin: 2}}
                     InputProps={{startAdornment: <InputAdornment position="start">$</InputAdornment>}}
                     InputLabelProps={{
-                        shrink: supportingCostIsFocused,
+                        shrink: supportingCostIsFocused || selectedCost !== "",
                         style: {paddingLeft: supportingCostIsFocused ? '0px' : '15px'}
                     }}
                     onFocus={() => setSupportingCostIsFocused(true)}
@@ -157,6 +194,8 @@ export default function Petitions() {
                     select
                     label="Sort order"
                     sx={{margin: 2}}
+                    value={selectedSortOrder}
+                    onChange={(event) => setSelectedSortOrder(event.target.value as SortOrder)}
                 >
                     {sortOrderOptions()}
                 </TextField>
