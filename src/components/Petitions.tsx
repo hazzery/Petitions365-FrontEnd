@@ -29,9 +29,9 @@ export default function Petitions() {
     const [categoryMap, setCategoryMap] = React.useState<Map<number, string>>(new Map<number, string>());
     const [searchQuery, setSearchQuery] = React.useState<string>("");
     const [searchInput, setSearchInput] = React.useState<string>("");
+    const [supportingCostIsFocused, setSupportingCostIsFocused] = React.useState<boolean>(false);
     const [selectedCategories, setSelectedCategories] = React.useState<number[]>([]);
     const [selectedCost, setSelectedCost] = React.useState<number | "">("");
-    const [supportingCostIsFocused, setSupportingCostIsFocused] = React.useState<boolean>(false);
 
     const submitSearchQuery = useCallback(() => {
         (searchQuery.length == 0 ? getAllPetitions() : getFilteredPetitions({q: searchQuery}))
@@ -95,6 +95,14 @@ export default function Petitions() {
         }
     }
 
+    function sortOrderOptions(): React.ReactElement[] {
+        return ["CREATED_ASC", "CREATED_DESC"].map((option: string) => (
+            <MenuItem key={option} value={option}>
+                {option.toLowerCase()}
+            </MenuItem>
+        ));
+    }
+
     return (
         <div>
             <h1>Petitions</h1>
@@ -146,13 +154,12 @@ export default function Petitions() {
                     onBlur={() => setSupportingCostIsFocused(false)}
                 />
                 <TextField
-                    label="Owned by"
+                    select
+                    label="Sort order"
                     sx={{margin: 2}}
-                />
-                <TextField
-                    label="Supported by"
-                    sx={{margin: 2}}
-                />
+                >
+                    {sortOrderOptions()}
+                </TextField>
             </Paper>
             <PetitionsGrid petitions={petitions} categoryMap={categoryMap}/>
         </div>
