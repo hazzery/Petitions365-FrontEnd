@@ -1,31 +1,29 @@
 import React from "react";
 import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
+import Typography from "@mui/material/Typography";
 import Container from '@mui/material/Container';
+import Avatar from "@mui/material/Avatar";
+import Box from '@mui/material/Box';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {Card, CardMedia} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 
 import {petitionImageUrl, userImageUrl} from "../model/api.ts";
 import {PetitionOverview} from "../model/responseBodies.ts";
-import Typography from "@mui/material/Typography";
 import {formatDate} from "../model/util.ts";
-import Avatar from "@mui/material/Avatar";
 
-
-// The majority of this code was taken from the Material-UI example at
-// https://github.com/mui/material-ui/blob/v5.15.16/docs/data/material/getting-started/templates/sign-in/SignIn.tsx
 
 interface PetitionCardProps {
     petitionOverview: PetitionOverview,
     categoryMap: Map<number, string>
 }
 
-
 const defaultTheme = createTheme();
 
 export default function PetitionCard(
     {petitionOverview, categoryMap}: PetitionCardProps
 ): React.ReactElement {
+    const navigate = useNavigate();
     const {
         petitionId,
         title,
@@ -40,12 +38,13 @@ export default function PetitionCard(
         <ThemeProvider theme={defaultTheme}>
             <Container component="main" maxWidth="xs">
                 <CssBaseline/>
-                <Card sx={{
+                <Card onClick={() => navigate("/petition/" + petitionId)} sx={{
                     marginTop: 3,
                     padding: 2,
                     width: '100%',
                     height: '100%',
                     position: 'relative',
+                    cursor: 'pointer'
                 }}>
                     <CardMedia
                         component="img"
