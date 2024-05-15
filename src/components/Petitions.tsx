@@ -123,7 +123,7 @@ export default function Petitions() {
     }
 
     function handleCostFilterChange(event: ChangeEvent<HTMLInputElement>): void {
-        const number = parseInt(event.target.value);
+        const number = Number(event.target.value);
         if (event.target.value === "") {
             setSelectedCost("");
         } else if (!isNaN(number)) {
