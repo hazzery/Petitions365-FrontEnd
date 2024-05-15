@@ -11,6 +11,7 @@ import {
     ListItemText,
     MenuItem,
     OutlinedInput,
+    Pagination,
     Paper,
     Select,
     SelectChangeEvent
@@ -46,6 +47,9 @@ export default function Petitions() {
     const [selectedCost, setSelectedCost] = React.useState<number | "">("");
     const [selectedSortOrder, setSelectedSortOrder] = React.useState<SortOrder>("CREATED_ASC");
     const [showFilterBar, setShowFilterBar] = React.useState<boolean>(false);
+    const [pageNumber, setPageNumber] = React.useState<number>(1);
+    const [pageSize] = React.useState<number>(9);
+    const [numberSearchResults, setNumberSearchResults] = React.useState<number>(0);
 
     const submitSearchQuery = useCallback(() => {
         function buildQueryParams(): GetFilteredPetitionsParams {
@@ -59,6 +63,8 @@ export default function Petitions() {
             if (selectedCost !== "") {
                 params.supportingCost = selectedCost;
             }
+            params.startIndex = (pageNumber - 1) * pageSize;
+            params.count = pageSize;
             params.sortBy = selectedSortOrder;
             return params;
         }
@@ -66,12 +72,13 @@ export default function Petitions() {
         getFilteredPetitions(buildQueryParams())
             .then((response: AxiosResponse<PetitionsList>) => {
                 setPetitions(response.data.petitions);
+                setNumberSearchResults(response.data.count);
             })
             .catch((error) => {
                 console.log(error.response.status);
                 console.log(error.response.statusText);
             });
-    }, [searchQuery, selectedCategories, selectedCost, selectedSortOrder]);
+    }, [pageNumber, pageSize, searchQuery, selectedCategories, selectedCost, selectedSortOrder]);
 
     React.useEffect(() => {
         getAllCategories()
@@ -202,7 +209,21 @@ export default function Petitions() {
                     {sortOrderOptions()}
                 </TextField>
             </Paper>}
-            <PetitionsGrid petitions={petitions} categoryMap={categoryMap}/>
+
+            <PetitionsGrid petitions={petitions} categoryMap={categoryMap}>
+                <Pagination
+                    showFirstButton
+                    showLastButton
+                    count={Math.ceil(numberSearchResults / pageSize)}
+                    color="primary"
+                    onChange={(_, page) => setPageNumber(page)}
+                    sx={{
+                        justifySelf: 'center',
+                        gridColumn: '1 / 4',
+                        marginY: '1rem'
+                    }}
+                />
+            </PetitionsGrid>
         </div>
     );
 }

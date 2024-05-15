@@ -11,7 +11,7 @@ interface PetitionsGridProps {
 }
 
 export default function PetitionsGrid(
-    {petitions, categoryMap}: PetitionsGridProps
+    {petitions, categoryMap, children}: PetitionsGridProps & { children: React.ReactNode | undefined }
 ): React.ReactElement {
     function petitionCards() {
         return petitions.map(
@@ -24,12 +24,13 @@ export default function PetitionsGrid(
     }
 
     return (
-        <Paper sx={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '20px'
-        }}>
-            {petitionCards()}
-        </Paper>
+            <Paper sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '20px'
+            }}>
+                {petitionCards()}
+                {children}
+            </Paper>
     );
 }
