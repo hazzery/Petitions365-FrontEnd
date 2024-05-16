@@ -1,23 +1,38 @@
 import React from "react";
 
-import PaidIcon from "@mui/icons-material/Paid";
 import CssBaseline from "@mui/material/CssBaseline";
 import GroupIcon from "@mui/icons-material/Group";
 import Typography from "@mui/material/Typography";
+import PaidIcon from "@mui/icons-material/Paid";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
+import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {Card, CardMedia} from "@mui/material";
 import {useParams} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
-import {getPetitionDetails, getSupportersOfPetition, petitionImageUrl, userImageUrl} from "../model/api.ts";
-import {PetitionDetails, Supporter, SupportTier} from "../model/responseBodies.ts";
+import {
+    getAllCategories,
+    getFilteredPetitions,
+    getPetitionDetails,
+    getSupportersOfPetition,
+    petitionImageUrl,
+    userImageUrl
+} from "../model/api.ts";
+import {
+    Category,
+    PetitionDetails,
+    PetitionOverview,
+    PetitionsList,
+    Supporter,
+    SupportTier
+} from "../model/responseBodies.ts";
 import {formatDate} from "../model/util.ts";
-import Grid from "@mui/material/Grid";
 import SupportTierCard from "./SupportTierCard.tsx";
 import SupporterCard from "./SupporterCard.tsx";
+import PetitionsGrid from "./PetitionsGrid.tsx";
 
 
 const defaultTheme = createTheme();
@@ -29,6 +44,8 @@ export default function Petition() {
     const [imageURL, setImageURL] = React.useState<string>("");
     const [title, setTitle] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
+    const [categoryId, setCategoryId] = React.useState<number>(NaN);
+    const [ownerId, setOwnerId] = React.useState<number>(NaN);
     const [ownerImageUrl, setOwnerImageUrl] = React.useState<string>("");
     const [ownerFirstName, setOwnerFirstName] = React.useState<string>("");
     const [ownerLastName, setOwnerLastName] = React.useState<string>("");
@@ -37,13 +54,14 @@ export default function Petition() {
     const [supportTiers, setSupportTiers] = React.useState<Array<SupportTier>>([]);
     const [supporters, setSupporters] = React.useState<Array<Supporter>>([]);
     const [supportTierMap, setSupportTierMap] = React.useState<Map<number, string>>(new Map());
+    const [similarPetitions, setSimilarPetitions] = React.useState<Array<PetitionOverview>>([]);
+    const [categoryMap, setCategoryMap] = React.useState<Map<number, string>>(new Map());
 
-    const petitionIdNumber = parseInt(petitionId as string);
     // if (isNaN(petitionIdNumber)) {
     //     return <NotFound/>;
     // }
-
     React.useEffect(() => {
+        const petitionIdNumber = parseInt(petitionId as string);
         function fetchPetition(): void {
             getPetitionDetails(petitionIdNumber)
                 .then((response: AxiosResponse<PetitionDetails>) => {
@@ -51,6 +69,8 @@ export default function Petition() {
                     setImageURL(petitionImageUrl(petitionIdNumber));
                     setTitle(response.data.title);
                     setDescription(response.data.description);
+                    setCategoryId(response.data.categoryId);
+                    setOwnerId(response.data.ownerId);
                     setOwnerImageUrl(userImageUrl(response.data.ownerId));
                     setOwnerFirstName(response.data.ownerFirstName);
                     setOwnerLastName(response.data.ownerLastName);
@@ -80,9 +100,58 @@ export default function Petition() {
                 });
         }
 
+        function mergePetitionListPromises(
+            setState: React.Dispatch<React.SetStateAction<Array<PetitionOverview>>>,
+            ...promises: Array<Promise<AxiosResponse<PetitionsList>>>
+        ): void {
+            const similarPetitionSet: Set<PetitionOverview> = new Set();
+            let numberOfFinishedRequests: number = 0;
+            for (const promise of promises) {
+                promise
+                    .then((response: AxiosResponse<PetitionsList>) => {
+                        for (const petition of response.data.petitions) {
+                            if (petition.petitionId !== petitionIdNumber) {
+                                similarPetitionSet.add(petition);
+                            }
+                        }
+                        if (numberOfFinishedRequests === promises.length - 1) {
+                            setState(Array.from(similarPetitionSet));
+                        } else {
+                            numberOfFinishedRequests += 1;
+                        }
+                    })
+                    .catch((error) => {
+                        setTitle(error.response.status.toString());
+                        setDescription(error.response.statusText);
+                    });
+            }
+        }
+
+        function fetchSimilarPetitions(): void {
+            mergePetitionListPromises(
+                setSimilarPetitions,
+                getFilteredPetitions({categoryIds: [categoryId]}),
+                getFilteredPetitions({ownerId: ownerId})
+            );
+        }
+
+        getAllCategories()
+            .then((response: AxiosResponse<Array<Category>>) => {
+                const map = new Map<number, string>();
+                response.data.forEach((category: Category) => {
+                    map.set(category.categoryId, category.name);
+                });
+                setCategoryMap(map);
+            })
+            .catch((error) => {
+                console.log(error.response.status);
+                console.log(error.response.statusText);
+            });
+
         fetchPetition();
         fetchSupporters();
-    }, [petitionId, petitionIdNumber, supportTierMap]);
+        fetchSimilarPetitions();
+    }, [categoryId, ownerId, petitionId]);
 
     function supportTierCards(): React.ReactElement[] {
         return supportTiers.map(
@@ -185,6 +254,12 @@ export default function Petition() {
                         <Box sx={{alignItems: 'center', display: 'flex', flexDirection: 'row'}}>
                             {supporterCards()}
                         </Box>
+                    </Card>
+                    <Card sx={{padding: 2, marginTop: 4}}>
+                        <Typography variant="h6" component="div">
+                            Similar Petitions
+                        </Typography>
+                        <PetitionsGrid petitions={similarPetitions} categoryMap={categoryMap} children={undefined}/>
                     </Card>
                 </Box>
             </Container>
