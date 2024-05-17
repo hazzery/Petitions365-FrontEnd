@@ -62,6 +62,7 @@ export default function Petition() {
     // }
     React.useEffect(() => {
         const petitionIdNumber = parseInt(petitionId as string);
+
         function fetchPetition(): void {
             getPetitionDetails(petitionIdNumber)
                 .then((response: AxiosResponse<PetitionDetails>) => {
@@ -104,27 +105,22 @@ export default function Petition() {
             setState: React.Dispatch<React.SetStateAction<Array<PetitionOverview>>>,
             ...promises: Array<Promise<AxiosResponse<PetitionsList>>>
         ): void {
-            const similarPetitionSet: Set<PetitionOverview> = new Set();
-            let numberOfFinishedRequests: number = 0;
-            for (const promise of promises) {
-                promise
-                    .then((response: AxiosResponse<PetitionsList>) => {
+            const similarPetitionMap: Map<number, PetitionOverview> = new Map();
+            Promise.all(promises)
+                .then((responses: AxiosResponse<PetitionsList>[]) => {
+                    responses.forEach((response: AxiosResponse<PetitionsList>) => {
                         for (const petition of response.data.petitions) {
                             if (petition.petitionId !== petitionIdNumber) {
-                                similarPetitionSet.add(petition);
+                                similarPetitionMap.set(petition.petitionId, petition);
                             }
                         }
-                        if (numberOfFinishedRequests === promises.length - 1) {
-                            setState(Array.from(similarPetitionSet));
-                        } else {
-                            numberOfFinishedRequests += 1;
-                        }
-                    })
-                    .catch((error) => {
-                        setTitle(error.response.status.toString());
-                        setDescription(error.response.statusText);
                     });
-            }
+                    setState(Array.from(similarPetitionMap.values()));
+                })
+                .catch((error) => {
+                    setTitle(error.response.status.toString());
+                    setDescription(error.response.statusText);
+                });
         }
 
         function fetchSimilarPetitions(): void {
