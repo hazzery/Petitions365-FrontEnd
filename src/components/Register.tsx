@@ -1,28 +1,44 @@
 import * as React from 'react';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import CssBaseline from '@mui/material/CssBaseline';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
-
-import {UserRegister} from "../model/responseBodies.ts";
-import {register} from "../model/api.ts";
+import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
+import {UserLogin} from "../model/responseBodies.ts";
+import {login, register} from "../model/api.ts";
 
-// The majority of this code was taken from the Material-UI example at
+
+// The returned JSX is copied from the Material-UI template at:
 // https://github.com/mui/material-ui/blob/v5.15.16/docs/data/material/getting-started/templates/sign-up/SignUp.tsx
 
 const defaultTheme = createTheme();
 
 export default function Register() {
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+
+    function logIn(email: string, password: string) {
+        login(email, password)
+            .then((response: AxiosResponse<UserLogin>) => {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('userId', String(response.data.userId));
+            })
+            .catch((error) => {
+                console.log(error.response);
+                setErrorMessage(error.response.data.message);
+            });
+    }
+
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         register(
@@ -30,8 +46,9 @@ export default function Register() {
             data.get('firstName') as string,
             data.get('lastName') as string,
             data.get('password') as string
-        ).then(((response: AxiosResponse<UserRegister>) => {
-            console.log(response.data);
+        ).then((() => {
+            logIn(data.get('email') as string, data.get('password') as string);
+            navigate('/petitions');
         })).catch((error) => {
             console.log(error.response);
         });
@@ -52,6 +69,9 @@ export default function Register() {
                     <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
                         <LockOutlinedIcon/>
                     </Avatar>
+                    <Typography component="h1" variant="h5">
+                        {errorMessage}
+                    </Typography>
                     <Typography component="h1" variant="h5">
                         Register
                     </Typography>
