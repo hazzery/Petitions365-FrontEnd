@@ -210,7 +210,7 @@ export default function Petitions() {
                 </TextField>
             </Paper>}
 
-            <PetitionsGrid petitions={petitions} categoryMap={categoryMap}>
+            <PetitionsGrid petitions={petitions} categoryMap={categoryMap} title={undefined}>
                 <Pagination
                     showFirstButton
                     showLastButton
@@ -219,7 +219,6 @@ export default function Petitions() {
                     onChange={(_, page) => setPageNumber(page)}
                     sx={{
                         justifySelf: 'center',
-                        gridColumn: '1 / 4',
                         marginY: '1rem'
                     }}
                 />

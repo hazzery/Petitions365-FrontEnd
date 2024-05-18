@@ -251,12 +251,18 @@ export default function Petition() {
                             {supporterCards()}
                         </Box>
                     </Card>
-                    <Card sx={{padding: 2, marginTop: 4}}>
-                        <Typography variant="h6" component="div">
-                            Similar Petitions
-                        </Typography>
-                        <PetitionsGrid petitions={similarPetitions} categoryMap={categoryMap} children={undefined}/>
-                    </Card>
+                    <Box sx={{padding: 2, marginTop: 4}}>
+                        <PetitionsGrid
+                            petitions={similarPetitions}
+                            categoryMap={categoryMap}
+                            title={
+                                <Typography variant="h6" component="div" sx={{marginTop: '15px'}}>
+                                    Similar Petitions
+                                </Typography>
+                            }
+                            children={undefined}
+                        />
+                    </Box>
                 </Box>
             </Container>
         </ThemeProvider>

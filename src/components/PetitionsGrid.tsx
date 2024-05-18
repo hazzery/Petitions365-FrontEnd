@@ -3,6 +3,7 @@ import PetitionCard from "./PetitionCard.tsx";
 
 import {PetitionOverview} from "../model/responseBodies.ts";
 import {Paper} from "@mui/material";
+import Box from "@mui/material/Box";
 
 
 interface PetitionsGridProps {
@@ -11,7 +12,9 @@ interface PetitionsGridProps {
 }
 
 export default function PetitionsGrid(
-    {petitions, categoryMap, children}: PetitionsGridProps & { children: React.ReactNode | undefined }
+    {
+        petitions, categoryMap, title = undefined, children = undefined
+    }: PetitionsGridProps & { title: React.ReactNode | undefined, children: React.ReactNode | undefined }
 ): React.ReactElement {
     function petitionCards() {
         return petitions.map(
@@ -24,13 +27,25 @@ export default function PetitionsGrid(
     }
 
     return (
-            <Paper sx={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '20px'
+        <Paper sx={{
+            padding: 0,
+            maxWidth: '75vw',
+            width: '70vw',
+            alignItems: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+        }}>
+            {title}
+            <Box sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                rowGap: '40px',
+                paddingY: '20px',
+                justifyContent: 'center',
             }}>
                 {petitionCards()}
-                {children}
-            </Paper>
+            </Box>
+            {children}
+        </Paper>
     );
 }

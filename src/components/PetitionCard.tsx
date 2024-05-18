@@ -36,10 +36,9 @@ export default function PetitionCard(
     } = petitionOverview;
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Container component="main" maxWidth="xs">
+            <Container component="main" maxWidth="xs" sx={{margin: 0}}>
                 <CssBaseline/>
                 <Card onClick={() => navigate("/petition/" + petitionId)} sx={{
-                    marginTop: 3,
                     padding: 2,
                     width: '100%',
                     height: '100%',
