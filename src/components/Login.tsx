@@ -1,22 +1,20 @@
 import * as React from 'react';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import CssBaseline from '@mui/material/CssBaseline';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {useNavigate} from "react-router-dom";
+import {AxiosResponse} from "axios";
 
 import {UserLogin} from "../model/responseBodies.ts";
 import {login} from "../model/api.ts";
-import {useNavigate} from "react-router-dom";
-import {AxiosResponse} from "axios";
 
 
 // The majority of this code was taken from the Material-UI example at
@@ -26,18 +24,21 @@ const defaultTheme = createTheme();
 
 export default function Login() {
     const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         login(data.get('email') as string, data.get('password') as string)
             .then((response: AxiosResponse<UserLogin>) => {
-                console.log(response.data);
-                navigate('/users');
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('userId', String(response.data.userId));
+                navigate('/petitions');
             })
             .catch((error) => {
                 console.log(error.response.status);
                 console.log(error.response.statusText);
+                setErrorMessage("Invalid email or password");
             });
     }
 
@@ -80,10 +81,9 @@ export default function Login() {
                             id="password"
                             autoComplete="current-password"
                         />
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary"/>}
-                            label="Remember me"
-                        />
+                        <Typography variant="body1" color="error">
+                            {errorMessage}
+                        </Typography>
                         <Button
                             type="submit"
                             fullWidth

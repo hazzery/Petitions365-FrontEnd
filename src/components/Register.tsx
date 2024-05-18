@@ -15,6 +15,7 @@ import {AxiosResponse} from "axios";
 
 import {UserLogin} from "../model/responseBodies.ts";
 import {login, register} from "../model/api.ts";
+import {formatServerResponse} from "../model/util.ts";
 
 
 // The returned JSX is copied from the Material-UI template at:
@@ -34,7 +35,6 @@ export default function Register() {
             })
             .catch((error) => {
                 console.log(error.response);
-                setErrorMessage(error.response.data.message);
             });
     }
 
@@ -51,6 +51,9 @@ export default function Register() {
             navigate('/petitions');
         })).catch((error) => {
             console.log(error.response);
+            setErrorMessage(
+                formatServerResponse(error.response.statusText)
+            );
         });
     }
 
@@ -69,9 +72,6 @@ export default function Register() {
                     <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
                         <LockOutlinedIcon/>
                     </Avatar>
-                    <Typography component="h1" variant="h5">
-                        {errorMessage}
-                    </Typography>
                     <Typography component="h1" variant="h5">
                         Register
                     </Typography>
@@ -120,6 +120,9 @@ export default function Register() {
                                 />
                             </Grid>
                         </Grid>
+                        <Typography variant="body1" color="error">
+                            {errorMessage}
+                        </Typography>
                         <Button
                             type="submit"
                             fullWidth
