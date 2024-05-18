@@ -1,5 +1,5 @@
 import * as React from 'react';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -14,8 +14,9 @@ import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
 import {UserLogin} from "../model/responseBodies.ts";
-import {login, register} from "../model/api.ts";
+import {login, register, uploadUserImage} from "../model/api.ts";
 import {formatServerResponse} from "../model/util.ts";
+import {ChangeEvent} from "react";
 
 
 // The returned JSX is copied from the Material-UI template at:
@@ -26,35 +27,55 @@ const defaultTheme = createTheme();
 export default function Register() {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-
-    function logIn(email: string, password: string) {
-        login(email, password)
-            .then((response: AxiosResponse<UserLogin>) => {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('userId', String(response.data.userId));
-            })
-            .catch((error) => {
-                console.log(error.response);
-            });
-    }
+    const [userImage, setUserImage] = React.useState<File | null>(null);
+    const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
+        const email = data.get('email') as string;
+        const password = data.get('password') as string;
         register(
-            data.get('email') as string,
+            email,
             data.get('firstName') as string,
             data.get('lastName') as string,
-            data.get('password') as string
-        ).then((() => {
-            logIn(data.get('email') as string, data.get('password') as string);
+            password
+        ).then(() => {
+            login(email, password)
+                .then((response: AxiosResponse<UserLogin>) => {
+                    const userId = response.data.userId;
+                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('userId', String(userId));
+                    if (userImage !== null) {
+                        uploadUserImage(userId, userImage);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
             navigate('/petitions');
-        })).catch((error) => {
+        }).catch((error) => {
             console.log(error.response);
             setErrorMessage(
                 formatServerResponse(error.response.statusText)
             );
         });
+    }
+
+    const inputRef = React.useRef<HTMLInputElement | null>(null);
+
+    function handleAvatarClick() {
+        inputRef.current?.click();
+    }
+
+    function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+        if (event.target.files && event.target.files.length > 0) {
+            setUserImage(event.target.files[0]);
+            setUserImageUrl(URL.createObjectURL(event.target.files[0]));
+        } else {
+            setUserImage(null);
+            setUserImageUrl(null);
+        }
     }
 
     return (
@@ -69,12 +90,28 @@ export default function Register() {
                         alignItems: 'center',
                     }}
                 >
-                    <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
-                        <LockOutlinedIcon/>
-                    </Avatar>
                     <Typography component="h1" variant="h5">
                         Register
                     </Typography>
+                    <Avatar onClick={handleAvatarClick} sx={{
+                        cursor: 'pointer',
+                        marginTop: 2,
+                        width: 100,
+                        height: 100
+                    }}>
+                        <input
+                            type="file"
+                            ref={inputRef}
+                            style={{display: 'none'}}
+                            onChange={handleFileChange}
+                        />
+                        {
+                            userImageUrl ?
+                                <img src={userImageUrl} alt="User"
+                                     style={{objectFit: 'cover', width: '100%', height: '100%'}}/> :
+                                <AccountCircleIcon sx={{fontSize: 120}} color="action"/>
+                        }
+                    </Avatar>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>

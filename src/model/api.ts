@@ -140,10 +140,17 @@ export function petitionImageUrl(petitionID: number): string {
 /**
  * Builds the URL for a user's image.
  *
- * @param userID The ID of the user to get the image URL for.
+ * @param userId The ID of the user to get the image URL for.
  */
-export function userImageUrl(userID: number): string {
-    return rootUrl + "/users/" + userID + "/image";
+export function userImageUrl(userId: number): string {
+    return rootUrl + "/users/" + userId + "/image";
+}
+
+export function uploadUserImage(userId: number, image: File): Promise<AxiosResponse> {
+    return Axios.put(userImageUrl(userId), image, {
+        headers: {"Content-Type": image.type}
+    });
+
 }
 
 /**
