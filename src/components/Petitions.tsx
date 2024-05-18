@@ -157,7 +157,7 @@ export default function Petitions() {
                     }}
                     onClick={() => setShowFilterBar(!showFilterBar)}
                 >
-                    <Typography variant="body2">Filter</Typography>
+                    <Typography variant="body2">{showFilterBar ? "Hide filters" : "Show filters"}</Typography>
                     <TuneIcon sx={{fontSize: 30}}/>
                 </Button>
                 <TextField
