@@ -1,6 +1,9 @@
 import * as React from 'react';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Visibility from '@mui/icons-material/Visibility';
 import CssBaseline from '@mui/material/CssBaseline';
+import IconButton from "@mui/material/IconButton";
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
@@ -10,13 +13,14 @@ import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {InputAdornment} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
+import {ChangeEvent} from "react";
 
 import {UserLogin} from "../model/responseBodies.ts";
 import {login, register, uploadUserImage} from "../model/api.ts";
 import {formatServerResponse} from "../model/util.ts";
-import {ChangeEvent} from "react";
 
 
 // The returned JSX is copied from the Material-UI template at:
@@ -29,6 +33,9 @@ export default function Register() {
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     const [userImage, setUserImage] = React.useState<File | null>(null);
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
+    const [showPassword, setShowPassword] = React.useState<boolean>(false);
+
+    const handleClickShowPassword = () => setShowPassword(!showPassword);
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -151,9 +158,19 @@ export default function Register() {
                                     fullWidth
                                     name="password"
                                     label="Password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     id="password"
                                     autoComplete="new-password"
+                                    InputProps={{
+                                        endAdornment: <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleClickShowPassword}
+                                            >
+                                                {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }}
                                 />
                             </Grid>
                         </Grid>
