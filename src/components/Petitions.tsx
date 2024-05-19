@@ -23,6 +23,7 @@ import PetitionsGrid from "./PetitionsGrid.tsx";
 import {getAllCategories, getFilteredPetitions, GetFilteredPetitionsParams, SortOrder} from "../model/api.ts";
 import {Category, PetitionOverview, PetitionsList} from "../model/responseBodies.ts";
 import Typography from "@mui/material/Typography";
+import NavBar from "./NavBar.tsx";
 
 
 const petitionSortOrdersMap = new Map<SortOrder, string>([
@@ -141,6 +142,7 @@ export default function Petitions() {
 
     return (
         <div>
+            <NavBar/>
             <h1>Petitions</h1>
             <form
                 style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20}}
