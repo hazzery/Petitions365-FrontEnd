@@ -1,6 +1,14 @@
 import Axios, {AxiosResponse} from "axios";
 
-import {Category, PetitionDetails, PetitionsList, Supporter, UserLogin, UserRegister} from "./responseBodies";
+import {
+    Category,
+    PetitionCreation,
+    PetitionDetails,
+    PetitionsList,
+    Supporter,
+    UserLogin,
+    UserRegister
+} from "./responseBodies";
 
 
 const rootUrl: string = "http://localhost:4941/api/v1";
@@ -58,6 +66,7 @@ export interface GetFilteredPetitionsParams {
 
 /**
  * Fetches all petitions that match the given filters.
+ *
  * @param startIndex The index of the first petition to fetch.
  * @param count The number of petitions to fetch.
  * @param q The search query to filter petitions by.
@@ -138,6 +147,18 @@ export function petitionImageUrl(petitionID: number): string {
 }
 
 /**
+ * Uploads an image for a petition.
+ *
+ * @param petitionID The ID number of the petition to upload the image for.
+ * @param image The image file to upload.
+ */
+export function uploadPetitionImage(petitionID: number, image: File): Promise<AxiosResponse> {
+    return Axios.put(petitionImageUrl(petitionID), image, {
+        headers: {"Content-Type": image.type}
+    });
+}
+
+/**
  * Builds the URL for a user's image.
  *
  * @param userId The ID of the user to get the image URL for.
@@ -146,6 +167,12 @@ export function userImageUrl(userId: number): string {
     return rootUrl + "/users/" + userId + "/image";
 }
 
+/**
+ * Uploads an image for a user.
+ *
+ * @param userId The ID number of the user to upload the image for.
+ * @param image The image file to upload.
+ */
 export function uploadUserImage(userId: number, image: File): Promise<AxiosResponse> {
     return Axios.put(userImageUrl(userId), image, {
         headers: {"Content-Type": image.type}
@@ -167,4 +194,21 @@ export function getAllCategories(): Promise<AxiosResponse<Array<Category>>> {
  */
 export function getSupportersOfPetition(petitionId: number): Promise<AxiosResponse<Array<Supporter>>> {
     return Axios.get(rootUrl + "/petitions/" + petitionId + "/supporters");
+}
+
+/**
+ * Creates a new petition on the server.
+ *
+ * @param title The title of the petition.
+ * @param description A description of the petition.
+ * @param categoryId The ID number of the category the petition belongs to.
+ * @param supportTiers An array of support tiers for the petition.
+ */
+export function createPetition(
+    title: string,
+    description: string,
+    categoryId: number,
+    supportTiers: Array<{ title: string, description: string, cost: number }>
+): Promise<AxiosResponse<PetitionCreation>> {
+    return Axios.post(rootUrl + "/petitions", {title, description, categoryId, supportTiers});
 }

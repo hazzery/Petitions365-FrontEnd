@@ -65,3 +65,7 @@ export interface Supporter {
     supporterLastName: string,
     timestamp: string
 }
+
+export interface PetitionCreation {
+    petitionId: number
+}

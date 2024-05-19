@@ -51,7 +51,7 @@ export default function NavBar(): React.ReactElement {
                     <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
                         <Button
                             key={1}
-                            onClick={() => navigate('/petitions')}
+                            onClick={() => navigate('/petition/new')}
                             sx={{my: 2, color: 'white', display: 'block'}}
                         >
                             Create Petition
