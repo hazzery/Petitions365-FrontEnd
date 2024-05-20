@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {ChangeEvent} from 'react';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
@@ -16,7 +17,6 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {InputAdornment} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
-import {ChangeEvent} from "react";
 
 import {UserLogin} from "../model/responseBodies.ts";
 import {login, register, uploadUserImage} from "../model/api.ts";
@@ -186,10 +186,15 @@ export default function Register() {
                         >
                             Register
                         </Button>
-                        <Grid container justifyContent="flex-end">
+                        <Grid container justifyContent="space-between">
                             <Grid item>
-                                <Link href="/Login" variant="body2">
+                                <Link onClick={() => navigate("/login")} variant="body2">
                                     Already have an account? Log in
+                                </Link>
+                            </Grid>
+                            <Grid item>
+                                <Link onClick={() => navigate("/")} variant="body2">
+                                    Cancel
                                 </Link>
                             </Grid>
                         </Grid>

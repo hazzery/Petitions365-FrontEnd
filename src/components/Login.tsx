@@ -46,14 +46,12 @@ export default function Login() {
         <ThemeProvider theme={defaultTheme}>
             <Container component="main" maxWidth="xs">
                 <CssBaseline/>
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
+                <Box sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}>
                     <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
                         <LockOutlinedIcon/>
                     </Avatar>
@@ -92,10 +90,15 @@ export default function Login() {
                         >
                             Log In
                         </Button>
-                        <Grid container>
+                        <Grid container justifyContent="space-between">
                             <Grid item>
-                                <Link href="/Register" variant="body2">
+                                <Link onClick={() => navigate("/register")} variant="body2">
                                     {"Don't have an account? Register"}
+                                </Link>
+                            </Grid>
+                            <Grid item>
+                                <Link onClick={() => navigate("/")} variant="body2">
+                                    Cancel
                                 </Link>
                             </Grid>
                         </Grid>
