@@ -1,15 +1,16 @@
 import React from "react";
+import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import Button from "@mui/material/Button";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
+import {useNavigate} from "react-router-dom";
+import {Paper} from "@mui/material";
 import {AxiosResponse} from "axios";
 
+import NavBar from "./NavBar.tsx";
 import {UserDetails} from "../model/responseBodies.ts";
 import {getUser, userImageUrl} from "../model/api.ts";
-import NavBar from "./NavBar.tsx";
-import CssBaseline from "@mui/material/CssBaseline";
-import {createTheme, ThemeProvider} from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import {useNavigate} from "react-router-dom";
 
 
 const defaultTheme = createTheme();
@@ -36,17 +37,32 @@ export default function UserProfile(): React.ReactElement {
             <Container component="main" maxWidth="xl">
                 <CssBaseline/>
                 <NavBar/>
-                <Box sx={{
-                    marginTop: 8,
+                <Paper sx={{
+                    marginTop: 5,
+                    padding: '30px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}>
-                    <img src={userImageUrl(userId)} alt="Avatar" style={{width: "200px"}}/>
-                    <Typography variant="h3">{userFirstName}</Typography>
-                    <Typography variant="h3">{userLastName}</Typography>
-                    <Typography variant="h3">{userEmail}</Typography>
-                </Box>
+                    <img
+                        src={userImageUrl(userId)}
+                        alt="User profile avatar"
+                        style={{width: "200px", borderRadius: "50%"}}
+                    />
+                    <Typography variant="h3">
+                        {userFirstName + ' ' + userLastName}
+                    </Typography>
+                    <Typography variant="h6">
+                        {userEmail}
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        onClick={() => navigate("/edit-profile")}
+                        style={{marginTop: "30px"}}
+                    >
+                        Edit profile
+                    </Button>
+                </Paper>
             </Container>
         </ThemeProvider>
     );
