@@ -221,3 +221,45 @@ export function getUser(userId: number): Promise<AxiosResponse<UserDetails>> {
     const headers = {"x-authorization": localStorage.getItem("token")};
     return Axios.get(rootUrl + "/users/" + userId, {headers});
 }
+
+/**
+ * Updates the details of a user.
+ *
+ * @param userId The ID number of the user to update.
+ * @param email The user's updated email address.
+ * @param firstName The user's updated first name.
+ * @param lastName The user's updated last name.
+ * @param password The user's updated password.
+ * @param currentPassword The user's current password.
+ */
+export function updateUserDetails(
+    userId: number, email: string, firstName: string, lastName: string, password: string, currentPassword: string
+): Promise<AxiosResponse> {
+    const headers = {"x-authorization": localStorage.getItem("token")};
+    const data: {
+        email?: string,
+        firstName?: string,
+        lastName?: string,
+        password?: string,
+        currentPassword?: string
+    } = {};
+    if (email) {
+        data.email = email;
+    }
+    if (firstName) {
+        data.firstName = firstName;
+    }
+    if (lastName) {
+        data.lastName = lastName;
+    }
+    if (password || currentPassword) {
+        data.password = password;
+        data.currentPassword = currentPassword;
+    }
+
+    return Axios.patch(
+        rootUrl + "/users/" + userId,
+        data,
+        {headers}
+    );
+}

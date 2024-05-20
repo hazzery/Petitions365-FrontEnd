@@ -13,9 +13,11 @@ import {Paper} from "@mui/material";
 
 import PasswordInput from "./PasswordInput.tsx";
 import NavBar from "./NavBar.tsx";
-import {UserDetails, UserLogin} from "../model/responseBodies.ts";
-import {getUser, login, register, updateUserDetails, uploadUserImage, userImageUrl} from "../model/api.ts";
+import {UserDetails} from "../model/responseBodies.ts";
+import {getUser, updateUserDetails, uploadUserImage, userImageUrl} from "../model/api.ts";
 import {formatServerResponse} from "../model/util.ts";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Avatar from "@mui/material/Avatar";
 
 
 
@@ -29,6 +31,7 @@ export default function EditProfile(): React.ReactElement {
     const [userAvatarUrl, setUserAvatarUrl] = React.useState<string>("");
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [userImage, setUserImage] = React.useState<File | null>(null);
+    const inputRef = React.useRef<HTMLInputElement | null>(null);
 
     const userId = parseInt(localStorage.getItem("userId") as string);
 
@@ -51,31 +54,31 @@ export default function EditProfile(): React.ReactElement {
             data.get('email') as string,
             data.get('firstName') as string,
             data.get('lastName') as string,
-            data.get('password') as string
+            data.get('newPassword') as string,
+            data.get('currentPassword') as string
         ).then(() => {
             navigate('/profile');
         }).catch((error) => {
-            console.log(error.response);
             setErrorMessage(
                 formatServerResponse(error.response.statusText)
             );
         });
+        if (userImage !== null) {
+            uploadUserImage(userId, userImage);
+        }
     }
 
-    // const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    //     const files = event.target.files;
-    //     if (files && files.length > 0) {
-    //         setUserAvatar(files[0]);
-    //         setUserAvatarUrl(URL.createObjectURL(files[0]));
-    //     }
-    // };
+    function handleAvatarClick() {
+        inputRef.current?.click();
+    }
 
-    // const handleAvatarUpload = (): void => {
-    //     if (userAvatar) {
-    //         setUserAvatarLoading(true);
-    //         setUserAvatarSuccess
-    //     }
-    // }
+    function handleFileChange(event: React.ChangeEvent<HTMLInputElement>): void {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            setUserImage(files[0]);
+            setUserAvatarUrl(URL.createObjectURL(files[0]));
+        }
+    }
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -89,44 +92,68 @@ export default function EditProfile(): React.ReactElement {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}>
+                    <Avatar onClick={handleAvatarClick} sx={{
+                        cursor: 'pointer',
+                        marginTop: 2,
+                        width: 100,
+                        height: 100
+                    }}>
+                        <input
+                            type="file"
+                            ref={inputRef}
+                            style={{display: 'none'}}
+                            onChange={handleFileChange}
+                        />
+                        {
+                            userAvatarUrl ?
+                                <img src={userAvatarUrl} alt="User"
+                                     style={{objectFit: 'cover', width: '100%', height: '100%'}}/> :
+                                <AccountCircleIcon sx={{fontSize: 120}} color="action"/>
+                        }
+                    </Avatar>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    autoComplete="given-name"
-                                    name="firstName"
-                                    required
                                     fullWidth
-                                    id="firstName"
+                                    name="firstName"
                                     label="First Name"
+                                    value={userFirstName}
+                                    onChange={(event) => setUserFirstName(event.target.value)}
                                     autoFocus
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    required
                                     fullWidth
-                                    id="lastName"
-                                    label="Last Name"
                                     name="lastName"
-                                    autoComplete="family-name"
+                                    label="Last Name"
+                                    value={userLastName}
+                                    onChange={(event) => setUserLastName(event.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
-                                    required
                                     fullWidth
-                                    id="email"
-                                    label="Email Address"
                                     name="email"
-                                    autoComplete="email"
+                                    label="Email Address"
+                                    value={userEmail}
+                                    onChange={(event) => setUserEmail(event.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <PasswordInput label="Current Password" name="currentPassword"/>
+                                <PasswordInput
+                                    required
+                                    label="Current Password"
+                                    name="currentPassword"
+                                />
                             </Grid>
                             <Grid item xs={12}>
-                                <PasswordInput label="New Password" name="newPassword"/>
+                                <PasswordInput
+                                    required
+                                    label="New Password"
+                                    name="newPassword"
+                                />
                             </Grid>
                         </Grid>
                         <Typography variant="body1" color="error">
