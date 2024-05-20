@@ -24,6 +24,10 @@ import {getAllCategories, getFilteredPetitions, GetFilteredPetitionsParams, Sort
 import {Category, PetitionOverview, PetitionsList} from "../model/responseBodies.ts";
 import Typography from "@mui/material/Typography";
 import NavBar from "./NavBar.tsx";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
 
 
 const petitionSortOrdersMap = new Map<SortOrder, string>([
@@ -36,6 +40,8 @@ const petitionSortOrdersMap = new Map<SortOrder, string>([
 ]);
 
 const petitionSortOrders = Array.from(petitionSortOrdersMap.keys());
+
+const defaultTheme = createTheme();
 
 export default function Petitions() {
     const [petitions, setPetitions] = React.useState<Array<PetitionOverview>>([]);
@@ -141,90 +147,107 @@ export default function Petitions() {
     }
 
     return (
-        <div>
-            <NavBar/>
-            <h1>Petitions</h1>
-            <form
-                style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20}}
-                onSubmit={() => setSearchQuery(searchInput)}
-                method="dialog"
-            >
-                <Button
-                    variant="contained"
-                    color="inherit"
-                    sx={{
-                        backgroundColor: '#fff',
-                        color: 'primary.main',
-                        marginRight: 1
-                    }}
-                    onClick={() => setShowFilterBar(!showFilterBar)}
-                >
-                    <Typography variant="body2">{showFilterBar ? "Hide filters" : "Show filters"}</Typography>
-                    <TuneIcon sx={{fontSize: 30}}/>
-                </Button>
-                <TextField
-                    id="search"
-                    label="Search"
-                    variant="outlined"
-                    sx={{width: '50%'}}
-                    value={searchInput}
-                    onChange={(event) => setSearchInput(event.target.value)}
-                />
-                <Button variant="contained" color="primary" type="submit" sx={{marginLeft: 1}}>
-                    <SearchIcon sx={{fontSize: 30}}/>
-                </Button>
-            </form>
-            {showFilterBar && <Paper sx={{marginBottom: 3, display: 'inline-flex', flexDirection: 'row'}}>
-                <FormControl sx={{margin: 2, width: 300}}>
-                    <InputLabel id="demo-multiple-checkbox-label">Categories</InputLabel>
-                    <Select
-                        labelId="demo-multiple-checkbox-label"
-                        multiple
-                        value={selectedCategories}
-                        onChange={handleCategoryFilterChange}
-                        input={<OutlinedInput label="Categories"/>}
-                        renderValue={renderSelectedCategories}
-                    >
-                        {categoryCheckboxes()}
-                    </Select>
-                </FormControl>
-                <TextField
-                    label="Minimum supporting cost"
-                    value={selectedCost}
-                    onChange={handleCostFilterChange}
-                    sx={{margin: 2}}
-                    InputProps={{startAdornment: <InputAdornment position="start">$</InputAdornment>}}
-                    InputLabelProps={{
-                        shrink: supportingCostIsFocused || selectedCost !== "",
-                        style: {paddingLeft: supportingCostIsFocused ? '0px' : '15px'}
-                    }}
-                    onFocus={() => setSupportingCostIsFocused(true)}
-                    onBlur={() => setSupportingCostIsFocused(false)}
-                />
-                <TextField
-                    select
-                    label="Sort order"
-                    sx={{margin: 2}}
-                    value={selectedSortOrder}
-                    onChange={(event) => setSelectedSortOrder(event.target.value as SortOrder)}
-                >
-                    {sortOrderOptions()}
-                </TextField>
-            </Paper>}
+        <ThemeProvider theme={defaultTheme}>
+            <Container component="main" maxWidth="xl">
+                <CssBaseline/>
+                <Box sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center"
+                }}>
+                    <NavBar/>
+                    <Typography variant="h2" sx={{marginY: '40px'}}>
+                        Petitions
+                    </Typography>
+                    <Box
+                        component="form"
+                        onSubmit={() => setSearchQuery(searchInput)}
+                        method="dialog"
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginBottom: 20,
+                            width: '100%'
+                        }}>
+                        <Button
+                            variant="contained"
+                            color="inherit"
+                            sx={{
+                                backgroundColor: '#fff',
+                                color: 'primary.main',
+                                marginRight: 1
+                            }}
+                            onClick={() => setShowFilterBar(!showFilterBar)}
+                        >
+                            <Typography variant="body2">{showFilterBar ? "Hide filters" : "Show filters"}</Typography>
+                            <TuneIcon sx={{fontSize: 30}}/>
+                        </Button>
+                        <TextField
+                            id="search"
+                            label="Search"
+                            variant="outlined"
+                            sx={{width: '50%'}}
+                            value={searchInput}
+                            onChange={(event) => setSearchInput(event.target.value)}
+                        />
+                        <Button variant="contained" color="primary" type="submit" sx={{marginLeft: 1}}>
+                            <SearchIcon sx={{fontSize: 30}}/>
+                        </Button>
+                    </Box>
+                    {showFilterBar && <Paper sx={{marginBottom: 3, display: 'inline-flex', flexDirection: 'row'}}>
+                        <FormControl sx={{margin: 2, width: 300}}>
+                            <InputLabel id="demo-multiple-checkbox-label">Categories</InputLabel>
+                            <Select
+                                labelId="demo-multiple-checkbox-label"
+                                multiple
+                                value={selectedCategories}
+                                onChange={handleCategoryFilterChange}
+                                input={<OutlinedInput label="Categories"/>}
+                                renderValue={renderSelectedCategories}
+                            >
+                                {categoryCheckboxes()}
+                            </Select>
+                        </FormControl>
+                        <TextField
+                            label="Minimum supporting cost"
+                            value={selectedCost}
+                            onChange={handleCostFilterChange}
+                            sx={{margin: 2}}
+                            InputProps={{startAdornment: <InputAdornment position="start">$</InputAdornment>}}
+                            InputLabelProps={{
+                                shrink: supportingCostIsFocused || selectedCost !== "",
+                                style: {paddingLeft: supportingCostIsFocused ? '0px' : '15px'}
+                            }}
+                            onFocus={() => setSupportingCostIsFocused(true)}
+                            onBlur={() => setSupportingCostIsFocused(false)}
+                        />
+                        <TextField
+                            select
+                            label="Sort order"
+                            sx={{margin: 2}}
+                            value={selectedSortOrder}
+                            onChange={(event) => setSelectedSortOrder(event.target.value as SortOrder)}
+                        >
+                            {sortOrderOptions()}
+                        </TextField>
+                    </Paper>}
 
-            <PetitionsGrid petitions={petitions} categoryMap={categoryMap} title={undefined}>
-                <Pagination
-                    showFirstButton
-                    showLastButton
-                    count={Math.ceil(numberSearchResults / pageSize)}
-                    color="primary"
-                    onChange={(_, page) => setPageNumber(page)}
-                    sx={{
-                        justifySelf: 'center',
-                        marginY: '1rem'
-                    }}
-                />
-            </PetitionsGrid>
-        </div>
+                    <PetitionsGrid petitions={petitions} categoryMap={categoryMap} title={undefined}>
+                        <Pagination
+                            showFirstButton
+                            showLastButton
+                            count={Math.ceil(numberSearchResults / pageSize)}
+                            color="primary"
+                            onChange={(_, page) => setPageNumber(page)}
+                            sx={{
+                                justifySelf: 'center',
+                                marginY: '1rem'
+                            }}
+                        />
+                    </PetitionsGrid>
+                </Box>
+            </Container>
+        </ThemeProvider>
     );
 }
