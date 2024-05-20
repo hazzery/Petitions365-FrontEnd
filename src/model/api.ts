@@ -153,9 +153,11 @@ export function petitionImageUrl(petitionID: number): string {
  * @param image The image file to upload.
  */
 export function uploadPetitionImage(petitionID: number, image: File): Promise<AxiosResponse> {
-    return Axios.put(petitionImageUrl(petitionID), image, {
-        headers: {"Content-Type": image.type}
-    });
+    const headers = {
+        "x-authorization": localStorage.getItem("token"),
+        "Content-Type": image.type
+    };
+    return Axios.put(petitionImageUrl(petitionID), image, {headers});
 }
 
 /**
@@ -174,9 +176,11 @@ export function userImageUrl(userId: number): string {
  * @param image The image file to upload.
  */
 export function uploadUserImage(userId: number, image: File): Promise<AxiosResponse> {
-    return Axios.put(userImageUrl(userId), image, {
-        headers: {"Content-Type": image.type}
-    });
+    const headers = {
+        "x-authorization": localStorage.getItem("token"),
+        "Content-Type": image.type
+    };
+    return Axios.put(userImageUrl(userId), image, {headers});
 
 }
 
@@ -210,5 +214,6 @@ export function createPetition(
     categoryId: number,
     supportTiers: Array<{ title: string, description: string, cost: number }>
 ): Promise<AxiosResponse<PetitionCreation>> {
-    return Axios.post(rootUrl + "/petitions", {title, description, categoryId, supportTiers});
+    const headers = {"x-authorization": localStorage.getItem("token")};
+    return Axios.post(rootUrl + "/petitions", {title, description, categoryId, supportTiers}, {headers});
 }
