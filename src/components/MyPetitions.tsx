@@ -1,19 +1,22 @@
 import React from 'react';
-import {Category, PetitionOverview} from "../model/responseBodies.ts";
-import {getAllCategories, getFilteredPetitions} from "../model/api.ts";
-import PetitionsGrid from "./PetitionsGrid.tsx";
-import {AxiosResponse} from "axios";
 import Typography from "@mui/material/Typography";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
-import {createTheme, ThemeProvider} from "@mui/material/styles";
-import NavBar from "./NavBar.tsx";
 import Box from "@mui/material/Box";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
+import {useNavigate} from "react-router-dom";
+import {AxiosResponse} from "axios";
+
+import PetitionsGrid from "./PetitionsGrid.tsx";
+import NavBar from "./NavBar.tsx";
+import {Category, PetitionOverview} from "../model/responseBodies.ts";
+import {getAllCategories, getFilteredPetitions} from "../model/api.ts";
 
 
 const defaultTheme = createTheme();
 
 export default function MyPetitions(): React.ReactElement {
+    const navigate = useNavigate();
     const [ownedPetitions, setOwnedPetitions] = React.useState<Array<PetitionOverview>>([]);
     const [signedPetitions, setSignedPetitions] = React.useState<Array<PetitionOverview>>([]);
     const [categoryMap, setCategoryMap] = React.useState<Map<number, string>>(new Map<number, string>());
@@ -21,7 +24,8 @@ export default function MyPetitions(): React.ReactElement {
     const userId = parseInt(localStorage.getItem("userId") as string);
     React.useEffect(() => {
         getFilteredPetitions({ownerId: userId})
-            .then((response) => setOwnedPetitions(response.data.petitions));
+            .then((response) => setOwnedPetitions(response.data.petitions))
+            .catch(() => navigate("/login"));
         getFilteredPetitions({supporterId: userId})
             .then((response) => setSignedPetitions(response.data.petitions));
         getAllCategories()
