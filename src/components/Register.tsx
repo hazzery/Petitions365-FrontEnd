@@ -35,6 +35,8 @@ export default function Register() {
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
+    const inputRef = React.useRef<HTMLInputElement | null>(null);
+
     const handleClickShowPassword = () => setShowPassword(!showPassword);
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -69,7 +71,6 @@ export default function Register() {
         });
     }
 
-    const inputRef = React.useRef<HTMLInputElement | null>(null);
 
     function handleAvatarClick() {
         inputRef.current?.click();
