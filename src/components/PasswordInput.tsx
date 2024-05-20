@@ -8,17 +8,18 @@ import {InputAdornment} from "@mui/material";
 
 interface PasswordInputProps {
     name: string,
-    label: string
+    label: string,
+    required?: boolean
 }
 
 export default function PasswordInput(
-    {name, label}: PasswordInputProps
+    {name, label, required}: PasswordInputProps
 ): React.ReactElement {
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
     return (
         <TextField
-            required
+            required={required}
             fullWidth
             name={name}
             label={label}
