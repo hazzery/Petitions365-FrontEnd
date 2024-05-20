@@ -175,7 +175,15 @@ export function uploadUserImage(userId: number, image: File): Promise<AxiosRespo
         "Content-Type": image.type
     };
     return Axios.put(userImageUrl(userId), image, {headers});
+}
 
+/**
+ * Fetches the image of a user. Will succeed if the user has an image set and fail if they do not.
+ *
+ * @param userId The ID number of the user to fetch the image for.
+ */
+export function checkUserImage(userId: number): Promise<AxiosResponse> {
+    return Axios.get(userImageUrl(userId));
 }
 
 /**

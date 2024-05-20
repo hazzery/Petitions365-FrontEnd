@@ -1,9 +1,11 @@
 import React from "react";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
@@ -13,11 +15,9 @@ import {Paper} from "@mui/material";
 
 import PasswordInput from "./PasswordInput.tsx";
 import NavBar from "./NavBar.tsx";
+import {checkUserImage, getUser, updateUserDetails, uploadUserImage, userImageUrl} from "../model/api.ts";
 import {UserDetails} from "../model/responseBodies.ts";
-import {getUser, updateUserDetails, uploadUserImage, userImageUrl} from "../model/api.ts";
 import {formatServerResponse} from "../model/util.ts";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Avatar from "@mui/material/Avatar";
 
 
 
@@ -41,9 +41,11 @@ export default function EditProfile(): React.ReactElement {
                 setUserFirstName(response.data.firstName);
                 setUserLastName(response.data.lastName);
                 setUserEmail(response.data.email);
-                setUserAvatarUrl(userImageUrl(userId));
             })
             .catch(() => navigate("/login"));
+
+        checkUserImage(userId)
+            .then(() => setUserAvatarUrl(userImageUrl(userId)));
     }, [navigate, userId]);
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
