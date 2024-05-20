@@ -8,7 +8,7 @@ export interface UserRegister {
 }
 
 export interface UserDetails {
-    email?: string,
+    email: string,
     firstName: string,
     lastName: string
 }
