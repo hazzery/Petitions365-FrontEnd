@@ -1,6 +1,7 @@
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
 import CreatePetition from "./components/CreatePetition.tsx";
+import MyPetitions from "./components/MyPetitions.tsx";
 import Petitions from "./components/Petitions.tsx";
 import Register from "./components/Register.tsx";
 import Petition from "./components/Petition.tsx";
@@ -22,6 +23,7 @@ function App() {
                         <Route path="/petitions" element={<Petitions/>}/>
                         <Route path="/petition/:petitionId" element={<Petition/>}/>
                         <Route path="/petition/new" element={<CreatePetition/>}/>
+                        <Route path="/my-petitions" element={<MyPetitions/>}/>
                         <Route path="*" element={<NotFound/>}/>
                     </Routes>
                 </div>
