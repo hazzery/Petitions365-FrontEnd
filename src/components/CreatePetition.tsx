@@ -16,6 +16,7 @@ import {Category, PetitionCreation, SupportTier} from "../model/responseBodies.t
 import CreateSupportTier from "./CreateSupportTier.tsx";
 import SupportTierCard from "./SupportTierCard.tsx";
 import {formatServerResponse} from "../model/util.ts";
+import NavBar from "./NavBar.tsx";
 
 
 const defaultTheme = createTheme();
@@ -102,16 +103,15 @@ export default function CreatePetition(): React.ReactElement {
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Container component="main" maxWidth="lg">
+            <Container component="main" maxWidth="xl">
                 <CssBaseline/>
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
+                <NavBar/>
+                <Box sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}>
                     <Typography component="h1" variant="h5">
                         New Petition
                     </Typography>
@@ -208,6 +208,5 @@ export default function CreatePetition(): React.ReactElement {
                 </Box>
             </Container>
         </ThemeProvider>
-    )
-        ;
+    );
 }
