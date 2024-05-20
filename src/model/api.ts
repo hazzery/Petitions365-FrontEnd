@@ -218,5 +218,6 @@ export function createPetition(
  * @param userId The ID of the user to fetch.
  */
 export function getUser(userId: number): Promise<AxiosResponse<UserDetails>> {
-    return Axios.get(rootUrl + "/users/" + userId);
+    const headers = {"x-authorization": localStorage.getItem("token")};
+    return Axios.get(rootUrl + "/users/" + userId, {headers});
 }
