@@ -2,6 +2,7 @@ import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
 import CreatePetition from "./components/CreatePetition.tsx";
 import MyPetitions from "./components/MyPetitions.tsx";
+import UserProfile from "./components/UserProfile.tsx";
 import Petitions from "./components/Petitions.tsx";
 import Register from "./components/Register.tsx";
 import Petition from "./components/Petition.tsx";
@@ -20,6 +21,7 @@ function App() {
                         <Route path="/" element={<Landing/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="/register" element={<Register/>}/>
+                        <Route path="/profile" element={<UserProfile/>}/>
                         <Route path="/petitions" element={<Petitions/>}/>
                         <Route path="/petition/:petitionId" element={<Petition/>}/>
                         <Route path="/petition/new" element={<CreatePetition/>}/>
