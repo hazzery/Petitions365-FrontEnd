@@ -17,11 +17,13 @@ import CreateSupportTier from "./CreateSupportTier.tsx";
 import SupportTierCard from "./SupportTierCard.tsx";
 import {formatServerResponse} from "../model/util.ts";
 import NavBar from "./NavBar.tsx";
+import {useNavigate} from "react-router-dom";
 
 
 const defaultTheme = createTheme();
 
 export default function CreatePetition(): React.ReactElement {
+    const navigate = useNavigate();
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const [petitionImage, setPetitionImage] = React.useState<File | null>(null);
     const [petitionImageUrl, setPetitionImageUrl] = React.useState<string | null>(null);
@@ -31,11 +33,14 @@ export default function CreatePetition(): React.ReactElement {
     const [supportTiers, setSupportTiers] = React.useState<Array<SupportTier>>([]);
 
     React.useEffect(() => {
+        if (isNaN(parseInt(localStorage.getItem('userId') || ''))) {
+            navigate('/login');
+        }
         getAllCategories()
             .then((response: AxiosResponse<Array<Category>>) => {
                 setCategories(response.data);
             });
-    }, []);
+    }, [navigate]);
 
     function handleImageUpload() {
         inputRef.current?.click();
