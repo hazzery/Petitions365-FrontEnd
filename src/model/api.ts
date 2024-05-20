@@ -38,13 +38,6 @@ export function register(
     return Axios.post(rootUrl + "/users/register", {email, firstName, lastName, password});
 }
 
-/**
- * Fetches all petitions.
- */
-export function getAllPetitions(): Promise<AxiosResponse<PetitionsList>> {
-    return Axios.get(rootUrl + "/petitions");
-}
-
 export type SortOrder =
     "ALPHABETICAL_ASC"
     | "ALPHABETICAL_DESC"
