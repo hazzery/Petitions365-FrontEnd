@@ -6,6 +6,7 @@ import {
     PetitionDetails,
     PetitionsList,
     Supporter,
+    UserDetails,
     UserLogin,
     UserRegister
 } from "./responseBodies";
@@ -209,4 +210,13 @@ export function createPetition(
 ): Promise<AxiosResponse<PetitionCreation>> {
     const headers = {"x-authorization": localStorage.getItem("token")};
     return Axios.post(rootUrl + "/petitions", {title, description, categoryId, supportTiers}, {headers});
+}
+
+/**
+ * Fetches the details of a user.
+ *
+ * @param userId The ID of the user to fetch.
+ */
+export function getUser(userId: number): Promise<AxiosResponse<UserDetails>> {
+    return Axios.get(rootUrl + "/users/" + userId);
 }
