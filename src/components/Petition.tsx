@@ -29,10 +29,11 @@ import {
     Supporter,
     SupportTier
 } from "../model/responseBodies.ts";
-import {formatDate} from "../model/util.ts";
 import SupportTierCard from "./SupportTierCard.tsx";
 import SupporterCard from "./SupporterCard.tsx";
 import PetitionsGrid from "./PetitionsGrid.tsx";
+import NavBar from "./NavBar.tsx";
+import {formatDate} from "../model/util.ts";
 
 
 const defaultTheme = createTheme();
@@ -165,6 +166,7 @@ export default function Petition() {
         <ThemeProvider theme={defaultTheme}>
             <Container component="main">
                 <CssBaseline/>
+                <NavBar/>
                 <Box
                     sx={{
                         marginTop: 8,
