@@ -16,20 +16,40 @@ import {userImageUrl} from "../model/api.ts";
 import {useNavigate} from "react-router-dom";
 
 
-const menuOptions = ['Manage Profile', 'My Petitions', 'Logout'];
-
 export default function NavBar(): React.ReactElement {
-    const userId = parseInt(localStorage.getItem('userId') as string);
     const navigate = useNavigate();
+    const userId = parseInt(localStorage.getItem('userId') as string);
+
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-    const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    function handleOpenUserMenu(event: React.MouseEvent<HTMLElement>) {
         setAnchorElUser(event.currentTarget);
-    };
+    }
 
-    const handleCloseUserMenu = () => {
+    function handleCloseUserMenu() {
         setAnchorElUser(null);
-    };
+    }
+
+    function handleLogout() {
+        localStorage.clear();
+        navigate('/login');
+    }
+
+    function handleMyPetitions() {
+        navigate('/my-petitions');
+    }
+
+    function handleManageProfile() {
+        navigate('/profile');
+    }
+
+    const handleMenuClick: Map<string, () => void> = new Map([
+        ['Manage Profile', handleManageProfile],
+        ['My Petitions', handleMyPetitions],
+        ['Logout', handleLogout],
+    ]);
+
+    const menuOptions = Array.from(handleMenuClick.keys());
 
     return (
         <AppBar position="static">
@@ -80,9 +100,9 @@ export default function NavBar(): React.ReactElement {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {menuOptions.map((setting: string) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography textAlign="center">{setting}</Typography>
+                            {menuOptions.map((option: string) => (
+                                <MenuItem key={option} onClick={handleMenuClick.get(option)}>
+                                    <Typography textAlign="center">{option}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
