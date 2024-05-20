@@ -28,20 +28,21 @@ export default function PetitionsGrid(
 
     return (
         <Paper sx={{
-            padding: 0,
+            padding: '20px',
             maxWidth: '75vw',
-            width: '70vw',
+            width: '75vw',
             alignItems: 'center',
             display: 'flex',
             flexDirection: 'column',
+            gap: '20px',
         }}>
             {title}
             <Box sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 rowGap: '40px',
-                paddingY: '20px',
                 justifyContent: 'center',
+                width: '100%'
             }}>
                 {petitionCards()}
             </Box>
