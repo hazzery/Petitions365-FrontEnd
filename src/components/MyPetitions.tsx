@@ -4,7 +4,14 @@ import {getAllCategories, getFilteredPetitions} from "../model/api.ts";
 import PetitionsGrid from "./PetitionsGrid.tsx";
 import {AxiosResponse} from "axios";
 import Typography from "@mui/material/Typography";
+import CssBaseline from "@mui/material/CssBaseline";
+import Container from "@mui/material/Container";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
+import NavBar from "./NavBar.tsx";
 import Box from "@mui/material/Box";
+
+
+const defaultTheme = createTheme();
 
 export default function MyPetitions(): React.ReactElement {
     const [ownedPetitions, setOwnedPetitions] = React.useState<Array<PetitionOverview>>([]);
@@ -32,19 +39,30 @@ export default function MyPetitions(): React.ReactElement {
     });
 
     return (
-        <Box sx={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-            <PetitionsGrid
-                petitions={ownedPetitions}
-                categoryMap={categoryMap}
-                title={<Typography variant="h4">My Petitions</Typography>}
-                children={undefined}
-            />
-            <PetitionsGrid
-                petitions={signedPetitions}
-                categoryMap={categoryMap}
-                title={<Typography variant="h4">My Signed Petitions</Typography>}
-                children={undefined}
-            />
-        </Box>
+        <ThemeProvider theme={defaultTheme}>
+            <Container component="main" maxWidth="xl">
+                <CssBaseline/>
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '30px',
+                    alignItems: 'center',
+                }}>
+                    <NavBar/>
+                    <PetitionsGrid
+                        petitions={ownedPetitions}
+                        categoryMap={categoryMap}
+                        title={<Typography variant="h4">My Petitions</Typography>}
+                        children={undefined}
+                    />
+                    <PetitionsGrid
+                        petitions={signedPetitions}
+                        categoryMap={categoryMap}
+                        title={<Typography variant="h4">My Signed Petitions</Typography>}
+                        children={undefined}
+                    />
+                </Box>
+            </Container>
+        </ThemeProvider>
     );
 }
