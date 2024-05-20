@@ -33,9 +33,9 @@ export default function UserProfile(): React.ReactElement {
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <NavBar/>
             <Container component="main" maxWidth="xl">
                 <CssBaseline/>
+                <NavBar/>
                 <Box sx={{
                     marginTop: 8,
                     display: 'flex',
