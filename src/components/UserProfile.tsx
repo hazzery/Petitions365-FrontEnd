@@ -10,7 +10,9 @@ import {AxiosResponse} from "axios";
 
 import NavBar from "./NavBar.tsx";
 import {UserDetails} from "../model/responseBodies.ts";
-import {getUser, userImageUrl} from "../model/api.ts";
+import {checkUserImage, getUser, userImageUrl} from "../model/api.ts";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Avatar from "@mui/material/Avatar";
 
 
 const defaultTheme = createTheme();
@@ -20,6 +22,7 @@ export default function UserProfile(): React.ReactElement {
     const [userFirstName, setUserFirstName] = React.useState<string>("");
     const [userLastName, setUserLastName] = React.useState<string>("");
     const [userEmail, setUserEmail] = React.useState<string>("");
+    const [userAvatarUrl, setUserAvatarUrl] = React.useState<string>("");
 
     const userId = parseInt(localStorage.getItem("userId") as string);
     React.useEffect(() => {
@@ -30,6 +33,8 @@ export default function UserProfile(): React.ReactElement {
                 setUserEmail(response.data.email);
             })
             .catch(() => navigate("/login"));
+        checkUserImage(userId)
+            .then(() => setUserAvatarUrl(userImageUrl(userId)));
     }, [navigate, userId]);
 
     return (
@@ -44,11 +49,18 @@ export default function UserProfile(): React.ReactElement {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}>
-                    <img
-                        src={userImageUrl(userId)}
-                        alt="User profile avatar"
-                        style={{width: "200px", borderRadius: "50%"}}
-                    />
+                    <Avatar sx={{
+                        marginTop: 2,
+                        width: 100,
+                        height: 100
+                    }}>
+                        {
+                            userAvatarUrl ?
+                                <img src={userAvatarUrl} alt="User profile avatar"
+                                     style={{objectFit: 'cover', width: '100%', height: '100%'}}/> :
+                                <AccountCircleIcon sx={{fontSize: 120}} color="action"/>
+                        }
+                    </Avatar>
                     <Typography variant="h3">
                         {userFirstName + ' ' + userLastName}
                     </Typography>
