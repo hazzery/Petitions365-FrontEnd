@@ -175,6 +175,7 @@ export default function CreatePetition(): React.ReactElement {
                                             label="Category"
                                             id="category"
                                             name="category"
+                                            defaultValue=""
                                             fullWidth
                                             required
                                         >
