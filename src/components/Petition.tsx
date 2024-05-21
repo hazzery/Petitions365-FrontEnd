@@ -229,7 +229,7 @@ export default function Petition() {
                                 <Box sx={{left: 16, bottom: 16, alignItems: 'center', display: 'flex'}}>
                                     <PaidIcon/>
                                     <Typography variant="body1" color="text.primary" sx={{ml: 1}}>
-                                        {`Money Raised: ${moneyRaised}`}
+                                        {`Money Raised: ${moneyRaised !== null ? moneyRaised : 0}`}
                                     </Typography>
                                 </Box>
                                 <Typography variant="h6" component="div">
