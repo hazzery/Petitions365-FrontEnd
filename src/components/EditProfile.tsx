@@ -13,7 +13,7 @@ import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
-import {Paper} from "@mui/material";
+import {Divider, Paper} from "@mui/material";
 
 import PasswordInput from "./PasswordInput.tsx";
 import NavBar from "./NavBar.tsx";
@@ -194,6 +194,12 @@ export default function EditProfile(): React.ReactElement {
                                     value={userEmail}
                                     onChange={(event) => setUserEmail(event.target.value)}
                                 />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Divider sx={{marginY: "15px"}}/>
+                                <Typography variant="h6" color="textSecondary">
+                                    Change Password
+                                </Typography>
                             </Grid>
                             <Grid item xs={12}>
                                 <PasswordInput
