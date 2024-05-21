@@ -154,13 +154,17 @@ export default function Petition() {
 
     function supportTierCards(): React.ReactElement[] {
         return supportTiers.map(
-            (supportTier: SupportTier) => <SupportTierCard supportTier={supportTier}/>
+            (supportTier: SupportTier, index: number) => <SupportTierCard key={index} supportTier={supportTier}/>
         );
     }
 
     function supporterCards(): React.ReactElement[] {
         return supporters.map(
-            (supporter: Supporter) => <SupporterCard supporter={supporter} supportTierMap={supportTierMap}/>
+            (supporter: Supporter, index: number) => <SupporterCard
+                key={index}
+                supporter={supporter}
+                supportTierMap={supportTierMap}
+            />
         );
     }
 
