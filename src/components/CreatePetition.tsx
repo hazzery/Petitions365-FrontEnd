@@ -94,7 +94,7 @@ export default function CreatePetition(): React.ReactElement {
 
     function supportTierCards(): React.ReactElement[] {
         return supportTiers.map(
-            (supportTier: SupportTier, index: number) => <Box sx={{display: "flex"}}>
+            (supportTier: SupportTier, index: number) => <Box key={index} sx={{display: "flex"}}>
                 <SupportTierCard supportTier={supportTier}/>
                 <Button
                     variant="contained"
