@@ -125,11 +125,13 @@ export default function Petition() {
         }
 
         function fetchSimilarPetitions(): void {
-            mergePetitionListPromises(
-                setSimilarPetitions,
-                getFilteredPetitions({categoryIds: [categoryId]}),
-                getFilteredPetitions({ownerId: ownerId})
-            );
+            if (!isNaN(categoryId) && !isNaN(ownerId)) {
+                mergePetitionListPromises(
+                    setSimilarPetitions,
+                    getFilteredPetitions({categoryIds: [categoryId]}),
+                    getFilteredPetitions({ownerId: ownerId})
+                );
+            }
         }
 
         getAllCategories()
