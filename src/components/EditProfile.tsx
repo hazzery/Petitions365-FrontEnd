@@ -4,8 +4,10 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
+import Menu from "@mui/material/Menu";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
@@ -15,10 +17,16 @@ import {Paper} from "@mui/material";
 
 import PasswordInput from "./PasswordInput.tsx";
 import NavBar from "./NavBar.tsx";
-import {checkUserImage, getUser, updateUserDetails, uploadUserImage, userImageUrl} from "../model/api.ts";
+import {
+    checkUserImage,
+    getUser,
+    removeUserProfileImage,
+    updateUserDetails,
+    uploadUserImage,
+    userImageUrl
+} from "../model/api.ts";
 import {UserDetails} from "../model/responseBodies.ts";
 import {formatServerResponse} from "../model/util.ts";
-
 
 
 const defaultTheme = createTheme();
@@ -32,6 +40,7 @@ export default function EditProfile(): React.ReactElement {
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [userImage, setUserImage] = React.useState<File | null>(null);
     const inputRef = React.useRef<HTMLInputElement | null>(null);
+    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
     const userId = parseInt(localStorage.getItem("userId") as string);
 
@@ -66,12 +75,31 @@ export default function EditProfile(): React.ReactElement {
             );
         });
         if (userImage !== null) {
-            uploadUserImage(userId, userImage);
+            uploadUserImage(userId, userImage)
+                .catch(() => {});
+        } else if (userAvatarUrl === "") {
+            removeUserProfileImage(userId)
+                .catch(() => {});
         }
     }
 
-    function handleAvatarClick() {
+    function handleAvatarClick(event: React.MouseEvent<HTMLElement>) {
+        setAnchorElUser(event.currentTarget);
+    }
+
+    function closeProfileImageMenu() {
+        setAnchorElUser(null);
+    }
+
+    function handleUploadImageClick() {
         inputRef.current?.click();
+        closeProfileImageMenu();
+    }
+
+    function handleRemoveImageClick() {
+        setUserAvatarUrl("");
+        setUserImage(null);
+        closeProfileImageMenu();
     }
 
     function handleFileChange(event: React.ChangeEvent<HTMLInputElement>): void {
@@ -113,6 +141,29 @@ export default function EditProfile(): React.ReactElement {
                                 <AccountCircleIcon sx={{fontSize: 120}} color="action"/>
                         }
                     </Avatar>
+                    <Menu
+                        sx={{marginTop: '45px'}}
+                        id="menu-appbar"
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        open={Boolean(anchorElUser)}
+                        onClose={closeProfileImageMenu}
+                    >
+                        <MenuItem key="uploadImage" onClick={handleUploadImageClick}>
+                            <Typography textAlign="center">Upload new profile image</Typography>
+                        </MenuItem>
+                        <MenuItem key="removeImage" onClick={handleRemoveImageClick}>
+                            <Typography textAlign="center">Remove profile image</Typography>
+                        </MenuItem>
+                    </Menu>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>

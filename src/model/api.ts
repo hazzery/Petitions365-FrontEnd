@@ -187,6 +187,16 @@ export function checkUserImage(userId: number): Promise<AxiosResponse> {
 }
 
 /**
+ * Removes the image of a user.
+ *
+ * @param userId The ID number of the user to remove the image for.
+ */
+export function removeUserProfileImage(userId: number): Promise<AxiosResponse> {
+    const headers = {"x-authorization": localStorage.getItem("token")};
+    return Axios.delete(userImageUrl(userId), {headers});
+}
+
+/**
  * Fetches all categories.
  */
 export function getAllCategories(): Promise<AxiosResponse<Array<Category>>> {
