@@ -163,15 +163,12 @@ export default function Petition() {
             <Container component="main">
                 <CssBaseline/>
                 <NavBar/>
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-
-                    }}
-                >
+                <Box sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}>
                     <Typography variant="h2" component="div">
                         {title}
                     </Typography>
