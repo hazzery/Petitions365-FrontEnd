@@ -30,10 +30,10 @@ import {
     SupportTier
 } from "../model/responseBodies.ts";
 import SupportTierCard from "./SupportTierCard.tsx";
-import SupporterCard from "./SupporterCard.tsx";
 import PetitionsGrid from "./PetitionsGrid.tsx";
 import NavBar from "./NavBar.tsx";
 import {formatDate} from "../model/util.ts";
+import SupportersGrid from "./SupportersGrid.tsx";
 
 
 const defaultTheme = createTheme();
@@ -158,16 +158,6 @@ export default function Petition() {
         );
     }
 
-    function supporterCards(): React.ReactElement[] {
-        return supporters.map(
-            (supporter: Supporter, index: number) => <SupporterCard
-                key={index}
-                supporter={supporter}
-                supportTierMap={supportTierMap}
-            />
-        );
-    }
-
     return (
         <ThemeProvider theme={defaultTheme}>
             <Container component="main">
@@ -250,15 +240,10 @@ export default function Petition() {
                                 </Box>
                             </Card>
                         </Grid>
+                        <Grid item sm={12}>
+                            <SupportersGrid supporters={supporters} supportTierMap={supportTierMap}/>
+                        </Grid>
                     </Grid>
-                    <Card sx={{padding: 2, marginTop: 4}}>
-                        <Typography variant="h6" component="div">
-                            Supporters
-                        </Typography>
-                        <Box sx={{alignItems: 'center', display: 'flex', flexDirection: 'row'}}>
-                            {supporterCards()}
-                        </Box>
-                    </Card>
                     <Box sx={{padding: 2, marginTop: 4}}>
                         <PetitionsGrid
                             petitions={similarPetitions}
