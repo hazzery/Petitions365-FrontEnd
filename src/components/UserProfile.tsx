@@ -34,7 +34,8 @@ export default function UserProfile(): React.ReactElement {
             })
             .catch(() => navigate("/login"));
         checkUserImage(userId)
-            .then(() => setUserAvatarUrl(userImageUrl(userId)));
+            .then(() => setUserAvatarUrl(userImageUrl(userId)))
+            .catch(() => setUserAvatarUrl(""));
     }, [navigate, userId]);
 
     return (

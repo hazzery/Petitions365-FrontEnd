@@ -50,7 +50,8 @@ export default function Register() {
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('userId', String(userId));
                     if (userImage !== null) {
-                        uploadUserImage(userId, userImage);
+                        uploadUserImage(userId, userImage)
+                            .catch(() => {});
                     }
                 })
                 .catch((error) => {

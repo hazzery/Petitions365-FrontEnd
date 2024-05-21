@@ -39,7 +39,8 @@ export default function CreatePetition(): React.ReactElement {
         getAllCategories()
             .then((response: AxiosResponse<Array<Category>>) => {
                 setCategories(response.data);
-            });
+            })
+            .catch(() => {});
     }, [navigate]);
 
     function handleImageUpload() {
@@ -67,7 +68,8 @@ export default function CreatePetition(): React.ReactElement {
         )
             .then((response: AxiosResponse<PetitionCreation>) => {
                 if (petitionImage !== null) {
-                    uploadPetitionImage(response.data.petitionId, petitionImage);
+                    uploadPetitionImage(response.data.petitionId, petitionImage)
+                        .catch(() => {});
                 }
             })
             .catch((error) => {

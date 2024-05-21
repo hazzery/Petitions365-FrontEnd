@@ -27,7 +27,8 @@ export default function MyPetitions(): React.ReactElement {
             .then((response) => setOwnedPetitions(response.data.petitions))
             .catch(() => navigate("/login"));
         getFilteredPetitions({supporterId: userId})
-            .then((response) => setSignedPetitions(response.data.petitions));
+            .then((response) => setSignedPetitions(response.data.petitions))
+            .catch(() => navigate("/login"));
         getAllCategories()
             .then((response: AxiosResponse<Array<Category>>) => {
                 const map = new Map<number, string>();
