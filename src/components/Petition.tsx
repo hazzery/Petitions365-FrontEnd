@@ -5,12 +5,13 @@ import GroupIcon from "@mui/icons-material/Group";
 import Typography from "@mui/material/Typography";
 import PaidIcon from "@mui/icons-material/Paid";
 import Container from "@mui/material/Container";
+import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {Card, CardMedia} from "@mui/material";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
 import {
@@ -40,7 +41,7 @@ const defaultTheme = createTheme();
 
 export default function Petition() {
     const {petitionId} = useParams();
-
+    const navigate = useNavigate();
     const [creationDate, setCreationDate] = React.useState<string>("");
     const [imageURL, setImageURL] = React.useState<string>("");
     const [title, setTitle] = React.useState<string>("");
@@ -235,6 +236,16 @@ export default function Petition() {
                                 <Box sx={{alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
                                     {supportTierCards()}
                                 </Box>
+                            </Card>
+                        </Grid>
+                        <Grid item sm={12}>
+                            <Card sx={{padding: 2, display: "flex", columnGap: "20px", justifyContent: "center"}}>
+                                <Button variant="contained" color="primary" onClick={() => navigate("edit")}>
+                                    Edit Petition
+                                </Button>
+                                <Button variant="contained" color="error">
+                                    Delete Petition
+                                </Button>
                             </Card>
                         </Grid>
                         <Grid item sm={12}>
