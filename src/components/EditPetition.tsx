@@ -72,7 +72,7 @@ export default function EditPetition(): React.ReactElement {
     return (
         <ThemeProvider theme={defaultTheme}>
             <NavBar/>
-            <Container component="main" maxWidth="sm">
+            <Container component="main" maxWidth="md">
                 <CssBaseline/>
                 <Paper sx={{
                     marginTop: 8,
