@@ -149,7 +149,7 @@ export default function Register() {
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <PasswordInput required label="password" name="password"/>
+                                <PasswordInput required label="Password" name="password"/>
                             </Grid>
                         </Grid>
                         <Typography variant="body1" color="error">
