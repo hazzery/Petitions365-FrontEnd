@@ -63,7 +63,7 @@ export default function MyPetitions(): React.ReactElement {
                     <PetitionsGrid
                         petitions={signedPetitions}
                         categoryMap={categoryMap}
-                        title={<Typography variant="h4">My Signed Petitions</Typography>}
+                        title={<Typography variant="h4">Petitions I've supported</Typography>}
                         children={undefined}
                     />
                 </Box>
