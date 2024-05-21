@@ -254,9 +254,23 @@ export function updateUserDetails(
         data.currentPassword = currentPassword;
     }
 
-    return Axios.patch(
-        rootUrl + "/users/" + userId,
-        data,
-        {headers}
-    );
+    return Axios.patch(rootUrl + "/users/" + userId, data, {headers});
+}
+
+/**
+ * Edits the details of a petition.
+ *
+ * @param petitionId The ID number of the petition to edit.
+ * @param title The updated title of the petition.
+ * @param description The updated description of the petition.
+ * @param categoryId The updated category ID of the petition.
+ */
+export function editPetition(
+    petitionId: number,
+    title: string,
+    description: string,
+    categoryId: number,
+): Promise<AxiosResponse> {
+    const headers = {"x-authorization": localStorage.getItem("token")};
+    return Axios.patch(rootUrl + "/petitions/" + petitionId, {title, description, categoryId}, {headers});
 }
