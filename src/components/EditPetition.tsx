@@ -6,19 +6,20 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
-import {MenuItem, Paper} from "@mui/material";
 import {useNavigate, useParams} from "react-router-dom";
+import {MenuItem, Paper} from "@mui/material";
 import {AxiosResponse} from "axios";
 
+import UploadableImage from "./UploadableImage.tsx";
 import NavBar from "./NavBar.tsx";
 import {
     editPetition,
     getAllCategories,
     getPetitionDetails,
-    petitionImageUrl, uploadPetitionImage
+    petitionImageUrl,
+    uploadPetitionImage
 } from "../model/api.ts";
 import {Category} from "../model/responseBodies.ts";
-import UploadableImage from "./UploadableImage.tsx";
 import {formatServerResponse} from "../model/util.ts";
 
 
