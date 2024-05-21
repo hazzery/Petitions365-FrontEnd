@@ -71,6 +71,7 @@ export default function CreatePetition(): React.ReactElement {
                     uploadPetitionImage(response.data.petitionId, petitionImage)
                         .catch(() => {});
                 }
+                navigate(`/petition/${response.data.petitionId}`);
             })
             .catch((error) => {
                 setErrorMessage(error.response.statusText);
