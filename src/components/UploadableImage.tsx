@@ -33,7 +33,7 @@ export default function UploadableImage(
                         src={url}
                         alt={alt}
                         onError={() => setUrl(null)}
-                        style={{objectFit: 'cover', maxWidth: '100%', maxHeight: '100%'}}
+                        style={{maxWidth: '100%', maxHeight: '400px'}}
                     />
                     : <AddPhotoAlternateIcon sx={{fontSize: 50}} color="action"/>
             }
