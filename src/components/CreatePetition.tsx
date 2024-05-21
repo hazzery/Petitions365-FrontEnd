@@ -165,6 +165,7 @@ export default function CreatePetition(): React.ReactElement {
                                         <TextField
                                             required
                                             fullWidth
+                                            multiline
                                             id="petitionDescription"
                                             label="Description"
                                             name="petitionDescription"
