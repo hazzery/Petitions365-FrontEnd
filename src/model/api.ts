@@ -47,19 +47,8 @@ export type SortOrder =
     | "CREATED_ASC"
     | "CREATED_DESC";
 
-export interface GetFilteredPetitionsParams {
-    startIndex?: number,
-    count?: number,
-    q?: string,
-    categoryIds?: number[],
-    supportingCost?: number,
-    ownerId?: number,
-    supporterId?: number,
-    sortBy?: SortOrder
-}
-
 /**
- * Fetches all petitions that match the given filters.
+ * Specify petition filters.
  *
  * @param startIndex The index of the first petition to fetch.
  * @param count The number of petitions to fetch.
@@ -81,45 +70,26 @@ export interface GetFilteredPetitionsParams {
  * CREATED_ASC: chronologically in order of creation date oldest-newest
  * CREATED_DESC: chronologically in order of creation date newest-oldest
  */
-export function getFilteredPetitions(
-    {
-        startIndex,
-        count,
-        q,
-        categoryIds,
-        supportingCost,
-        ownerId,
-        supporterId,
-        sortBy
-    }: GetFilteredPetitionsParams
-): Promise<AxiosResponse<PetitionsList>> {
-    const params = new URLSearchParams();
+export interface GetFilteredPetitionsParams {
+    startIndex?: number,
+    count?: number,
+    q?: string,
+    categoryIds?: number[],
+    supportingCost?: number,
+    ownerId?: number,
+    supporterId?: number,
+    sortBy?: SortOrder
+}
 
-    if (startIndex !== undefined) {
-        params.append("startIndex", startIndex.toString());
-    }
-    if (count !== undefined) {
-        params.append("count", count.toString());
-    }
-    if (q !== undefined) {
-        params.append("q", q);
-    }
-    if (categoryIds !== undefined && categoryIds.length > 0) {
-        params.append("categoryIds", categoryIds.join(","));
-    }
-    if (supportingCost !== undefined) {
-        params.append("supportingCost", supportingCost.toString());
-    }
-    if (ownerId !== undefined) {
-        params.append("ownerId", ownerId.toString());
-    }
-    if (supporterId !== undefined) {
-        params.append("supporterId", supporterId.toString());
-    }
-    if (sortBy !== undefined) {
-        params.append("sortBy", sortBy);
-    }
-    return Axios.get(rootUrl + "/petitions?" + params.toString());
+/**
+ * Fetches all petitions that match the given filters.
+ *
+ * @param params The filters to apply to the petitions.
+ */
+export function getFilteredPetitions(
+    params: GetFilteredPetitionsParams
+): Promise<AxiosResponse<PetitionsList>> {
+    return Axios.get(rootUrl + "/petitions", {params});
 }
 
 /**
