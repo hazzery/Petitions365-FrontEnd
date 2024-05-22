@@ -23,7 +23,7 @@ export default function SupporterCard({supporter, supportTierMap}: SupporterCard
     } = supporter;
 
     function setDefaultImage(event: React.SyntheticEvent<HTMLImageElement>) {
-        event.currentTarget.src = "https://www.svgrepo.com/show/486506/user-profile-filled.svg"
+        event.currentTarget.src = "https://www.svgrepo.com/show/486506/user-profile-filled.svg";
     }
 
     return (
