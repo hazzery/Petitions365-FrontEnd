@@ -32,11 +32,11 @@ export default function SupporterCard({supporter, supportTierMap}: SupporterCard
             flexDirection: 'column',
             alignItems: 'center',
             width: '250px',
-            height: '300px'
+            height: '350px'
         }}>
             <CardMedia
                 component="img"
-                height="140px"
+                height="160px"
                 image={userImageUrl(supporterId)}
                 alt="Supporter profile image"
                 onError={setDefaultImage}
