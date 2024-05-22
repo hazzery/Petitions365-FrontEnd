@@ -15,6 +15,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
 import {
+    deletePetition,
     getAllCategories,
     getFilteredPetitions,
     getPetitionDetails,
@@ -159,6 +160,12 @@ export default function Petition() {
         );
     }
 
+    function removePetition(): void {
+        deletePetition(Number(petitionId))
+            .then(() => navigate("/petitions"))
+            .catch(() => null);
+    }
+
     return (
         <ThemeProvider theme={defaultTheme}>
             <Container component="main">
@@ -243,9 +250,12 @@ export default function Petition() {
                                 <Button variant="contained" color="primary" onClick={() => navigate("edit")}>
                                     Edit Petition
                                 </Button>
-                                <Button variant="contained" color="error">
-                                    Delete Petition
-                                </Button>
+                                {
+                                    numberOfSupporters === 0 &&
+                                    <Button variant="contained" color="error" onClick={removePetition}>
+                                        Delete Petition
+                                    </Button>
+                                }
                             </Card>
                         </Grid>
                         <Grid item sm={12}>
