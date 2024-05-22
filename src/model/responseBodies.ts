@@ -30,7 +30,14 @@ export interface PetitionsList {
     count: number
 }
 
-export interface SupportTier {
+export interface AbstractSupportTier {
+    supportTierId?: number | undefined,
+    title: string,
+    description: string,
+    cost: number | ""
+}
+
+export interface SupportTier extends AbstractSupportTier {
     supportTierId: number,
     title: string,
     description: string,

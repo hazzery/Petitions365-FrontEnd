@@ -274,3 +274,47 @@ export function editPetition(
     const headers = {"x-authorization": localStorage.getItem("token")};
     return Axios.patch(rootUrl + "/petitions/" + petitionId, {title, description, categoryId}, {headers});
 }
+
+/**
+ * Create a new support tier for a petition.
+ *
+ * @param petitionId The ID number of the petition to create the support tier for.
+ * @param title The title of the support tier.
+ * @param description The description of the support tier.
+ * @param cost The cost of the support tier.
+ */
+export function createSupportTier(
+    petitionId: number,
+    title: string,
+    description: string,
+    cost: number
+): Promise<AxiosResponse> {
+    const headers = {"x-authorization": localStorage.getItem("token")};
+    return Axios.put(rootUrl + "/petitions/" + petitionId + "/supportTiers", {title, description, cost}, {headers});
+}
+
+/**
+ * Deletes a support tier from a petition.
+ *
+ * @param petitionId The ID number of the petition to delete the support tier from.
+ * @param supportTierId The ID number of the support tier to delete.
+ */
+export function deleteSupportTier(petitionId: number, supportTierId: number): Promise<AxiosResponse> {
+    const headers = {"x-authorization": localStorage.getItem("token")};
+    return Axios.delete(rootUrl + "/petitions/" + petitionId + "/supportTiers/" + supportTierId, {headers});
+}
+
+export function editSupportTier(
+    petitionId: number,
+    supportTierId: number,
+    title: string,
+    description: string,
+    cost: number
+): Promise<AxiosResponse> {
+    const headers = {"x-authorization": localStorage.getItem("token")};
+    return Axios.patch(rootUrl + "/petitions/" + petitionId + "/supportTiers/" + supportTierId, {
+        title,
+        description,
+        cost
+    }, {headers});
+}
