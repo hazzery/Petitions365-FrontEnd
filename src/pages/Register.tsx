@@ -57,7 +57,7 @@ export default function Register() {
                     localStorage.setItem('userId', String(userId));
                     if (userImage !== null) {
                         uploadUserImage(userId, userImage)
-                            .catch(() => {});
+                            .catch(() => null);
                     }
                 })
                 .catch((error) => {
@@ -71,7 +71,6 @@ export default function Register() {
             );
         });
     }
-
 
     function handleAvatarClick() {
         inputRef.current?.click();
