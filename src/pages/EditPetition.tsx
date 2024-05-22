@@ -16,11 +16,10 @@ import {
     editPetition,
     getAllCategories,
     getPetitionDetails,
-    getSupportersOfPetition,
     petitionImageUrl,
     uploadPetitionImage
 } from "../model/api.ts";
-import {AbstractSupportTier, Category, PetitionDetails, Supporter} from "../model/responseBodies.ts";
+import {Category, PetitionDetails, SupportTier} from "../model/responseBodies.ts";
 import {formatServerResponse} from "../model/util.ts";
 import Box from "@mui/material/Box";
 import SupportTiersPaper from "../components/SupportTiersPaper.tsx";
@@ -36,10 +35,9 @@ export default function EditPetition(): React.ReactElement {
     const [description, setDescription] = React.useState<string>("");
     const [categoryId, setCategoryId] = React.useState<number>(NaN);
     const [image, setImage] = React.useState<File | null>(null);
-    const [supportTiers, setSupportTiers] = React.useState<Array<AbstractSupportTier>>([]);
+    const [supportTiers, setSupportTiers] = React.useState<Array<SupportTier>>([]);
 
     const [errorMessage, setErrorMessage] = React.useState<string>("");
-    const [supportersMap, setSupportersMap] = React.useState<Map<number, Array<Supporter>>>(new Map());
     const [categories, setCategories] = React.useState<Array<Category>>([]);
 
     React.useEffect(() => {
@@ -56,19 +54,6 @@ export default function EditPetition(): React.ReactElement {
         getAllCategories()
             .then((response: AxiosResponse<Array<Category>>) => setCategories(response.data))
             .catch(() => null);
-
-        getSupportersOfPetition(petitionIdNumber)
-            .then((response: AxiosResponse<Array<Supporter>>) => {
-                const map = new Map<number, Array<Supporter>>();
-                response.data.forEach((supporter: Supporter) => {
-                    if (!map.has(supporter.supportTierId)) {
-                        map.set(supporter.supportTierId, []);
-                    }
-                    map.get(supporter.supportTierId)?.push(supporter);
-                });
-                setSupportersMap(map);
-            })
-            .catch(() => null);
     }, [petitionId]);
 
     function categoryOptions(): React.ReactElement[] {
@@ -79,7 +64,7 @@ export default function EditPetition(): React.ReactElement {
         ));
     }
 
-    function handleSave(): void {
+    function handleSavePetition(): void {
         editPetition(Number(petitionId), title, description, categoryId)
             .then(() => {
                 if (image) {
@@ -89,12 +74,6 @@ export default function EditPetition(): React.ReactElement {
                 navigate("/petition/" + petitionId);
             })
             .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
-    }
-
-    function numberOfSupporters(supportTier: AbstractSupportTier): number {
-        return supportTier.supportTierId
-            ? supportersMap.get(supportTier.supportTierId)?.length ?? 0
-            : 0;
     }
 
     return (
@@ -161,7 +140,7 @@ export default function EditPetition(): React.ReactElement {
                                 <Typography variant="body1" color="error">{errorMessage}</Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <Button variant="contained" onClick={handleSave}>
+                                <Button variant="contained" onClick={handleSavePetition}>
                                     <Typography variant="button">Save</Typography>
                                 </Button>
                             </Grid>
@@ -170,8 +149,6 @@ export default function EditPetition(): React.ReactElement {
                     <SupportTiersPaper
                         supportTiers={supportTiers}
                         petitionId={petitionId as string}
-                        setSupportTiers={setSupportTiers}
-                        numberOfSupporters={numberOfSupporters}
                     />
                     <Button variant="contained" onClick={() => navigate("/petition/" + petitionId)}>
                         <Typography variant="button">

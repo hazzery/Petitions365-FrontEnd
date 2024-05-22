@@ -1,5 +1,4 @@
 import React from "react";
-import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {Alert, Card, CardActions, CardContent} from "@mui/material";
@@ -16,11 +15,12 @@ interface EditSupportTierProps {
     numberOfSupporters: number,
     removeSupportTierCard: (index: number) => void,
     petitionId: number,
-    index: number
+    index: number,
+    onlySupportTier: boolean
 }
 
 export default function EditSupportTierCard(
-    {supportTier, numberOfSupporters, removeSupportTierCard, petitionId, index}: EditSupportTierProps
+    {supportTier, numberOfSupporters, removeSupportTierCard, petitionId, index, onlySupportTier}: EditSupportTierProps
 ): React.ReactElement {
     const [title, setTitle] = React.useState<string>(supportTier?.title ?? "");
     const [description, setDescription] = React.useState<string>(supportTier?.description ?? "");
@@ -28,13 +28,13 @@ export default function EditSupportTierCard(
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [success, setSuccess] = React.useState<boolean>(false);
 
-    function showSuccess() {
+    function showSuccess(): void {
         setSuccess(true);
         setErrorMessage("");
         setTimeout(() => setSuccess(false), 3000);
     }
 
-    function addSupportTier() {
+    function addSupportTier(): void {
         createSupportTier(petitionId, title, description, cost as number)
             .then(() => {
                 getPetitionDetails(petitionId)
@@ -52,33 +52,41 @@ export default function EditSupportTierCard(
             .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
     }
 
-    function updateSupportTier() {
+    function updateSupportTier(): void {
         editSupportTier(petitionId, supportTier.supportTierId as number, title, description, cost as number)
             .then(showSuccess)
             .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
     }
 
-    function removeSupportTier() {
+    function removeSupportTier(): void {
         deleteSupportTier(petitionId, supportTier.supportTierId as number)
             .then(() => removeSupportTierCard(index))
             .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
     }
 
+    function deletable(): boolean {
+        return editable() && !onlySupportTier;
+    }
+
+    function editable(): boolean {
+        return numberOfSupporters === 0;
+    }
+
     function actionButtons() {
         if (supportTier.supportTierId !== undefined) {
             return <>
-                <Button fullWidth variant="contained" color="error" onClick={removeSupportTier}>
+                <Button fullWidth variant="contained" color="error" onClick={removeSupportTier} disabled={!deletable()}>
                     Delete
                 </Button>
-                <Button fullWidth variant="contained" onClick={updateSupportTier}>
+                <Button fullWidth variant="contained" onClick={updateSupportTier} disabled={!editable()}>
                     Save
                 </Button>
             </>;
         }
 
         return <>
-            <Button fullWidth variant="contained" color="error" onClick={() => removeSupportTierCard(index)}>
-                Delete
+            <Button fullWidth variant="contained" color="warning" onClick={() => removeSupportTierCard(index)}>
+                Remove
             </Button>
             <Button fullWidth variant="contained" onClick={addSupportTier}>
                 Create
@@ -86,8 +94,8 @@ export default function EditSupportTierCard(
         </>;
     }
 
-    function SupportTierFields() {
-        return <Card sx={{height: "100%", minWidth: "33%", padding: "10px"}}>
+    return (
+        <Card sx={{height: "100%", minWidth: "33%", padding: "10px"}}>
             <CardContent sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -100,6 +108,7 @@ export default function EditSupportTierCard(
                     label="Title"
                     value={title}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => setTitle(event.target.value)}
+                    disabled={!editable()}
                 />
                 <TextField
                     required
@@ -109,6 +118,7 @@ export default function EditSupportTierCard(
                     value={description}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDescription(event.target.value)}
                     InputProps={{sx: {height: "150px"}}}
+                    disabled={!editable()}
                 />
                 <CostInput
                     fullWidth
@@ -116,9 +126,15 @@ export default function EditSupportTierCard(
                     label="Cost"
                     defaultValue={cost}
                     onChange={setCost}
+                    disabled={!editable()}
                 />
                 <Alert severity="error" sx={{display: errorMessage === "" ? "none" : "block", width: "100%"}}>
                     {errorMessage}
+                </Alert>
+                <Alert severity="info"
+                       sx={{display: onlySupportTier || numberOfSupporters > 0 ? "block" : "none", width: "100%"}}>
+                    {numberOfSupporters > 0 ? "Cannot edit or delete support tier with supporters" : ""}
+                    {onlySupportTier ? "Cannot delete, must have at least one tier" : ""}
                 </Alert>
                 <Alert severity="success" sx={{display: success ? "block" : "none", width: "100%"}}>
                     Support tier saved successfully
@@ -127,16 +143,6 @@ export default function EditSupportTierCard(
             <CardActions sx={{display: "flex", gap: "20px"}}>
                 {actionButtons()}
             </CardActions>
-        </Card>;
-    }
-
-    return (
-        <>
-            {
-                numberOfSupporters === 0
-                    ? SupportTierFields()
-                    : <Typography variant="body1">Tier '{title}' has supporters and cannot be edited.</Typography>
-            }
-        </>
+        </Card>
     );
 }
