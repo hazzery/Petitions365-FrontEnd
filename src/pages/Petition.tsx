@@ -245,19 +245,22 @@ export default function Petition() {
                                 </Box>
                             </Card>
                         </Grid>
-                        <Grid item sm={12}>
-                            <Card sx={{padding: 2, display: "flex", columnGap: "20px", justifyContent: "center"}}>
-                                <Button variant="contained" color="primary" onClick={() => navigate("edit")}>
-                                    Edit Petition
-                                </Button>
-                                {
-                                    numberOfSupporters === 0 &&
-                                    <Button variant="contained" color="error" onClick={removePetition}>
-                                        Delete Petition
+                        {
+                            ownerId === parseInt(localStorage.getItem("userId") as string) &&
+                            <Grid item sm={12}>
+                                <Card sx={{padding: 2, display: "flex", columnGap: "20px", justifyContent: "center"}}>
+                                    <Button variant="contained" color="primary" onClick={() => navigate("edit")}>
+                                        Edit Petition
                                     </Button>
-                                }
-                            </Card>
-                        </Grid>
+                                    {
+                                        numberOfSupporters === 0 &&
+                                        <Button variant="contained" color="error" onClick={removePetition}>
+                                            Delete Petition
+                                        </Button>
+                                    }
+                                </Card>
+                            </Grid>
+                        }
                         <Grid item sm={12}>
                             <SupportersGrid supporters={supporters} supportTierMap={supportTierMap}/>
                         </Grid>
