@@ -8,7 +8,7 @@ interface CostInputProps<Required extends boolean> {
     fullWidth?: boolean,
     label: string,
     defaultValue?: number | "",
-    onChange: Required extends true ? (value: number) => void : (value: number | "") => void
+    onChange: Required extends true ? (value: number) => void : (value: number | "") => void,
     disabled?: boolean
 }
 
