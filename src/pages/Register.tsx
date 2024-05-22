@@ -17,7 +17,7 @@ import {AxiosResponse} from "axios";
 import {UserLogin} from "../model/responseBodies.ts";
 import {login, register, uploadUserImage} from "../model/api.ts";
 import {formatServerResponse} from "../model/util.ts";
-import PasswordInput from "./PasswordInput.tsx";
+import PasswordInput from "../components/PasswordInput.tsx";
 
 
 // The returned JSX is copied from the Material-UI template at:

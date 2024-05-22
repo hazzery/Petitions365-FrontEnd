@@ -7,8 +7,8 @@ import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
-import PetitionsGrid from "./PetitionsGrid.tsx";
-import NavBar from "./NavBar.tsx";
+import PetitionsGrid from "../components/PetitionsGrid.tsx";
+import NavBar from "../components/NavBar.tsx";
 import {Category, PetitionOverview} from "../model/responseBodies.ts";
 import {getAllCategories, getFilteredPetitions} from "../model/api.ts";
 

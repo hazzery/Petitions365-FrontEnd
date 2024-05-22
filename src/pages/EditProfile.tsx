@@ -15,8 +15,8 @@ import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 import {Divider, Paper} from "@mui/material";
 
-import PasswordInput from "./PasswordInput.tsx";
-import NavBar from "./NavBar.tsx";
+import PasswordInput from "../components/PasswordInput.tsx";
+import NavBar from "../components/NavBar.tsx";
 import {
     checkUserImage,
     getUser,

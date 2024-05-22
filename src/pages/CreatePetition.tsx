@@ -13,10 +13,10 @@ import {CardMedia, MenuItem} from "@mui/material";
 import {createPetition, getAllCategories, uploadPetitionImage} from "../model/api.ts";
 import {AxiosResponse} from "axios";
 import {Category, PetitionCreation, SupportTier} from "../model/responseBodies.ts";
-import CreateSupportTier from "./CreateSupportTier.tsx";
-import SupportTierCard from "./SupportTierCard.tsx";
+import CreateSupportTier from "../components/CreateSupportTier.tsx";
+import SupportTierCard from "../components/SupportTierCard.tsx";
 import {formatServerResponse} from "../model/util.ts";
-import NavBar from "./NavBar.tsx";
+import NavBar from "../components/NavBar.tsx";
 import {useNavigate} from "react-router-dom";
 
 

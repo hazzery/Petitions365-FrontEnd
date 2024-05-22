@@ -19,11 +19,11 @@ import {
 import {AxiosResponse} from "axios";
 
 
-import PetitionsGrid from "./PetitionsGrid.tsx";
+import PetitionsGrid from "../components/PetitionsGrid.tsx";
 import {getAllCategories, getFilteredPetitions, GetFilteredPetitionsParams, SortOrder} from "../model/api.ts";
 import {Category, PetitionOverview, PetitionsList} from "../model/responseBodies.ts";
 import Typography from "@mui/material/Typography";
-import NavBar from "./NavBar.tsx";
+import NavBar from "../components/NavBar.tsx";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";

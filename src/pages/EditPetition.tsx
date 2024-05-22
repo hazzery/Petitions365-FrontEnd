@@ -10,8 +10,8 @@ import {useNavigate, useParams} from "react-router-dom";
 import {MenuItem, Paper} from "@mui/material";
 import {AxiosResponse} from "axios";
 
-import UploadableImage from "./UploadableImage.tsx";
-import NavBar from "./NavBar.tsx";
+import UploadableImage from "../components/UploadableImage.tsx";
+import NavBar from "../components/NavBar.tsx";
 import {
     editPetition,
     getAllCategories,
@@ -23,7 +23,7 @@ import {
 import {AbstractSupportTier, Category, PetitionDetails, Supporter} from "../model/responseBodies.ts";
 import {formatServerResponse} from "../model/util.ts";
 import Box from "@mui/material/Box";
-import SupportTiersPaper from "./SupportTiersPaper.tsx";
+import SupportTiersPaper from "../components/SupportTiersPaper.tsx";
 
 
 const defaultTheme = createTheme();

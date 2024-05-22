@@ -1,16 +1,16 @@
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
-import CreatePetition from "./components/CreatePetition.tsx";
-import EditPetition from "./components/EditPetition.tsx";
-import MyPetitions from "./components/MyPetitions.tsx";
-import UserProfile from "./components/UserProfile.tsx";
-import EditProfile from "./components/EditProfile.tsx";
-import Petitions from "./components/Petitions.tsx";
-import Register from "./components/Register.tsx";
-import Petition from "./components/Petition.tsx";
-import NotFound from "./components/NotFound";
-import Landing from "./components/Landing";
-import Login from "./components/Login.tsx";
+import CreatePetition from "./pages/CreatePetition.tsx";
+import EditPetition from "./pages/EditPetition.tsx";
+import MyPetitions from "./pages/MyPetitions.tsx";
+import UserProfile from "./pages/UserProfile.tsx";
+import EditProfile from "./pages/EditProfile.tsx";
+import Petitions from "./pages/Petitions.tsx";
+import Register from "./pages/Register.tsx";
+import Petition from "./pages/Petition.tsx";
+import NotFound from "./pages/NotFound.tsx";
+import Landing from "./pages/Landing.tsx";
+import Login from "./pages/Login.tsx";
 import './App.css';
 
 export default function App() {

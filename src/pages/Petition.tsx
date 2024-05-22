@@ -30,11 +30,11 @@ import {
     Supporter,
     SupportTier
 } from "../model/responseBodies.ts";
-import SupportTierCard from "./SupportTierCard.tsx";
-import PetitionsGrid from "./PetitionsGrid.tsx";
-import NavBar from "./NavBar.tsx";
+import SupportTierCard from "../components/SupportTierCard.tsx";
+import PetitionsGrid from "../components/PetitionsGrid.tsx";
+import NavBar from "../components/NavBar.tsx";
 import {formatDate} from "../model/util.ts";
-import SupportersGrid from "./SupportersGrid.tsx";
+import SupportersGrid from "../components/SupportersGrid.tsx";
 
 
 const defaultTheme = createTheme();

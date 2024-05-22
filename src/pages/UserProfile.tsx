@@ -8,7 +8,7 @@ import {useNavigate} from "react-router-dom";
 import {Paper} from "@mui/material";
 import {AxiosResponse} from "axios";
 
-import NavBar from "./NavBar.tsx";
+import NavBar from "../components/NavBar.tsx";
 import {UserDetails} from "../model/responseBodies.ts";
 import {checkUserImage, getUser, userImageUrl} from "../model/api.ts";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
