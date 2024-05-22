@@ -1,9 +1,12 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
 import TextField from "@mui/material/TextField";
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+
+import CostInput from "./CostInput.tsx";
+
 
 const style = {
     position: 'absolute' as const,
@@ -29,13 +32,16 @@ interface CreateSupportTierProps {
 export default function CreateSupportTier(
     {open, handleClose, addSupportTier}: CreateSupportTierProps
 ): React.ReactElement {
+    const [title, setTitle] = React.useState<string>("");
+    const [description, setDescription] = React.useState<string>("");
+    const [cost, setCost] = React.useState<number | "">("");
+
     return (
         <div>
             <Modal
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -44,32 +50,28 @@ export default function CreateSupportTier(
                     <TextField
                         required
                         fullWidth
-                        id="supportTierTitle"
                         label="Title"
+                        value={title}
+                        onChange={(event) => setTitle(event.target.value)}
                     />
                     <TextField
                         required
                         fullWidth
-                        id="supportTierDescription"
                         label="Description"
+                        value={description}
+                        onChange={(event) => setDescription(event.target.value)}
                     />
-                    <TextField
+                    <CostInput
                         required
                         fullWidth
-                        id="supportTierCost"
                         label="Cost"
+                        onChange={setCost}
                     />
                     <Button
                         fullWidth
                         variant="contained"
                         color="primary"
-                        onClick={() => {
-                            addSupportTier(
-                                (document.getElementById("supportTierTitle") as HTMLInputElement).value,
-                                (document.getElementById("supportTierDescription") as HTMLInputElement).value,
-                                parseFloat((document.getElementById("supportTierCost") as HTMLInputElement).value)
-                            );
-                        }}
+                        onClick={() => addSupportTier(title, description, cost as number)}
                     >
                         Create
                     </Button>
