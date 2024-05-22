@@ -33,6 +33,12 @@ export default function Register() {
 
     const inputRef = React.useRef<HTMLInputElement | null>(null);
 
+    React.useEffect(() => {
+        if (localStorage.getItem('token')) {
+            navigate('/petitions');
+        }
+    });
+
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const data = new FormData(event.currentTarget);

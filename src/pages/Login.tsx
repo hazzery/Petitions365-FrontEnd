@@ -26,6 +26,12 @@ export default function Login() {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
+    React.useEffect(() => {
+        if (localStorage.getItem('token')) {
+            navigate('/petitions');
+        }
+    });
+
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
