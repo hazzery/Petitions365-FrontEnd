@@ -39,6 +39,14 @@ export function register(
     return Axios.post(rootUrl + "/users/register", {email, firstName, lastName, password});
 }
 
+/**
+ * Logs out the currently logged-in user.
+ */
+export function logout(): Promise<AxiosResponse> {
+    const headers = {"x-authorization": localStorage.getItem("token")};
+    return Axios.post(rootUrl + "/users/logout", {headers});
+}
+
 export type SortOrder =
     "ALPHABETICAL_ASC"
     | "ALPHABETICAL_DESC"
@@ -304,6 +312,15 @@ export function deleteSupportTier(petitionId: number, supportTierId: number): Pr
     return Axios.delete(rootUrl + "/petitions/" + petitionId + "/supportTiers/" + supportTierId, {headers});
 }
 
+/**
+ * Edits a support tier for a petition.
+ *
+ * @param petitionId The ID number of the petition to edit the support tier for.
+ * @param supportTierId The ID number of the support tier to edit.
+ * @param title The updated title of the support tier.
+ * @param description The updated description of the support tier.
+ * @param cost The updated cost of the support tier.
+ */
 export function editSupportTier(
     petitionId: number,
     supportTierId: number,
@@ -317,4 +334,14 @@ export function editSupportTier(
         description,
         cost
     }, {headers});
+}
+
+/**
+ * Deletes a petition.
+ *
+ * @param petitionId The ID number of the petition to delete.
+ */
+export function deletePetition(petitionId: number): Promise<AxiosResponse> {
+    const headers = {"x-authorization": localStorage.getItem("token")};
+    return Axios.delete(rootUrl + "/petitions/" + petitionId, {headers});
 }
