@@ -9,10 +9,11 @@ interface CostInputProps<Required extends boolean> {
     label: string,
     defaultValue?: number | "",
     onChange: Required extends true ? (value: number) => void : (value: number | "") => void
+    disabled?: boolean
 }
 
 export default function CostInput<Required extends boolean>(
-    {required, fullWidth, label, defaultValue, onChange}: CostInputProps<Required>
+    {required, fullWidth, label, defaultValue, onChange, disabled}: CostInputProps<Required>
 ): React.ReactElement {
     const [value, setValue] = React.useState<string>(defaultValue ? defaultValue.toString() : "");
     const [textFieldIsFocused, setTextFieldIsFocused] = React.useState<boolean>(false);
@@ -43,6 +44,7 @@ export default function CostInput<Required extends boolean>(
             required={required}
             onChange={handleInputChange}
             error={error}
+            disabled={disabled}
             InputProps={{startAdornment: <InputAdornment position="start">$</InputAdornment>}}
             InputLabelProps={{
                 shrink: textFieldIsFocused || value !== "",
