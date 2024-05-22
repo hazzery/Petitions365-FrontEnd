@@ -44,7 +44,7 @@ export default function PetitionsGrid(
                 justifyContent: 'center',
                 width: '100%'
             }}>
-                {petitionCards()}
+                {petitions.length > 0 ? petitionCards() : "No petitions found"}
             </Box>
             {children}
         </Paper>
