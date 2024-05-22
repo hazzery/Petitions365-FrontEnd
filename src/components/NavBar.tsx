@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import Box from '@mui/material/Box';
 
-import {userImageUrl} from "../model/api.ts";
+import {logout, userImageUrl} from "../model/api.ts";
 import {useNavigate} from "react-router-dom";
 
 
@@ -31,8 +31,12 @@ export default function NavBar(): React.ReactElement {
     }
 
     function handleLogout() {
-        localStorage.clear();
-        navigate('/login');
+        logout()
+            .then(() => {
+                localStorage.clear();
+                navigate('/login');
+            })
+            .catch(() => null);
     }
 
     function handleMyPetitions() {
