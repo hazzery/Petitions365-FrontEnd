@@ -47,13 +47,23 @@ export default function NavBar(): React.ReactElement {
         navigate('/profile');
     }
 
+    function handleRegister() {
+        navigate('/register');
+    }
+
+    function handleLogin() {
+        navigate('/login');
+    }
+
     const handleMenuClick: Map<string, () => void> = new Map([
         ['Manage Profile', handleManageProfile],
         ['My Petitions', handleMyPetitions],
         ['Logout', handleLogout],
+        ['Register', handleRegister],
+        ['Login', handleLogin]
     ]);
 
-    const menuOptions = Array.from(handleMenuClick.keys());
+    const menuOptions = !isNaN(userId) ? ['Manage Profile', 'My Petitions', 'Logout'] : ['Register', 'Login'];
 
     return (
         <AppBar position="static">
@@ -75,12 +85,15 @@ export default function NavBar(): React.ReactElement {
                         SENG365 Petitions
                     </Typography>
                     <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-                        <Button
-                            onClick={() => navigate('/petition/new')}
-                            sx={{my: 2, color: 'white', display: 'block'}}
-                        >
-                            Create Petition
-                        </Button>
+                        {
+                            !isNaN(userId) &&
+                            <Button
+                                onClick={() => navigate('/petition/new')}
+                                sx={{my: 2, color: 'white', display: 'block'}}
+                            >
+                                Create Petition
+                            </Button>
+                        }
                     </Box>
 
                     <Box sx={{flexGrow: 0}}>
