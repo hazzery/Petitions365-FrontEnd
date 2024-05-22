@@ -10,7 +10,7 @@ interface SupportTiersPaperProps {
     supportTiers: Array<AbstractSupportTier>,
     setSupportTiers: (supportTiers: Array<AbstractSupportTier>) => void,
     petitionId: string,
-    numberOfSupporters: (supportTier: AbstractSupportTier) => number,
+    numberOfSupporters: (supportTier: AbstractSupportTier) => number
 }
 
 export default function SupportTiersPaper(

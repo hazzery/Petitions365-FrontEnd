@@ -16,11 +16,14 @@ import {
     editPetition,
     getAllCategories,
     getPetitionDetails,
+    getSupportersOfPetition,
     petitionImageUrl,
     uploadPetitionImage
 } from "../model/api.ts";
-import {Category} from "../model/responseBodies.ts";
+import {AbstractSupportTier, Category, PetitionDetails, Supporter} from "../model/responseBodies.ts";
 import {formatServerResponse} from "../model/util.ts";
+import Box from "@mui/material/Box";
+import SupportTiersPaper from "./SupportTiersPaper.tsx";
 
 
 const defaultTheme = createTheme();
@@ -28,25 +31,43 @@ const defaultTheme = createTheme();
 export default function EditPetition(): React.ReactElement {
     const {petitionId} = useParams();
     const navigate = useNavigate();
+
     const [title, setTitle] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
     const [categoryId, setCategoryId] = React.useState<number>(NaN);
-    const [categories, setCategories] = React.useState<Array<Category>>([]);
     const [image, setImage] = React.useState<File | null>(null);
+    const [supportTiers, setSupportTiers] = React.useState<Array<AbstractSupportTier>>([]);
+
     const [errorMessage, setErrorMessage] = React.useState<string>("");
+    const [supportersMap, setSupportersMap] = React.useState<Map<number, Array<Supporter>>>(new Map());
+    const [categories, setCategories] = React.useState<Array<Category>>([]);
 
     React.useEffect(() => {
         const petitionIdNumber = parseInt(petitionId as string);
         getPetitionDetails(petitionIdNumber)
-            .then((response: AxiosResponse) => {
+            .then((response: AxiosResponse<PetitionDetails>) => {
                 setTitle(response.data.title);
                 setDescription(response.data.description);
                 setCategoryId(response.data.categoryId);
+                setSupportTiers(response.data.supportTiers);
             })
             .catch(() => null);
 
         getAllCategories()
             .then((response: AxiosResponse<Array<Category>>) => setCategories(response.data))
+            .catch(() => null);
+
+        getSupportersOfPetition(petitionIdNumber)
+            .then((response: AxiosResponse<Array<Supporter>>) => {
+                const map = new Map<number, Array<Supporter>>();
+                response.data.forEach((supporter: Supporter) => {
+                    if (!map.has(supporter.supportTierId)) {
+                        map.set(supporter.supportTierId, []);
+                    }
+                    map.get(supporter.supportTierId)?.push(supporter);
+                });
+                setSupportersMap(map);
+            })
             .catch(() => null);
     }, [petitionId]);
 
@@ -70,75 +91,94 @@ export default function EditPetition(): React.ReactElement {
             .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
     }
 
+    function numberOfSupporters(supportTier: AbstractSupportTier): number {
+        return supportTier.supportTierId
+            ? supportersMap.get(supportTier.supportTierId)?.length ?? 0
+            : 0;
+    }
+
     return (
         <ThemeProvider theme={defaultTheme}>
             <NavBar/>
-            <Container component="main" maxWidth="md">
+            <Container component="main" maxWidth="lg">
                 <CssBaseline/>
-                <Paper sx={{
+                <Box sx={{
                     marginTop: 8,
-                    padding: "40px",
                     display: 'flex',
                     flexDirection: 'column',
+                    gap: '20px',
                     alignItems: 'center',
                 }}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <Typography variant="h4">Edit Petition</Typography>
+                    <Paper sx={{padding: "40px"}}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Typography variant="h4">Edit Petition</Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <UploadableImage
+                                    imageUrl={petitionImageUrl(Number(petitionId))}
+                                    alt="Petition Image"
+                                    setImage={setImage}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    autoFocus
+                                    name="petitionTitle"
+                                    label="Title"
+                                    value={title}
+                                    onChange={(event: ChangeEvent<HTMLInputElement>) => setTitle(event.target.value)}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    multiline
+                                    name="petitionDescription"
+                                    label="Description"
+                                    value={description}
+                                    onChange={
+                                        (event: ChangeEvent<HTMLTextAreaElement>) => setDescription(event.target.value)
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    select
+                                    fullWidth
+                                    name="category"
+                                    label="Category"
+                                    value={!isNaN(categoryId) ? categoryId : ""}
+                                    onChange={
+                                        (event: ChangeEvent<HTMLInputElement>) => setCategoryId(parseInt(event.target.value))
+                                    }
+                                >
+                                    {categoryOptions()}
+                                </TextField>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Typography variant="body1" color="error">{errorMessage}</Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button variant="contained" onClick={handleSave}>
+                                    <Typography variant="button">Save</Typography>
+                                </Button>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <UploadableImage
-                                imageUrl={petitionImageUrl(Number(petitionId))}
-                                alt="Petition Image"
-                                setImage={setImage}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                autoFocus
-                                name="petitionTitle"
-                                label="Title"
-                                value={title}
-                                onChange={(event: ChangeEvent<HTMLInputElement>) => setTitle(event.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                multiline
-                                name="petitionDescription"
-                                label="Description"
-                                value={description}
-                                onChange={
-                                    (event: ChangeEvent<HTMLTextAreaElement>) => setDescription(event.target.value)
-                                }
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                select
-                                fullWidth
-                                name="category"
-                                label="Category"
-                                value={!isNaN(categoryId) ? categoryId : ""}
-                                onChange={
-                                    (event: ChangeEvent<HTMLInputElement>) => setCategoryId(parseInt(event.target.value))
-                                }
-                            >
-                                {categoryOptions()}
-                            </TextField>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="body1" color="error">{errorMessage}</Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button variant="contained" onClick={handleSave}>
-                                <Typography variant="button">Save</Typography>
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </Paper>
+                    </Paper>
+                    <SupportTiersPaper
+                        supportTiers={supportTiers}
+                        petitionId={petitionId as string}
+                        setSupportTiers={setSupportTiers}
+                        numberOfSupporters={numberOfSupporters}
+                    />
+                    <Button variant="contained" onClick={() => navigate("/petition/" + petitionId)}>
+                        <Typography variant="button">
+                            Cancel
+                        </Typography>
+                    </Button>
+                </Box>
             </Container>
         </ThemeProvider>
     );
