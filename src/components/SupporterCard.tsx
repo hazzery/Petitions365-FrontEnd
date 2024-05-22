@@ -22,6 +22,10 @@ export default function SupporterCard({supporter, supportTierMap}: SupporterCard
         timestamp
     } = supporter;
 
+    function setDefaultImage(event: React.SyntheticEvent<HTMLImageElement>) {
+        event.currentTarget.src = "https://www.svgrepo.com/show/486506/user-profile-filled.svg"
+    }
+
     return (
         <Card sx={{
             display: 'flex',
@@ -35,6 +39,7 @@ export default function SupporterCard({supporter, supportTierMap}: SupporterCard
                 height="140px"
                 image={userImageUrl(supporterId)}
                 alt="Supporter profile image"
+                onError={setDefaultImage}
             />
             <CardContent>
                 <Typography variant="h6">
