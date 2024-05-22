@@ -2,7 +2,6 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
 import {Alert, Card, CardActions, CardContent} from "@mui/material";
 
 import CostInput from "./CostInput.tsx";
@@ -88,11 +87,12 @@ export default function EditSupportTierCard(
     }
 
     function SupportTierFields() {
-        return <Card sx={{height: "100%", padding: "10px", width: "100%"}}>
+        return <Card sx={{height: "100%", minWidth: "33%", padding: "10px"}}>
             <CardContent sx={{
                 display: "flex",
                 flexDirection: "column",
-                rowGap: "20px"
+                rowGap: "20px",
+                width: "100%"
             }}>
                 <TextField
                     required
@@ -108,6 +108,7 @@ export default function EditSupportTierCard(
                     label="Description"
                     value={description}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDescription(event.target.value)}
+                    InputProps={{sx: {height: "150px"}}}
                 />
                 <CostInput
                     fullWidth
@@ -130,12 +131,12 @@ export default function EditSupportTierCard(
     }
 
     return (
-        <Box>
+        <>
             {
                 numberOfSupporters === 0
                     ? SupportTierFields()
                     : <Typography variant="body1">Tier '{title}' has supporters and cannot be edited.</Typography>
             }
-        </Box>
+        </>
     );
 }
