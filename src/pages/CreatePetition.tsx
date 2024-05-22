@@ -60,6 +60,10 @@ export default function CreatePetition(): React.ReactElement {
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
+        if (petitionImage === null) {
+            setErrorMessage("Please upload an image for your petition.");
+            return;
+        }
         createPetition(
             data.get('petitionTitle') as string,
             data.get('petitionDescription') as string,
