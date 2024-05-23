@@ -117,7 +117,7 @@ export default function EditSupportTierCard(
                     label="Description"
                     value={description}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDescription(event.target.value)}
-                    InputProps={{sx: {height: "150px"}}}
+                    InputProps={{sx: {height: "150px", alignItems: "flex-start"}}}
                     disabled={!editable()}
                 />
                 <CostInput
