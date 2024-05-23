@@ -7,6 +7,7 @@ import PaidIcon from "@mui/icons-material/Paid";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
+import Modal from "@mui/material/Modal";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
@@ -59,6 +60,7 @@ export default function Petition() {
     const [supportTierMap, setSupportTierMap] = React.useState<Map<number, string>>(new Map());
     const [similarPetitions, setSimilarPetitions] = React.useState<Array<PetitionOverview>>([]);
     const [categoryMap, setCategoryMap] = React.useState<Map<number, string>>(new Map());
+    const [showDeleteModal, setShowDeleteModal] = React.useState(false);
 
     // if (isNaN(petitionIdNumber)) {
     //     return <NotFound/>;
@@ -254,13 +256,40 @@ export default function Petition() {
                                     </Button>
                                     {
                                         numberOfSupporters === 0 &&
-                                        <Button variant="contained" color="error" onClick={removePetition}>
+                                        <Button variant="contained" color="error"
+                                                onClick={() => setShowDeleteModal(true)}>
                                             Delete Petition
                                         </Button>
                                     }
                                 </Card>
                             </Grid>
                         }
+                        <Modal
+                            open={showDeleteModal}
+                            onClose={() => setShowDeleteModal(false)}
+                            aria-labelledby="modal-modal-title"
+                        >
+                            <Box sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                width: 500,
+                                bgcolor: 'background.paper',
+                                borderRadius: '20px',
+                                boxShadow: 24,
+                                p: 4,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 2
+                            }}>
+                                <Typography id="modal-modal-title" variant="h6" component="h2">
+                                    Are you sure you want to delete this petition?
+                                </Typography>
+                                <Button variant="contained" color="error" onClick={removePetition}>Delete</Button>
+                                <Button variant="contained" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+                            </Box>
+                        </Modal>
                         <Grid item sm={12}>
                             <SupportersGrid supporters={supporters} supportTierMap={supportTierMap}/>
                         </Grid>
