@@ -30,9 +30,10 @@ export default function SupportersGrid({supporters, supportTierMap}: SupportersG
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
+                flexWrap: 'wrap',
                 alignItems: 'center',
                 justifyContent: 'center',
-                columnGap: '25px',
+                gap: '25px',
                 marginY: '10px'
             }}>
                 {supporters.length > 0? supporterCards() : <Typography variant="body1">No supporters yet</Typography>}
