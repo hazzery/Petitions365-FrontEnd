@@ -345,3 +345,15 @@ export function deletePetition(petitionId: number): Promise<AxiosResponse> {
     const headers = {"x-authorization": localStorage.getItem("token")};
     return Axios.delete(rootUrl + "/petitions/" + petitionId, {headers});
 }
+
+/**
+ * Supports a petition.
+ *
+ * @param petitionId The ID number of the petition to support.
+ * @param supportTierId The ID number of the support tier to support with.
+ // * @param message A message to send to the petition owner.
+ */
+export function supportPetition(petitionId: number, supportTierId: number): Promise<AxiosResponse> {
+    const headers = {"x-authorization": localStorage.getItem("token")};
+    return Axios.post(rootUrl + "/petitions/" + petitionId + "/supporters", {supportTierId}, {headers});
+}
