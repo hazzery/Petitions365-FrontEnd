@@ -43,6 +43,7 @@ const defaultTheme = createTheme();
 
 export default function Petition() {
     const {petitionId} = useParams();
+    const [petitionIdNumber] = React.useState<number>(parseInt(petitionId as string));
     const navigate = useNavigate();
     const [creationDate, setCreationDate] = React.useState<string>("");
     const [imageURL, setImageURL] = React.useState<string>("");
@@ -57,7 +58,6 @@ export default function Petition() {
     const [moneyRaised, setMoneyRaised] = React.useState<number>(NaN);
     const [supportTiers, setSupportTiers] = React.useState<Array<SupportTier>>([]);
     const [supporters, setSupporters] = React.useState<Array<Supporter>>([]);
-    const [supportTierMap, setSupportTierMap] = React.useState<Map<number, string>>(new Map());
     const [similarPetitions, setSimilarPetitions] = React.useState<Array<PetitionOverview>>([]);
     const [categoryMap, setCategoryMap] = React.useState<Map<number, string>>(new Map());
     const [showDeleteModal, setShowDeleteModal] = React.useState(false);
@@ -66,46 +66,39 @@ export default function Petition() {
     //     return <NotFound/>;
     // }
     React.useEffect(() => {
-        const petitionIdNumber = parseInt(petitionId as string);
+        getPetitionDetails(petitionIdNumber)
+            .then((response: AxiosResponse<PetitionDetails>) => {
+                setCreationDate(response.data.creationDate);
+                setImageURL(petitionImageUrl(petitionIdNumber));
+                setTitle(response.data.title);
+                setDescription(response.data.description);
+                setCategoryId(response.data.categoryId);
+                setOwnerId(response.data.ownerId);
+                setOwnerImageUrl(userImageUrl(response.data.ownerId));
+                setOwnerFirstName(response.data.ownerFirstName);
+                setOwnerLastName(response.data.ownerLastName);
+                setNumberOfSupporters(response.data.numberOfSupporters);
+                setMoneyRaised(response.data.moneyRaised);
+                setSupportTiers(response.data.supportTiers);
+            })
+            .catch((error) => {
+                setTitle(error.response.status.toString());
+                setDescription(error.response.statusText);
+            });
+    }, [petitionIdNumber]);
 
-        function fetchPetition(): void {
-            getPetitionDetails(petitionIdNumber)
-                .then((response: AxiosResponse<PetitionDetails>) => {
-                    setCreationDate(response.data.creationDate);
-                    setImageURL(petitionImageUrl(petitionIdNumber));
-                    setTitle(response.data.title);
-                    setDescription(response.data.description);
-                    setCategoryId(response.data.categoryId);
-                    setOwnerId(response.data.ownerId);
-                    setOwnerImageUrl(userImageUrl(response.data.ownerId));
-                    setOwnerFirstName(response.data.ownerFirstName);
-                    setOwnerLastName(response.data.ownerLastName);
-                    setNumberOfSupporters(response.data.numberOfSupporters);
-                    setMoneyRaised(response.data.moneyRaised);
-                    setSupportTiers(response.data.supportTiers);
-                    const map = new Map<number, string>();
-                    for (const supportTier of response.data.supportTiers) {
-                        map.set(supportTier.supportTierId, supportTier.title);
-                    }
-                    setSupportTierMap(map);
-                })
-                .catch((error) => {
-                    setTitle(error.response.status.toString());
-                    setDescription(error.response.statusText);
-                });
-        }
+    React.useEffect(() => {
+        getSupportersOfPetition(petitionIdNumber)
+            .then((response: AxiosResponse<Array<Supporter>>) => {
+                setSupporters(response.data);
+            })
+            .catch((error) => {
+                setTitle(error.response.status.toString());
+                setDescription(error.response.statusText);
+            });
+    }, [petitionIdNumber]);
 
-        function fetchSupporters(): void {
-            getSupportersOfPetition(petitionIdNumber)
-                .then((response: AxiosResponse<Array<Supporter>>) => {
-                    setSupporters(response.data);
-                })
-                .catch((error) => {
-                    setTitle(error.response.status.toString());
-                    setDescription(error.response.statusText);
-                });
-        }
-
+    React.useEffect(() => {
         function mergePetitionListPromises(
             setState: React.Dispatch<React.SetStateAction<Array<PetitionOverview>>>,
             ...promises: Array<Promise<AxiosResponse<PetitionsList>>>
@@ -128,16 +121,16 @@ export default function Petition() {
                 });
         }
 
-        function fetchSimilarPetitions(): void {
-            if (!isNaN(categoryId) && !isNaN(ownerId)) {
-                mergePetitionListPromises(
-                    setSimilarPetitions,
-                    getFilteredPetitions({categoryIds: [categoryId]}),
-                    getFilteredPetitions({ownerId: ownerId})
-                );
-            }
+        if (!isNaN(categoryId) && !isNaN(ownerId)) {
+            mergePetitionListPromises(
+                setSimilarPetitions,
+                getFilteredPetitions({categoryIds: [categoryId]}),
+                getFilteredPetitions({ownerId: ownerId})
+            );
         }
+    }, [categoryId, ownerId, petitionIdNumber]);
 
+    React.useEffect(() => {
         getAllCategories()
             .then((response: AxiosResponse<Array<Category>>) => {
                 const map = new Map<number, string>();
@@ -151,10 +144,7 @@ export default function Petition() {
                 console.log(error.response.statusText);
             });
 
-        fetchPetition();
-        fetchSupporters();
-        fetchSimilarPetitions();
-    }, [categoryId, ownerId, petitionId]);
+    }, []);
 
     function supportTierCards(): React.ReactElement[] {
         return supportTiers.map(
@@ -291,7 +281,7 @@ export default function Petition() {
                             </Box>
                         </Modal>
                         <Grid item sm={12}>
-                            <SupportersGrid supporters={supporters} supportTierMap={supportTierMap}/>
+                            <SupportersGrid supporters={supporters} supportTiers={supportTiers}/>
                         </Grid>
                     </Grid>
                     <Box sx={{padding: 2, marginTop: 4}}>

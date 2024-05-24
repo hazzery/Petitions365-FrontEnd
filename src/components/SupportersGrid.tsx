@@ -2,16 +2,26 @@ import {Card} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import React from "react";
-import {Supporter} from "../model/responseBodies.ts";
+import {Supporter, SupportTier} from "../model/responseBodies.ts";
 import SupporterCard from "./SupporterCard.tsx";
 
 
 interface SupportersGridProps {
     supporters: Supporter[],
-    supportTierMap: Map<number, string>
+    supportTiers: Array<SupportTier>
 }
 
-export default function SupportersGrid({supporters, supportTierMap}: SupportersGridProps): React.ReactElement {
+export default function SupportersGrid({supporters, supportTiers}: SupportersGridProps): React.ReactElement {
+    const [supportTierMap, setSupportTierMap] = React.useState<Map<number, string>>(new Map<number, string>());
+
+    React.useEffect(() => {
+        const map = new Map<number, string>();
+        for (const supportTier of supportTiers) {
+            map.set(supportTier.supportTierId, supportTier.title);
+        }
+        setSupportTierMap(map);
+    }, [supportTiers]);
+
     function supporterCards(): React.ReactElement[] {
         return supporters.map(
             (supporter: Supporter, index: number) => <SupporterCard
