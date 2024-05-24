@@ -355,7 +355,12 @@ export default function Petition() {
                                 <Typography variant="h6" component="div">
                                     Support Tiers
                                 </Typography>
-                                <Box sx={{alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
+                                <Box sx={{
+                                    alignItems: 'center',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '20px'
+                                }}>
                                     {supportTierCards()}
                                 </Box>
                             </Paper>
