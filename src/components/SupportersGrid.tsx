@@ -1,7 +1,8 @@
-import {Card} from "@mui/material";
+import React from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import React from "react";
+import {Paper} from "@mui/material";
+
 import {Supporter, SupportTier} from "../model/responseBodies.ts";
 import SupporterCard from "./SupporterCard.tsx";
 
@@ -33,7 +34,7 @@ export default function SupportersGrid({supporters, supportTiers}: SupportersGri
     }
 
     return (
-        <Card sx={{padding: 2, marginTop: 4}}>
+        <Paper sx={{padding: 2}}>
             <Typography variant="h6" component="div">
                 Supporters
             </Typography>
@@ -48,6 +49,6 @@ export default function SupportersGrid({supporters, supportTiers}: SupportersGri
             }}>
                 {supporters.length > 0? supporterCards() : <Typography variant="body1">No supporters yet</Typography>}
             </Box>
-        </Card>
+        </Paper>
     );
 }
