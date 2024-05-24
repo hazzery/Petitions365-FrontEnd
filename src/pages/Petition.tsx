@@ -352,7 +352,7 @@ export default function Petition() {
                                         </Typography>
                                     </Box>
                                 </Box>
-                                <Typography variant="h6" component="div">
+                                <Typography variant="h5" component="div">
                                     Support Tiers
                                 </Typography>
                                 <Box sx={{

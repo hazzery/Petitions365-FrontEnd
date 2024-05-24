@@ -28,7 +28,7 @@ export default function SupportTierCard({supportTier, onClick}: SupportTierCardP
             cursor: onClick !== undefined ? "pointer" : "default",
             width: "100%"
         }}>
-            <Typography variant="h5" component="div">
+            <Typography variant="h6" component="div">
                 {title}
             </Typography>
             <Box sx={{display: "flex", flexDirection: "row"}}>
