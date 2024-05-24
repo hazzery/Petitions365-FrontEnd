@@ -25,7 +25,8 @@ export default function SupportTierCard({supportTier, onClick}: SupportTierCardP
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            cursor: onClick !== undefined ? "pointer" : "default"
+            cursor: onClick !== undefined ? "pointer" : "default",
+            width: "100%"
         }}>
             <Typography variant="h5" component="div">
                 {title}
