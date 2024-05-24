@@ -231,7 +231,7 @@ export default function Petition() {
         );
     }
 
-    function unauthUserActionButtons(): React.ReactElement {
+    function unauthenticatedUserActionButtons(): React.ReactElement {
         return (
             <>
                 <Typography variant="body1" component="div">
@@ -373,7 +373,7 @@ export default function Petition() {
                                     ownerId === parseInt(localStorage.getItem("userId") as string)
                                         ? <>{ownerActionButtons()}</>
                                         : localStorage.getItem("userId") === null
-                                            ? <>{unauthUserActionButtons()}</>
+                                            ? <>{unauthenticatedUserActionButtons()}</>
                                             : <>{supporterActionButtons()}</>
                                 }
                             </Card>
