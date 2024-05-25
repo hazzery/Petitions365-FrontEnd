@@ -45,27 +45,17 @@ export default function Petition() {
     const {petitionId} = useParams();
     const [petitionIdNumber, setPetitionIdNumber] = React.useState<number>(parseInt(petitionId as string));
     const navigate = useNavigate();
-    const [creationDate, setCreationDate] = React.useState<string>("");
-    const [imageURL, setImageURL] = React.useState<string>("");
-    const [title, setTitle] = React.useState<string>("");
-    const [description, setDescription] = React.useState<string>("");
-    const [categoryId, setCategoryId] = React.useState<number>(NaN);
-    const [ownerId, setOwnerId] = React.useState<number>(NaN);
-    const [ownerImageUrl, setOwnerImageUrl] = React.useState<string>("");
-    const [ownerFirstName, setOwnerFirstName] = React.useState<string>("");
-    const [ownerLastName, setOwnerLastName] = React.useState<string>("");
-    const [numberOfSupporters, setNumberOfSupporters] = React.useState<number>(NaN);
-    const [moneyRaised, setMoneyRaised] = React.useState<number>(NaN);
-    const [supportTiers, setSupportTiers] = React.useState<Array<SupportTier>>([]);
+    const [petitionDetails, setPetitionDetails] = React.useState<PetitionDetails | undefined>();
     const [supporters, setSupporters] = React.useState<Array<Supporter>>([]);
     const [similarPetitions, setSimilarPetitions] = React.useState<Array<PetitionOverview>>([]);
     const [categoryMap, setCategoryMap] = React.useState<Map<number, string>>(new Map());
     const [showDeleteModal, setShowDeleteModal] = React.useState(false);
     const [showSupportModal, setShowSupportModal] = React.useState(false);
 
-    // if (isNaN(petitionIdNumber)) {
-    //     return <NotFound/>;
-    // }
+    React.useEffect(() => {
+        setPetitionIdNumber(parseInt(petitionId as string));
+    }, [petitionId]);
+
     React.useEffect(() => {
         if (isNaN(petitionIdNumber)) {
             navigate("/not-found");
@@ -73,41 +63,16 @@ export default function Petition() {
     }, [petitionIdNumber, navigate]);
 
     React.useEffect(() => {
-        setPetitionIdNumber(parseInt(petitionId as string));
-    }, [petitionId]);
-
-    React.useEffect(() => {
         getPetitionDetails(petitionIdNumber)
-            .then((response: AxiosResponse<PetitionDetails>) => {
-                setCreationDate(response.data.creationDate);
-                setImageURL(petitionImageUrl(petitionIdNumber));
-                setTitle(response.data.title);
-                setDescription(response.data.description);
-                setCategoryId(response.data.categoryId);
-                setOwnerId(response.data.ownerId);
-                setOwnerImageUrl(userImageUrl(response.data.ownerId));
-                setOwnerFirstName(response.data.ownerFirstName);
-                setOwnerLastName(response.data.ownerLastName);
-                setNumberOfSupporters(response.data.numberOfSupporters);
-                setMoneyRaised(response.data.moneyRaised);
-                setSupportTiers(response.data.supportTiers);
-            })
-            .catch((error) => {
-                setTitle(error.response.status.toString());
-                setDescription(error.response.statusText);
-            });
+            .then((response: AxiosResponse<PetitionDetails>) => setPetitionDetails(response.data))
+            .catch(() => null);
         window.scrollTo(0, 0);
     }, [petitionIdNumber]);
 
     React.useEffect(() => {
         getSupportersOfPetition(petitionIdNumber)
-            .then((response: AxiosResponse<Array<Supporter>>) => {
-                setSupporters(response.data);
-            })
-            .catch((error) => {
-                setTitle(error.response.status.toString());
-                setDescription(error.response.statusText);
-            });
+            .then((response: AxiosResponse<Array<Supporter>>) => setSupporters(response.data))
+            .catch(() => null);
     }, [petitionIdNumber]);
 
     React.useEffect(() => {
@@ -127,20 +92,19 @@ export default function Petition() {
                     });
                     setState(Array.from(similarPetitionMap.values()));
                 })
-                .catch((error) => {
-                    setTitle(error.response.status.toString());
-                    setDescription(error.response.statusText);
-                });
+                .catch(() => null);
         }
 
-        if (!isNaN(categoryId) && !isNaN(ownerId)) {
-            mergePetitionListPromises(
-                setSimilarPetitions,
-                getFilteredPetitions({categoryIds: [categoryId]}),
-                getFilteredPetitions({ownerId: ownerId})
-            );
+        if (petitionDetails === undefined) {
+            return;
         }
-    }, [categoryId, ownerId, petitionIdNumber]);
+
+        mergePetitionListPromises(
+            setSimilarPetitions,
+            getFilteredPetitions({categoryIds: [petitionDetails.categoryId]}),
+            getFilteredPetitions({ownerId: petitionDetails.ownerId})
+        );
+    }, [petitionDetails, petitionIdNumber]);
 
     React.useEffect(() => {
         getAllCategories()
@@ -159,7 +123,10 @@ export default function Petition() {
     }, []);
 
     function supportTierCards(): React.ReactElement[] {
-        return supportTiers.map(
+        if (petitionDetails === undefined) {
+            return [];
+        }
+        return petitionDetails.supportTiers.map(
             (supportTier: SupportTier, index: number) => <SupportTierCard
                 key={index}
                 supportTier={supportTier}
@@ -181,7 +148,7 @@ export default function Petition() {
                     Edit Petition
                 </Button>
                 {
-                    numberOfSupporters === 0 &&
+                    !petitionDetails?.numberOfSupporters &&
                     <Button variant="contained" color="error"
                             onClick={() => setShowDeleteModal(true)}>
                         Delete Petition
@@ -215,6 +182,9 @@ export default function Petition() {
     }
 
     function supporterActionButtons(): React.ReactElement {
+        if (petitionDetails === undefined) {
+            return <></>;
+        }
         return (
             <>
                 <Button variant="contained" color="primary" onClick={() => setShowSupportModal(true)}>
@@ -224,11 +194,22 @@ export default function Petition() {
                     open={showSupportModal}
                     onClose={() => setShowSupportModal(false)}
                     supporters={supporters}
-                    supportTiers={supportTiers}
+                    supportTiers={petitionDetails.supportTiers}
                     petitionId={Number(petitionId)}
                 />
             </>
         );
+    }
+
+    if (petitionDetails === undefined) {
+        return <>
+            <ThemeProvider theme={defaultTheme}>
+                <NavBar/>
+                <Container component="main">
+                    <CssBaseline/>
+                </Container>
+            </ThemeProvider>
+        </>;
     }
 
     return (
@@ -242,7 +223,7 @@ export default function Petition() {
                     alignItems: 'center',
                 }}>
                     <Typography variant="h2" component="div">
-                        {title}
+                        {petitionDetails.title}
                     </Typography>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} sx={{display: 'flex'}}>
@@ -251,7 +232,7 @@ export default function Petition() {
                                     <Grid item xs={12} sm={8} sx={{display: 'flex', justifyContent: 'center'}}>
                                         <CardMedia
                                             component="img"
-                                            image={imageURL}
+                                            image={petitionImageUrl(petitionIdNumber)}
                                             alt="petition"
                                             sx={{
                                                 width: '80%',
@@ -266,7 +247,7 @@ export default function Petition() {
                                         justifyContent: 'center'
                                     }}>
                                         <Avatar
-                                            src={ownerImageUrl}
+                                            src={userImageUrl(petitionDetails.ownerId)}
                                             alt="User profile image"
                                             sx={{
                                                 width: 60,
@@ -275,15 +256,15 @@ export default function Petition() {
                                             }}
                                         />
                                         <Typography variant="body2" color="text.primary" sx={{ml: 1}}>
-                                            {`${ownerFirstName} ${ownerLastName}`}
+                                            {`${petitionDetails.ownerFirstName} ${petitionDetails.ownerLastName}`}
                                         </Typography>
                                         <Typography variant="body2" component="div">
-                                            {formatDate(creationDate)}
+                                            {formatDate(petitionDetails.creationDate)}
                                         </Typography>
                                     </Grid>
                                 </Grid>
                                 <Typography variant="body1" component="div">
-                                    {description}
+                                    {petitionDetails.description}
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -293,13 +274,13 @@ export default function Petition() {
                                     <Box sx={{alignItems: 'center', display: 'flex'}}>
                                         <GroupIcon/>
                                         <Typography variant="body1" sx={{marginLeft: 1}}>
-                                            {`Supporters: ${numberOfSupporters}`}
+                                            {`Supporters: ${petitionDetails.numberOfSupporters}`}
                                         </Typography>
                                     </Box>
                                     <Box sx={{alignItems: 'center', display: 'flex'}}>
                                         <PaidIcon/>
                                         <Typography variant="body1" sx={{marginLeft: 1}}>
-                                            {`Money Raised: ${moneyRaised !== null ? moneyRaised : 0}`}
+                                            {`Money Raised: ${petitionDetails.moneyRaised !== null ? petitionDetails.moneyRaised : 0}`}
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -326,7 +307,7 @@ export default function Petition() {
                                 width: "100%"
                             }}>
                                 {
-                                    ownerId === parseInt(localStorage.getItem("userId") as string)
+                                    petitionDetails.ownerId === parseInt(localStorage.getItem("userId") as string)
                                         ? <>{ownerActionButtons()}</>
                                         : localStorage.getItem("userId") === null
                                             ? <>{unauthenticatedUserActionButtons()}</>
@@ -335,7 +316,7 @@ export default function Petition() {
                             </Card>
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                            <SupportersGrid supporters={supporters} supportTiers={supportTiers}/>
+                            <SupportersGrid supporters={supporters} supportTiers={petitionDetails.supportTiers}/>
                         </Grid>
                         <Grid item xs={12} sm={12}>
                             <PetitionsGrid
