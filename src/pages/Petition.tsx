@@ -11,8 +11,8 @@ import Modal from "@mui/material/Modal";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
-import {Card, CardMedia, Paper} from "@mui/material";
 import {useNavigate, useParams} from "react-router-dom";
+import {Card, CardMedia, Paper} from "@mui/material";
 import {AxiosResponse} from "axios";
 
 import {
@@ -281,9 +281,9 @@ export default function Petition() {
 
     return (
         <ThemeProvider theme={defaultTheme}>
+            <NavBar/>
             <Container component="main">
                 <CssBaseline/>
-                <NavBar/>
                 <Box sx={{
                     marginTop: 8,
                     display: 'flex',

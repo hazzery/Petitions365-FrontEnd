@@ -7,17 +7,18 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import {createTheme, ThemeProvider} from "@mui/material/styles";
-import {MenuItem} from "@mui/material";
 import {createPetition, getAllCategories, uploadPetitionImage} from "../model/api.ts";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
+import {MenuItem, Paper} from "@mui/material";
 import {AxiosResponse} from "axios";
-import {Category, PetitionCreation, SupportTier} from "../model/responseBodies.ts";
+
 import CreateSupportTier from "../components/CreateSupportTier.tsx";
 import SupportTierCard from "../components/SupportTierCard.tsx";
+import UploadableImage from "../components/UploadableImage.tsx";
 import {formatServerResponse} from "../model/util.ts";
 import NavBar from "../components/NavBar.tsx";
+import {Category, PetitionCreation, SupportTier} from "../model/responseBodies.ts";
 import {useNavigate} from "react-router-dom";
-import UploadableImage from "../components/UploadableImage.tsx";
 
 
 const defaultTheme = createTheme();
@@ -99,11 +100,12 @@ export default function CreatePetition(): React.ReactElement {
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Container component="main" maxWidth="xl">
+            <NavBar/>
+            <Container component="main">
                 <CssBaseline/>
-                <NavBar/>
-                <Box sx={{
-                    marginTop: 8,
+                <Paper sx={{
+                    marginTop: '40px',
+                    padding: '30px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -185,7 +187,7 @@ export default function CreatePetition(): React.ReactElement {
                             Create
                         </Button>
                     </Box>
-                </Box>
+                </Paper>
             </Container>
         </ThemeProvider>
     );

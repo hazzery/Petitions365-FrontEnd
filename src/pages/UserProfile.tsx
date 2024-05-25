@@ -1,18 +1,18 @@
 import React from "react";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {useNavigate} from "react-router-dom";
-import {Paper} from "@mui/material";
 import {AxiosResponse} from "axios";
+import {Paper} from "@mui/material";
 
 import NavBar from "../components/NavBar.tsx";
-import {UserDetails} from "../model/responseBodies.ts";
 import {checkUserImage, getUser, userImageUrl} from "../model/api.ts";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Avatar from "@mui/material/Avatar";
+import {UserDetails} from "../model/responseBodies.ts";
 
 
 const defaultTheme = createTheme();
@@ -40,9 +40,9 @@ export default function UserProfile(): React.ReactElement {
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Container component="main" maxWidth="xl">
+            <NavBar/>
+            <Container component="main">
                 <CssBaseline/>
-                <NavBar/>
                 <Paper sx={{
                     marginTop: 5,
                     padding: '30px',

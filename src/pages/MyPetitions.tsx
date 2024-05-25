@@ -1,6 +1,6 @@
 import React from 'react';
-import Typography from "@mui/material/Typography";
 import CssBaseline from "@mui/material/CssBaseline";
+import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
@@ -9,8 +9,8 @@ import {AxiosResponse} from "axios";
 
 import PetitionsGrid from "../components/PetitionsGrid.tsx";
 import NavBar from "../components/NavBar.tsx";
-import {Category, PetitionOverview} from "../model/responseBodies.ts";
 import {getAllCategories, getFilteredPetitions} from "../model/api.ts";
+import {Category, PetitionOverview} from "../model/responseBodies.ts";
 
 
 const defaultTheme = createTheme();
@@ -45,6 +45,7 @@ export default function MyPetitions(): React.ReactElement {
 
     return (
         <ThemeProvider theme={defaultTheme}>
+            <NavBar/>
             <Container component="main" maxWidth="xl">
                 <CssBaseline/>
                 <Box sx={{
@@ -53,7 +54,6 @@ export default function MyPetitions(): React.ReactElement {
                     gap: '30px',
                     alignItems: 'center',
                 }}>
-                    <NavBar/>
                     <PetitionsGrid
                         petitions={ownedPetitions}
                         categoryMap={categoryMap}

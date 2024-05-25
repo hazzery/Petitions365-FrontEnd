@@ -11,9 +11,9 @@ import Menu from "@mui/material/Menu";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
+import {Divider, Paper} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
-import {Divider, Paper} from "@mui/material";
 
 import PasswordInput from "../components/PasswordInput.tsx";
 import NavBar from "../components/NavBar.tsx";
@@ -113,9 +113,9 @@ export default function EditProfile(): React.ReactElement {
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Container component="main" maxWidth="xl">
+            <NavBar/>
+            <Container component="main">
                 <CssBaseline/>
-                <NavBar/>
                 <Paper sx={{
                     marginTop: 5,
                     padding: '30px',

@@ -1,9 +1,13 @@
 import React, {ChangeEvent, useCallback} from "react";
+import CssBaseline from "@mui/material/CssBaseline";
 import SearchIcon from "@mui/icons-material/Search";
+import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
+import Container from "@mui/material/Container";
 import TuneIcon from "@mui/icons-material/Tune";
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import {
     FormControl,
     InputAdornment,
@@ -16,18 +20,14 @@ import {
     Select,
     SelectChangeEvent
 } from "@mui/material";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {AxiosResponse} from "axios";
 
 
 import PetitionsGrid from "../components/PetitionsGrid.tsx";
+import NavBar from "../components/NavBar.tsx";
 import {getAllCategories, getFilteredPetitions, GetFilteredPetitionsParams, SortOrder} from "../model/api.ts";
 import {Category, PetitionOverview, PetitionsList} from "../model/responseBodies.ts";
-import Typography from "@mui/material/Typography";
-import NavBar from "../components/NavBar.tsx";
-import {createTheme, ThemeProvider} from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
 
 
 const petitionSortOrdersMap = new Map<SortOrder, string>([
@@ -148,6 +148,7 @@ export default function Petitions() {
 
     return (
         <ThemeProvider theme={defaultTheme}>
+            <NavBar/>
             <Container component="main" maxWidth="xl">
                 <CssBaseline/>
                 <Box sx={{
@@ -155,7 +156,6 @@ export default function Petitions() {
                     flexDirection: "column",
                     alignItems: "center"
                 }}>
-                    <NavBar/>
                     <Typography variant="h2" sx={{marginY: '40px'}}>
                         Petitions
                     </Typography>

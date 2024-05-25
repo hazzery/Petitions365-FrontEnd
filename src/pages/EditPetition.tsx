@@ -5,11 +5,13 @@ import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {useNavigate, useParams} from "react-router-dom";
 import {MenuItem, Paper} from "@mui/material";
 import {AxiosResponse} from "axios";
 
+import SupportTiersPaper from "../components/SupportTiersPaper.tsx";
 import UploadableImage from "../components/UploadableImage.tsx";
 import NavBar from "../components/NavBar.tsx";
 import {
@@ -21,8 +23,6 @@ import {
 } from "../model/api.ts";
 import {Category, PetitionDetails, SupportTier} from "../model/responseBodies.ts";
 import {formatServerResponse} from "../model/util.ts";
-import Box from "@mui/material/Box";
-import SupportTiersPaper from "../components/SupportTiersPaper.tsx";
 
 
 const defaultTheme = createTheme();
@@ -79,7 +79,7 @@ export default function EditPetition(): React.ReactElement {
     return (
         <ThemeProvider theme={defaultTheme}>
             <NavBar/>
-            <Container component="main" maxWidth="lg">
+            <Container component="main">
                 <CssBaseline/>
                 <Box sx={{
                     marginTop: 8,

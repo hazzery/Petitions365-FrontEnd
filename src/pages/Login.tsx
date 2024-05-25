@@ -13,6 +13,7 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
+import NavBar from "../components/NavBar.tsx";
 import {UserLogin} from "../model/responseBodies.ts";
 import {login} from "../model/api.ts";
 
@@ -50,6 +51,7 @@ export default function Login() {
 
     return (
         <ThemeProvider theme={defaultTheme}>
+            <NavBar/>
             <Container component="main" maxWidth="xs">
                 <CssBaseline/>
                 <Box sx={{

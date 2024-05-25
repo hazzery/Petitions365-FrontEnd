@@ -1,5 +1,4 @@
-import * as React from 'react';
-import {ChangeEvent} from 'react';
+import React, {ChangeEvent} from 'react';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
@@ -14,10 +13,11 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
-import {UserLogin} from "../model/responseBodies.ts";
+import PasswordInput from "../components/PasswordInput.tsx";
+import NavBar from "../components/NavBar.tsx";
 import {login, register, uploadUserImage} from "../model/api.ts";
 import {formatServerResponse} from "../model/util.ts";
-import PasswordInput from "../components/PasswordInput.tsx";
+import {UserLogin} from "../model/responseBodies.ts";
 
 
 // The returned JSX is copied from the Material-UI template at:
@@ -88,6 +88,7 @@ export default function Register() {
 
     return (
         <ThemeProvider theme={defaultTheme}>
+            <NavBar/>
             <Container component="main" maxWidth="xs">
                 <CssBaseline/>
                 <Box
