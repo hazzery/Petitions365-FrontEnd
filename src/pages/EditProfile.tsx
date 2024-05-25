@@ -43,7 +43,8 @@ export default function EditProfile(): React.ReactElement {
     const [currentPassword, setCurrentPassword] = useStringValidation({required: true, minLength: 6, maxLength: 64});
 
     const [userAvatarUrl, setUserAvatarUrl] = React.useState<string>("");
-    const [errorMessage, setErrorMessage] = React.useState<string>("");
+    const [editProfileErrorMessage, setEditProfileErrorMessage] = React.useState<string>("");
+    const [changePasswordErrorMessage, setChangePasswordErrorMessage] = React.useState<string>("");
     const [userImage, setUserImage] = React.useState<File | null>(null);
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const [anchorImageMenu, setAnchorImageMenu] = React.useState<null | HTMLElement>(null);
@@ -77,7 +78,7 @@ export default function EditProfile(): React.ReactElement {
             userId, userEmail.value, userFirstName.value, userLastName.value,
         )
             .then(() => navigate('/profile'))
-            .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
+            .catch(() => setEditProfileErrorMessage("Invalid current password"));
 
         if (userImage !== null) {
             uploadUserImage(userId, userImage)
@@ -97,7 +98,7 @@ export default function EditProfile(): React.ReactElement {
 
         changeUserPassword(userId, password.value, currentPassword.value)
             .then(() => navigate('/profile'))
-            .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
+            .catch((error) => setChangePasswordErrorMessage(formatServerResponse(error.response.statusText)));
     }
 
     function handleNewImage() {
@@ -206,6 +207,9 @@ export default function EditProfile(): React.ReactElement {
                                 />
                             </Grid>
                             <Grid item xs={12}>
+                                <Typography variant="body1" color="error">
+                                    {editProfileErrorMessage}
+                                </Typography>
                                 <Button
                                     fullWidth
                                     variant="contained"
@@ -242,6 +246,9 @@ export default function EditProfile(): React.ReactElement {
                                 />
                             </Grid>
                             <Grid item xs={12}>
+                                <Typography variant="body1" color="error">
+                                    {changePasswordErrorMessage}
+                                </Typography>
                                 <Button
                                     fullWidth
                                     variant="contained"
@@ -252,9 +259,6 @@ export default function EditProfile(): React.ReactElement {
                                 </Button>
                             </Grid>
                         </Grid>
-                        <Typography variant="body1" color="error">
-                            {errorMessage}
-                        </Typography>
                     </Box>
                 </Paper>
             </Container>
