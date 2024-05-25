@@ -229,8 +229,8 @@ export default function EditProfile(): React.ReactElement {
                                 <PasswordInput
                                     required
                                     label="Current Password"
-                                    value={password.value}
-                                    onChange={(value) => setPassword(value)}
+                                    value={currentPassword.value}
+                                    onChange={(value) => setCurrentPassword(value)}
                                     error={passwordFormSubmitted && Boolean(currentPassword.error)}
                                     helperText={passwordFormSubmitted && currentPassword.error}
                                 />
@@ -239,10 +239,14 @@ export default function EditProfile(): React.ReactElement {
                                 <PasswordInput
                                     required
                                     label="New Password"
-                                    value={currentPassword.value}
-                                    onChange={(value) => setCurrentPassword(value)}
-                                    error={passwordFormSubmitted && Boolean(password.error)}
-                                    helperText={passwordFormSubmitted && password.error}
+                                    value={password.value}
+                                    onChange={(value) => setPassword(value)}
+                                    error={
+                                        passwordFormSubmitted && (Boolean(password.error) || password.value === currentPassword.value)
+                                    }
+                                    helperText={
+                                        passwordFormSubmitted && (password.error || (password.value === currentPassword.value && "Passwords should not match"))
+                                    }
                                 />
                             </Grid>
                             <Grid item xs={12}>
