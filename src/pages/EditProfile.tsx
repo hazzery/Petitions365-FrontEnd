@@ -15,6 +15,7 @@ import {Divider, Paper} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
+import useFieldValidation from "../hooks/useFieldValidation.ts";
 import PasswordInput from "../components/PasswordInput.tsx";
 import NavBar from "../components/NavBar.tsx";
 import {
@@ -33,16 +34,19 @@ const defaultTheme = createTheme();
 
 export default function EditProfile(): React.ReactElement {
     const navigate = useNavigate();
-    const [userFirstName, setUserFirstName] = React.useState<string>("");
-    const [userLastName, setUserLastName] = React.useState<string>("");
-    const [userEmail, setUserEmail] = React.useState<string>("");
-    const [password, setPassword] = React.useState<string>("");
-    const [currentPassword, setCurrentPassword] = React.useState<string>("");
+
+    const [userFirstName, setUserFirstName] = useFieldValidation({maxLength: 64});
+    const [userLastName, setUserLastName] = useFieldValidation({maxLength: 64});
+    const [userEmail, setUserEmail] = useFieldValidation({maxLength: 256, email: true});
+    const [password, setPassword] = useFieldValidation({minLength: 6, maxLength: 64});
+    const [currentPassword, setCurrentPassword] = useFieldValidation({minLength: 6, maxLength: 64});
+
     const [userAvatarUrl, setUserAvatarUrl] = React.useState<string>("");
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [userImage, setUserImage] = React.useState<File | null>(null);
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+    const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
 
     const userId = parseInt(localStorage.getItem("userId") as string);
 
@@ -58,16 +62,17 @@ export default function EditProfile(): React.ReactElement {
         checkUserImage(userId)
             .then(() => setUserAvatarUrl(userImageUrl(userId)))
             .catch(() => setUserAvatarUrl(""));
-    }, [navigate, userId]);
+    }, [navigate, setUserEmail, setUserFirstName, setUserLastName, userId]);
 
     function handleSubmit() {
+        setFormSubmitted(true);
         updateUserDetails(
             userId,
-            userFirstName,
-            userLastName,
-            userEmail,
-            password,
-            currentPassword
+            userEmail.value,
+            userFirstName.value,
+            userLastName.value,
+            password.value,
+            currentPassword.value
         ).then(() => {
             navigate('/profile');
         }).catch((error) => {
@@ -171,24 +176,30 @@ export default function EditProfile(): React.ReactElement {
                                     fullWidth
                                     autoFocus
                                     label="First Name"
-                                    value={userFirstName}
+                                    value={userFirstName.value}
                                     onChange={(event) => setUserFirstName(event.target.value)}
+                                    error={formSubmitted && Boolean(userFirstName.error)}
+                                    helperText={formSubmitted && userFirstName.error}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     fullWidth
                                     label="Last Name"
-                                    value={userLastName}
+                                    value={userLastName.value}
                                     onChange={(event) => setUserLastName(event.target.value)}
+                                    error={formSubmitted && Boolean(userLastName.error)}
+                                    helperText={formSubmitted && userLastName.error}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
                                     label="Email Address"
-                                    value={userEmail}
+                                    value={userEmail.value}
                                     onChange={(event) => setUserEmail(event.target.value)}
+                                    error={formSubmitted && Boolean(userEmail.error)}
+                                    helperText={formSubmitted && userEmail.error}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -201,7 +212,7 @@ export default function EditProfile(): React.ReactElement {
                                 <PasswordInput
                                     required
                                     label="Current Password"
-                                    value={password}
+                                    value={password.value}
                                     onChange={(value) => setPassword(value)}
                                 />
                             </Grid>
@@ -209,7 +220,7 @@ export default function EditProfile(): React.ReactElement {
                                 <PasswordInput
                                     required
                                     label="New Password"
-                                    value={currentPassword}
+                                    value={currentPassword.value}
                                     onChange={(value) => setCurrentPassword(value)}
                                 />
                             </Grid>
