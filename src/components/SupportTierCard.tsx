@@ -9,10 +9,11 @@ import {SupportTier} from "../model/responseBodies.ts";
 
 interface SupportTierCardProps {
     supportTier: SupportTier,
-    onClick?: () => void
+    onClick?: () => void,
+    sx?: object
 }
 
-export default function SupportTierCard({supportTier, onClick}: SupportTierCardProps): React.ReactElement {
+export default function SupportTierCard({supportTier, onClick, sx}: SupportTierCardProps): React.ReactElement {
     const {
         title,
         description,
@@ -26,7 +27,8 @@ export default function SupportTierCard({supportTier, onClick}: SupportTierCardP
             flexDirection: "column",
             alignItems: "center",
             cursor: onClick !== undefined ? "pointer" : "default",
-            width: "100%"
+            width: "100%",
+            ...sx
         }}>
             <Typography variant="h6" component="div">
                 {title}
