@@ -10,55 +10,62 @@ import Box from "@mui/material/Box";
 import {createPetition, getAllCategories, uploadPetitionImage} from "../model/api.ts";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {MenuItem, Paper} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
 import CreateSupportTier from "../components/CreateSupportTier.tsx";
+import useFieldValidation from "../hooks/useFieldValidation.ts";
 import SupportTierCard from "../components/SupportTierCard.tsx";
 import UploadableImage from "../components/UploadableImage.tsx";
-import {formatServerResponse} from "../model/util.ts";
 import NavBar from "../components/NavBar.tsx";
 import {Category, PetitionCreation, SupportTier} from "../model/responseBodies.ts";
-import {useNavigate} from "react-router-dom";
+import {formatServerResponse} from "../model/util.ts";
 
 
 const defaultTheme = createTheme();
 
 export default function CreatePetition(): React.ReactElement {
     const navigate = useNavigate();
+
+    const [title, setTitle] = useFieldValidation({required: true});
+    const [description, setDescription] = useFieldValidation({required: true});
+    const [category, setCategory] = React.useState<number | undefined>();
+
     const [petitionImage, setPetitionImage] = React.useState<File | null>(null);
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     const [categories, setCategories] = React.useState<Array<Category>>([]);
-    const [showSupportTierModal, setShowSupportTierModal] = React.useState<boolean>(false);
     const [supportTiers, setSupportTiers] = React.useState<Array<SupportTier>>([]);
+
+    const [showSupportTierModal, setShowSupportTierModal] = React.useState<boolean>(false);
+    const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         if (isNaN(parseInt(localStorage.getItem('userId') || ''))) {
             navigate('/login');
         }
         getAllCategories()
-            .then((response: AxiosResponse<Array<Category>>) => {
-                setCategories(response.data);
-            })
-            .catch(() => {});
+            .then((response: AxiosResponse<Array<Category>>) => setCategories(response.data))
+            .catch(() => null);
     }, [navigate]);
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
+    function handleSubmit() {
+        setFormSubmitted(true);
+
         if (petitionImage === null) {
             setErrorMessage("Please upload an image for your petition.");
             return;
         }
-        createPetition(
-            data.get('petitionTitle') as string,
-            data.get('petitionDescription') as string,
-            parseInt(data.get('category') as string),
-            supportTiers
-        )
+
+        if (title.error || description.error || category === undefined) {
+            return;
+        }
+
+        createPetition(title.value, description.value, category, supportTiers)
             .then((response: AxiosResponse<PetitionCreation>) => {
                 if (petitionImage !== null) {
                     uploadPetitionImage(response.data.petitionId, petitionImage)
-                        .catch(() => {});
+                        .catch(() => {
+                        });
                 }
                 navigate(`/petition/${response.data.petitionId}`);
             })
@@ -112,7 +119,7 @@ export default function CreatePetition(): React.ReactElement {
                     <Typography component="h1" variant="h5">
                         New Petition
                     </Typography>
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{marginTop: 3}}>
+                    <Box sx={{marginTop: 3}}>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
                                 <Box sx={{display: 'flex', justifyContent: 'center'}}>
@@ -124,12 +131,14 @@ export default function CreatePetition(): React.ReactElement {
                                 <Grid container spacing={2}>
                                     <Grid item xs={12}>
                                         <TextField
-                                            name="petitionTitle"
                                             required
                                             fullWidth
-                                            id="petitionTitle"
-                                            label="Title"
                                             autoFocus
+                                            label="Title"
+                                            value={title.value}
+                                            onChange={(event) => setTitle(event.target.value)}
+                                            error={formSubmitted && Boolean(title.error)}
+                                            helperText={formSubmitted && title.error}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
@@ -137,20 +146,21 @@ export default function CreatePetition(): React.ReactElement {
                                             required
                                             fullWidth
                                             multiline
-                                            id="petitionDescription"
                                             label="Description"
-                                            name="petitionDescription"
+                                            value={description.value}
+                                            onChange={(event) => setDescription(event.target.value)}
+                                            error={formSubmitted && Boolean(description.error)}
+                                            helperText={formSubmitted && description.error}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
                                             select
-                                            label="Category"
-                                            id="category"
-                                            name="category"
-                                            defaultValue=""
-                                            fullWidth
                                             required
+                                            fullWidth
+                                            label="Category"
+                                            value={category}
+                                            onChange={(event) => setCategory(parseInt(event.target.value))}
                                         >
                                             {categoryOptions()}
                                         </TextField>
@@ -179,9 +189,9 @@ export default function CreatePetition(): React.ReactElement {
                             {errorMessage && formatServerResponse(errorMessage)}
                         </Typography>
                         <Button
-                            type="submit"
                             variant="contained"
                             sx={{marginTop: 3, marginBottom: 2, width: '50%'}}
+                            onClick={handleSubmit}
                         >
                             Create
                         </Button>
