@@ -29,7 +29,7 @@ export default function CreatePetition(): React.ReactElement {
 
     const [title, setTitle] = useFieldValidation({required: true, maxLength: 128});
     const [description, setDescription] = useFieldValidation({required: true, maxLength: 1024});
-    const [category, setCategory] = React.useState<number | undefined>();
+    const [category, setCategory] = React.useState<number | "">("");
 
     const [petitionImage, setPetitionImage] = React.useState<File | null>(null);
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
@@ -54,24 +54,28 @@ export default function CreatePetition(): React.ReactElement {
         if (petitionImage === null) {
             setErrorMessage("Please upload an image for your petition.");
             return;
+        } else {
+            setErrorMessage(null);
         }
 
-        if (title.error || description.error || category === undefined) {
+        if (supportTiers.length === 0) {
+            setErrorMessage("Please add at least one support tier.");
+            return;
+        } else {
+            setErrorMessage(null);
+        }
+
+        if (title.error || description.error || category === "") {
             return;
         }
 
         createPetition(title.value, description.value, category, supportTiers)
             .then((response: AxiosResponse<PetitionCreation>) => {
-                if (petitionImage !== null) {
-                    uploadPetitionImage(response.data.petitionId, petitionImage)
-                        .catch(() => {
-                        });
-                }
+                uploadPetitionImage(response.data.petitionId, petitionImage)
+                    .catch(() => null);
                 navigate(`/petition/${response.data.petitionId}`);
             })
-            .catch((error) => {
-                setErrorMessage(error.response.statusText);
-            });
+            .catch((error) => setErrorMessage(error.response.statusText));
     }
 
     function categoryOptions(): React.ReactElement[] {
@@ -161,13 +165,15 @@ export default function CreatePetition(): React.ReactElement {
                                             label="Category"
                                             value={category}
                                             onChange={(event) => setCategory(parseInt(event.target.value))}
+                                            error={formSubmitted && category == ""}
+                                            helperText={formSubmitted && category == "" && "Please select a category."}
                                         >
                                             {categoryOptions()}
                                         </TextField>
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={6} sx={{display: "flex", flexDirection: "column", gap: "10px"}}>
                                 {supportTierCards()}
                                 {supportTiers.length < 3 && <Button
                                     fullWidth
