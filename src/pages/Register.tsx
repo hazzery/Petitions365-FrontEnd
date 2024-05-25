@@ -33,6 +33,7 @@ export default function Register() {
     const [password, setPassword] = React.useState<string>('');
     const [userImage, setUserImage] = React.useState<File | null>(null);
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
+    const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
     const inputRef = React.useRef<HTMLInputElement | null>(null);
@@ -44,6 +45,7 @@ export default function Register() {
     });
 
     function handleSubmit() {
+        setFormSubmitted(true);
         register(email, firstName, lastName, password).then(() => {
             login(email, password)
                 .then((response: AxiosResponse<UserLogin>) => {
@@ -76,6 +78,28 @@ export default function Register() {
             setUserImage(null);
             setUserImageUrl(null);
         }
+    }
+
+    function firstNameError() {
+        return formSubmitted && (
+            firstName.length === 0 || firstName.length > 64
+        );
+    }
+
+    function lastNameError() {
+        return formSubmitted && (
+            lastName.length === 0 || lastName.length > 64
+        );
+    }
+
+    function emailError() {
+        // email regex from https://stackoverflow.com/a/46181/12311071
+        return formSubmitted && (
+            email.length === 0 || email.length > 256
+            || !email.toLowerCase().match(
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            )
+        );
     }
 
     return (
@@ -123,6 +147,7 @@ export default function Register() {
                                     autoComplete="given-name"
                                     value={firstName}
                                     onChange={(event) => setFirstName(event.target.value)}
+                                    error={firstNameError()}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -133,6 +158,7 @@ export default function Register() {
                                     autoComplete="family-name"
                                     value={lastName}
                                     onChange={(event) => setLastName(event.target.value)}
+                                    error={lastNameError()}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -143,6 +169,7 @@ export default function Register() {
                                     autoComplete="email"
                                     value={email}
                                     onChange={(event) => setEmail(event.target.value)}
+                                    error={emailError()}
                                 />
                             </Grid>
                             <Grid item xs={12}>
