@@ -34,7 +34,10 @@ export default function PetitionCard(
             padding: 2,
             width: '30%',
             position: 'relative',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            ":hover": {
+                backgroundColor: "#f0f0f0"
+            }
         }}>
             <CardMedia
                 component="img"
