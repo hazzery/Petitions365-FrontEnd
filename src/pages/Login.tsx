@@ -17,6 +17,7 @@ import NavBar from "../components/NavBar.tsx";
 import {UserLogin} from "../model/responseBodies.ts";
 import {login} from "../model/api.ts";
 import PasswordInput from "../components/PasswordInput.tsx";
+import useFieldValidation from "../hooks/useFieldValidation.ts";
 
 
 // The majority of this code was taken from the Material-UI example at
@@ -26,28 +27,28 @@ const defaultTheme = createTheme();
 
 export default function Login() {
     const navigate = useNavigate();
-    const [email, setEmail] = React.useState<string>('');
-    const [password, setPassword] = React.useState<string>('');
-    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+    const [email, setEmail] = useFieldValidation({required: true, email: true, maxLength: 256});
+    const [password, setPassword] = useFieldValidation({required: true, minLength: 6, maxLength: 64});
+    const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         if (localStorage.getItem('token')) {
             navigate('/petitions');
         }
-    });
+    }, [navigate]);
 
     function handleSubmit() {
-        login(email, password)
+        setFormSubmitted(true);
+        if (email.error || password.error) {
+            return;
+        }
+        login(email.value, password.value)
             .then((response: AxiosResponse<UserLogin>) => {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('userId', String(response.data.userId));
                 navigate('/petitions');
             })
-            .catch((error) => {
-                console.log(error.response.status);
-                console.log(error.response.statusText);
-                setErrorMessage("Invalid email or password");
-            });
+            .catch(() => null);
     }
 
     return (
@@ -74,18 +75,19 @@ export default function Login() {
                             margin="normal"
                             label="Email Address"
                             autoComplete="email"
-                            value={email}
+                            value={email.value}
                             onChange={(event) => setEmail(event.target.value)}
+                            error={formSubmitted && Boolean(email.error)}
+                            helperText={formSubmitted && email.error}
                         />
                         <PasswordInput
                             required
                             label="Password"
-                            value={password}
+                            value={password.value}
                             onChange={(value) => setPassword(value)}
+                            error={formSubmitted && Boolean(password.error)}
+                            helperText={formSubmitted && password.error}
                         />
-                        <Typography variant="body1" color="error">
-                            {errorMessage}
-                        </Typography>
                         <Button
                             fullWidth
                             variant="contained"
