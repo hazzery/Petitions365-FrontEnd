@@ -95,7 +95,7 @@ export default function EditProfile(): React.ReactElement {
             return;
         }
 
-        changeUserPassword(userId, currentPassword.value, password.value)
+        changeUserPassword(userId, password.value, currentPassword.value)
             .then(() => navigate('/profile'))
             .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
     }
