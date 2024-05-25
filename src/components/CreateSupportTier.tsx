@@ -42,11 +42,15 @@ export default function CreateSupportTier(
     function handleSubmit() {
         setFormSubmitted(true);
 
-        if (title.error || description.error) {
+        if (title.error || description.error || cost === "") {
             return;
         }
 
-        addSupportTier(title.value, description.value, cost as number);
+        addSupportTier(title.value, description.value, cost);
+        setFormSubmitted(false);
+        setTitle("");
+        setDescription("");
+        setCost("");
     }
 
     return (
@@ -83,6 +87,7 @@ export default function CreateSupportTier(
                         fullWidth
                         label="Cost"
                         onChange={setCost}
+                        formSubmitted={formSubmitted}
                     />
                     <Button
                         fullWidth
