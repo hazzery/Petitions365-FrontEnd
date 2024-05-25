@@ -1,5 +1,4 @@
-import React, {ChangeEvent} from "react";
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import React from "react";
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
@@ -9,7 +8,7 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
-import {CardMedia, MenuItem} from "@mui/material";
+import {MenuItem} from "@mui/material";
 import {createPetition, getAllCategories, uploadPetitionImage} from "../model/api.ts";
 import {AxiosResponse} from "axios";
 import {Category, PetitionCreation, SupportTier} from "../model/responseBodies.ts";
@@ -18,15 +17,14 @@ import SupportTierCard from "../components/SupportTierCard.tsx";
 import {formatServerResponse} from "../model/util.ts";
 import NavBar from "../components/NavBar.tsx";
 import {useNavigate} from "react-router-dom";
+import UploadableImage from "../components/UploadableImage.tsx";
 
 
 const defaultTheme = createTheme();
 
 export default function CreatePetition(): React.ReactElement {
     const navigate = useNavigate();
-    const inputRef = React.useRef<HTMLInputElement | null>(null);
     const [petitionImage, setPetitionImage] = React.useState<File | null>(null);
-    const [petitionImageUrl, setPetitionImageUrl] = React.useState<string | null>(null);
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     const [categories, setCategories] = React.useState<Array<Category>>([]);
     const [showSupportTierModal, setShowSupportTierModal] = React.useState<boolean>(false);
@@ -42,20 +40,6 @@ export default function CreatePetition(): React.ReactElement {
             })
             .catch(() => {});
     }, [navigate]);
-
-    function handleImageUpload() {
-        inputRef.current?.click();
-    }
-
-    function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-        if (event.target.files && event.target.files.length > 0) {
-            setPetitionImage(event.target.files[0]);
-            setPetitionImageUrl(URL.createObjectURL(event.target.files[0]));
-        } else {
-            setPetitionImage(null);
-            setPetitionImageUrl(null);
-        }
-    }
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -131,28 +115,10 @@ export default function CreatePetition(): React.ReactElement {
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
                                 <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                                    <CardMedia
-                                        component='div'
-                                        onClick={handleImageUpload}
-                                        sx={{
-                                            cursor: 'pointer',
-                                            marginY: 2,
-                                            maxWidth: "300px",
-                                            maxHeight: "300px",
-                                        }}>
-                                        {
-                                            petitionImageUrl ?
-                                                <img src={petitionImageUrl} alt="User"
-                                                     style={{objectFit: 'cover', width: '100%', height: '100%'}}/> :
-                                                <AddPhotoAlternateIcon sx={{fontSize: 50}} color="action"/>
-                                        }
-                                        <input
-                                            type="file"
-                                            ref={inputRef}
-                                            style={{display: 'none'}}
-                                            onChange={handleFileChange}
-                                        />
-                                    </CardMedia>
+                                    <UploadableImage
+                                        alt="Upload petition image here"
+                                        setImage={setPetitionImage}
+                                    />
                                 </Box>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12}>

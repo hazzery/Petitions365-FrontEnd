@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 
 
 interface ImageProps {
-    imageUrl: string,
+    imageUrl?: string | undefined,
     alt: string,
     setImage: (image: File | null) => void
 }
@@ -13,7 +13,7 @@ export default function UploadableImage(
     {imageUrl, alt, setImage}: ImageProps
 ): React.ReactElement {
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const [url, setUrl] = React.useState<string | null>(imageUrl);
+    const [url, setUrl] = React.useState<string | null>(imageUrl ?? null);
 
     function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
         if (event.target.files && event.target.files.length > 0) {
