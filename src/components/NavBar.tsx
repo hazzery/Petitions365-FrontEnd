@@ -63,7 +63,7 @@ export default function NavBar(): React.ReactElement {
     const menuOptions = !isNaN(userId) ? ['Manage Profile', 'My Petitions', 'Logout'] : ['Register', 'Login'];
 
     return (
-        <AppBar position="static">
+        <AppBar position="static" sx={{marginBottom: 6}}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <BallotIcon sx={{display: {xs: 'none', md: 'flex'}, mr: 1}}/>

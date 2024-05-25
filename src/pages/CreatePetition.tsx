@@ -104,7 +104,6 @@ export default function CreatePetition(): React.ReactElement {
             <Container component="main">
                 <CssBaseline/>
                 <Paper sx={{
-                    marginTop: '40px',
                     padding: '30px',
                     display: 'flex',
                     flexDirection: 'column',

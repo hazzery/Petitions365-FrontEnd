@@ -13,7 +13,7 @@ export default function NotFound() {
             <NavBar/>
             <Container component="main" maxWidth="xl">
                 <CssBaseline/>
-                <Typography variant="h3" sx={{marginTop: "30px"}}>
+                <Typography variant="h3">
                     Oopsy daisy, that page can't be found!
                 </Typography>
             </Container>

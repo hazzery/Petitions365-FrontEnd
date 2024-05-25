@@ -44,7 +44,6 @@ export default function UserProfile(): React.ReactElement {
             <Container component="main">
                 <CssBaseline/>
                 <Paper sx={{
-                    marginTop: 5,
                     padding: '30px',
                     display: 'flex',
                     flexDirection: 'column',

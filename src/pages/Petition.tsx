@@ -290,7 +290,6 @@ export default function Petition() {
             <Container component="main">
                 <CssBaseline/>
                 <Box sx={{
-                    marginTop: 8,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',

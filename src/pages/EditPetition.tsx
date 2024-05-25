@@ -82,7 +82,6 @@ export default function EditPetition(): React.ReactElement {
             <Container component="main">
                 <CssBaseline/>
                 <Box sx={{
-                    marginTop: 8,
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '20px',

@@ -17,7 +17,7 @@ export default function Landing(): React.ReactElement {
             <NavBar/>
             <Container component="main">
                 <CssBaseline/>
-                <Typography variant="h3" sx={{marginTop: '40px'}}>
+                <Typography variant="h3">
                     Welcome to Petitions365
                 </Typography>
                 <Box sx={{

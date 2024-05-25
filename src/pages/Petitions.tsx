@@ -156,7 +156,7 @@ export default function Petitions() {
                     flexDirection: "column",
                     alignItems: "center"
                 }}>
-                    <Typography variant="h2" sx={{marginY: '40px'}}>
+                    <Typography variant="h2" sx={{marginBottom: '40px'}}>
                         Petitions
                     </Typography>
                     <Box
