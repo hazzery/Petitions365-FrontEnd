@@ -19,6 +19,7 @@ import useFieldValidation from "../hooks/useFieldValidation.ts";
 import PasswordInput from "../components/PasswordInput.tsx";
 import NavBar from "../components/NavBar.tsx";
 import {
+    changeUserPassword,
     checkUserImage,
     getUser,
     removeUserProfileImage,
@@ -35,18 +36,19 @@ const defaultTheme = createTheme();
 export default function EditProfile(): React.ReactElement {
     const navigate = useNavigate();
 
-    const [userFirstName, setUserFirstName] = useFieldValidation({maxLength: 64});
-    const [userLastName, setUserLastName] = useFieldValidation({maxLength: 64});
-    const [userEmail, setUserEmail] = useFieldValidation({maxLength: 256, email: true});
-    const [password, setPassword] = useFieldValidation({minLength: 6, maxLength: 64});
-    const [currentPassword, setCurrentPassword] = useFieldValidation({minLength: 6, maxLength: 64});
+    const [userFirstName, setUserFirstName] = useFieldValidation({required: true, maxLength: 64});
+    const [userLastName, setUserLastName] = useFieldValidation({required: true, maxLength: 64});
+    const [userEmail, setUserEmail] = useFieldValidation({required: true, maxLength: 256, email: true});
+    const [password, setPassword] = useFieldValidation({required: true, minLength: 6, maxLength: 64});
+    const [currentPassword, setCurrentPassword] = useFieldValidation({required: true, minLength: 6, maxLength: 64});
 
     const [userAvatarUrl, setUserAvatarUrl] = React.useState<string>("");
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [userImage, setUserImage] = React.useState<File | null>(null);
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const [anchorImageMenu, setAnchorImageMenu] = React.useState<null | HTMLElement>(null);
-    const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
+    const [profileFormSubmitted, setProfileFormSubmitted] = React.useState<boolean>(false);
+    const [passwordFormSubmitted, setPasswordFormSubmitted] = React.useState<boolean>(false);
 
     const userId = parseInt(localStorage.getItem("userId") as string);
 
@@ -64,41 +66,46 @@ export default function EditProfile(): React.ReactElement {
             .catch(() => setUserAvatarUrl(""));
     }, [navigate, setUserEmail, setUserFirstName, setUserLastName, userId]);
 
-    function handleSubmit() {
-        setFormSubmitted(true);
+    function handleEditProfile() {
+        setProfileFormSubmitted(true);
+
+        if (userFirstName.error || userLastName.error || userEmail.error) {
+            return;
+        }
+
         updateUserDetails(
-            userId,
-            userEmail.value,
-            userFirstName.value,
-            userLastName.value,
-            password.value,
-            currentPassword.value
-        ).then(() => {
-            navigate('/profile');
-        }).catch((error) => {
-            setErrorMessage(
-                formatServerResponse(error.response.statusText)
-            );
-        });
+            userId, userEmail.value, userFirstName.value, userLastName.value,
+        )
+            .then(() => navigate('/profile'))
+            .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
+
         if (userImage !== null) {
             uploadUserImage(userId, userImage)
-                .catch(() => {});
+                .catch(() => null);
         } else if (userAvatarUrl === "") {
             removeUserProfileImage(userId)
-                .catch(() => {});
+                .catch(() => null);
         }
     }
 
-    function handleAvatarClick(event: React.MouseEvent<HTMLElement>) {
-        setAnchorImageMenu(event.currentTarget);
+    function handleChangePassword() {
+        setPasswordFormSubmitted(true);
+
+        if (password.error || currentPassword.error) {
+            return;
+        }
+
+        changeUserPassword(userId, currentPassword.value, password.value)
+            .then(() => navigate('/profile'))
+            .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
     }
 
-    function handleUploadImageClick() {
+    function handleNewImage() {
         inputRef.current?.click();
         setAnchorImageMenu(null);
     }
 
-    function handleRemoveImageClick() {
+    function handleRemoveImage() {
         setUserAvatarUrl("");
         setUserImage(null);
         setAnchorImageMenu(null);
@@ -115,7 +122,7 @@ export default function EditProfile(): React.ReactElement {
     return (
         <ThemeProvider theme={defaultTheme}>
             <NavBar/>
-            <Container component="main">
+            <Container component="main" maxWidth="sm">
                 <CssBaseline/>
                 <Paper sx={{
                     padding: '30px',
@@ -123,7 +130,7 @@ export default function EditProfile(): React.ReactElement {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}>
-                    <Avatar onClick={handleAvatarClick} sx={{
+                    <Avatar onClick={(event) => setAnchorImageMenu(event.currentTarget)} sx={{
                         cursor: 'pointer',
                         marginTop: 2,
                         width: 100,
@@ -158,10 +165,10 @@ export default function EditProfile(): React.ReactElement {
                         open={Boolean(anchorImageMenu)}
                         onClose={() => setAnchorImageMenu(null)}
                     >
-                        <MenuItem key="uploadImage" onClick={handleUploadImageClick}>
+                        <MenuItem key="uploadImage" onClick={handleNewImage}>
                             <Typography textAlign="center">Upload new profile image</Typography>
                         </MenuItem>
-                        <MenuItem key="removeImage" onClick={handleRemoveImageClick}>
+                        <MenuItem key="removeImage" onClick={handleRemoveImage}>
                             <Typography textAlign="center">Remove profile image</Typography>
                         </MenuItem>
                     </Menu>
@@ -174,8 +181,8 @@ export default function EditProfile(): React.ReactElement {
                                     label="First Name"
                                     value={userFirstName.value}
                                     onChange={(event) => setUserFirstName(event.target.value)}
-                                    error={formSubmitted && Boolean(userFirstName.error)}
-                                    helperText={formSubmitted && userFirstName.error}
+                                    error={profileFormSubmitted && Boolean(userFirstName.error)}
+                                    helperText={profileFormSubmitted && userFirstName.error}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -184,8 +191,8 @@ export default function EditProfile(): React.ReactElement {
                                     label="Last Name"
                                     value={userLastName.value}
                                     onChange={(event) => setUserLastName(event.target.value)}
-                                    error={formSubmitted && Boolean(userLastName.error)}
-                                    helperText={formSubmitted && userLastName.error}
+                                    error={profileFormSubmitted && Boolean(userLastName.error)}
+                                    helperText={profileFormSubmitted && userLastName.error}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -194,9 +201,19 @@ export default function EditProfile(): React.ReactElement {
                                     label="Email Address"
                                     value={userEmail.value}
                                     onChange={(event) => setUserEmail(event.target.value)}
-                                    error={formSubmitted && Boolean(userEmail.error)}
-                                    helperText={formSubmitted && userEmail.error}
+                                    error={profileFormSubmitted && Boolean(userEmail.error)}
+                                    helperText={profileFormSubmitted && userEmail.error}
                                 />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    sx={{marginTop: 3, marginBottom: 2}}
+                                    onClick={handleEditProfile}
+                                >
+                                    Update Profile
+                                </Button>
                             </Grid>
                             <Grid item xs={12}>
                                 <Divider sx={{marginY: "15px"}}/>
@@ -210,7 +227,8 @@ export default function EditProfile(): React.ReactElement {
                                     label="Current Password"
                                     value={password.value}
                                     onChange={(value) => setPassword(value)}
-                                    helperText={formSubmitted && currentPassword.error}
+                                    error={passwordFormSubmitted && Boolean(currentPassword.error)}
+                                    helperText={passwordFormSubmitted && currentPassword.error}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -219,21 +237,24 @@ export default function EditProfile(): React.ReactElement {
                                     label="New Password"
                                     value={currentPassword.value}
                                     onChange={(value) => setCurrentPassword(value)}
-                                    helperText={formSubmitted && password.error}
+                                    error={passwordFormSubmitted && Boolean(password.error)}
+                                    helperText={passwordFormSubmitted && password.error}
                                 />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    sx={{marginTop: 3}}
+                                    onClick={handleChangePassword}
+                                >
+                                    Change Password
+                                </Button>
                             </Grid>
                         </Grid>
                         <Typography variant="body1" color="error">
                             {errorMessage}
                         </Typography>
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            sx={{marginTop: 3, marginBottom: 2}}
-                            onClick={handleSubmit}
-                        >
-                            Update Profile
-                        </Button>
                     </Box>
                 </Paper>
             </Container>
