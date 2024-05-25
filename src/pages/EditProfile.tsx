@@ -36,6 +36,8 @@ export default function EditProfile(): React.ReactElement {
     const [userFirstName, setUserFirstName] = React.useState<string>("");
     const [userLastName, setUserLastName] = React.useState<string>("");
     const [userEmail, setUserEmail] = React.useState<string>("");
+    const [password, setPassword] = React.useState<string>("");
+    const [currentPassword, setCurrentPassword] = React.useState<string>("");
     const [userAvatarUrl, setUserAvatarUrl] = React.useState<string>("");
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [userImage, setUserImage] = React.useState<File | null>(null);
@@ -58,16 +60,14 @@ export default function EditProfile(): React.ReactElement {
             .catch(() => setUserAvatarUrl(""));
     }, [navigate, userId]);
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
+    function handleSubmit() {
         updateUserDetails(
             userId,
-            data.get('email') as string,
-            data.get('firstName') as string,
-            data.get('lastName') as string,
-            data.get('newPassword') as string,
-            data.get('currentPassword') as string
+            userFirstName,
+            userLastName,
+            userEmail,
+            password,
+            currentPassword
         ).then(() => {
             navigate('/profile');
         }).catch((error) => {
@@ -164,22 +164,20 @@ export default function EditProfile(): React.ReactElement {
                             <Typography textAlign="center">Remove profile image</Typography>
                         </MenuItem>
                     </Menu>
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
+                    <Box sx={{marginTop: 3}}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     fullWidth
-                                    name="firstName"
+                                    autoFocus
                                     label="First Name"
                                     value={userFirstName}
                                     onChange={(event) => setUserFirstName(event.target.value)}
-                                    autoFocus
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     fullWidth
-                                    name="lastName"
                                     label="Last Name"
                                     value={userLastName}
                                     onChange={(event) => setUserLastName(event.target.value)}
@@ -188,7 +186,6 @@ export default function EditProfile(): React.ReactElement {
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
-                                    name="email"
                                     label="Email Address"
                                     value={userEmail}
                                     onChange={(event) => setUserEmail(event.target.value)}
@@ -204,14 +201,16 @@ export default function EditProfile(): React.ReactElement {
                                 <PasswordInput
                                     required
                                     label="Current Password"
-                                    name="currentPassword"
+                                    value={password}
+                                    onChange={(value) => setPassword(value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <PasswordInput
                                     required
                                     label="New Password"
-                                    name="newPassword"
+                                    value={currentPassword}
+                                    onChange={(value) => setCurrentPassword(value)}
                                 />
                             </Grid>
                         </Grid>

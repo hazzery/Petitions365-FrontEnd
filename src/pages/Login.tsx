@@ -16,6 +16,7 @@ import {AxiosResponse} from "axios";
 import NavBar from "../components/NavBar.tsx";
 import {UserLogin} from "../model/responseBodies.ts";
 import {login} from "../model/api.ts";
+import PasswordInput from "../components/PasswordInput.tsx";
 
 
 // The majority of this code was taken from the Material-UI example at
@@ -25,6 +26,8 @@ const defaultTheme = createTheme();
 
 export default function Login() {
     const navigate = useNavigate();
+    const [email, setEmail] = React.useState<string>('');
+    const [password, setPassword] = React.useState<string>('');
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
     React.useEffect(() => {
@@ -33,10 +36,8 @@ export default function Login() {
         }
     });
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        login(data.get('email') as string, data.get('password') as string)
+    function handleSubmit() {
+        login(email, password)
             .then((response: AxiosResponse<UserLogin>) => {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('userId', String(response.data.userId));
@@ -59,7 +60,7 @@ export default function Login() {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}>
-                    <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+                    <Avatar sx={{margin: 1, backgroundColor: 'secondary.main'}}>
                         <LockOutlinedIcon/>
                     </Avatar>
                     <Typography component="h1" variant="h5">
@@ -67,33 +68,29 @@ export default function Login() {
                     </Typography>
                     <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
                         <TextField
-                            margin="normal"
                             required
                             fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
                             autoFocus
-                        />
-                        <TextField
                             margin="normal"
+                            label="Email Address"
+                            autoComplete="email"
+                            value={email}
+                            onChange={(event) => setEmail(event.target.value)}
+                        />
+                        <PasswordInput
                             required
-                            fullWidth
-                            name="password"
                             label="Password"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
+                            value={password}
+                            onChange={(value) => setPassword(value)}
                         />
                         <Typography variant="body1" color="error">
                             {errorMessage}
                         </Typography>
                         <Button
-                            type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{mt: 3, mb: 2}}
+                            sx={{marginTop: 3, marginBottom: 2}}
+                            onClick={handleSubmit}
                         >
                             Log In
                         </Button>

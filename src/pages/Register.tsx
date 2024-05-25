@@ -20,16 +20,20 @@ import {formatServerResponse} from "../model/util.ts";
 import {UserLogin} from "../model/responseBodies.ts";
 
 
-// The returned JSX is copied from the Material-UI template at:
+// The returned JSX has been modified from the Material-UI template at:
 // https://github.com/mui/material-ui/blob/v5.15.16/docs/data/material/getting-started/templates/sign-up/SignUp.tsx
 
 const defaultTheme = createTheme();
 
 export default function Register() {
     const navigate = useNavigate();
-    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+    const [firstName, setFirstName] = React.useState<string>('');
+    const [lastName, setLastName] = React.useState<string>('');
+    const [email, setEmail] = React.useState<string>('');
+    const [password, setPassword] = React.useState<string>('');
     const [userImage, setUserImage] = React.useState<File | null>(null);
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
     const inputRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -39,17 +43,8 @@ export default function Register() {
         }
     });
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        const email = data.get('email') as string;
-        const password = data.get('password') as string;
-        register(
-            email,
-            data.get('firstName') as string,
-            data.get('lastName') as string,
-            password
-        ).then(() => {
+    function handleSubmit() {
+        register(email, firstName, lastName, password).then(() => {
             login(email, password)
                 .then((response: AxiosResponse<UserLogin>) => {
                     const userId = response.data.userId;
@@ -60,12 +55,9 @@ export default function Register() {
                             .catch(() => null);
                     }
                 })
-                .catch((error) => {
-                    console.log(error.response);
-                });
+                .catch(() => null);
             navigate('/petitions');
         }).catch((error) => {
-            console.log(error.response);
             setErrorMessage(
                 formatServerResponse(error.response.statusText)
             );
@@ -120,51 +112,56 @@ export default function Register() {
                                 <AccountCircleIcon sx={{fontSize: 120}} color="action"/>
                         }
                     </Avatar>
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
+                    <Box sx={{marginTop: 3}}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    autoComplete="given-name"
-                                    name="firstName"
                                     required
                                     fullWidth
-                                    id="firstName"
-                                    label="First Name"
                                     autoFocus
+                                    label="First Name"
+                                    autoComplete="given-name"
+                                    value={firstName}
+                                    onChange={(event) => setFirstName(event.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     required
                                     fullWidth
-                                    id="lastName"
                                     label="Last Name"
-                                    name="lastName"
                                     autoComplete="family-name"
+                                    value={lastName}
+                                    onChange={(event) => setLastName(event.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
                                     required
                                     fullWidth
-                                    id="email"
                                     label="Email Address"
-                                    name="email"
                                     autoComplete="email"
+                                    value={email}
+                                    onChange={(event) => setEmail(event.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <PasswordInput required label="Password" name="password"/>
+                                <PasswordInput
+                                    required
+                                    label="Password"
+                                    value={password}
+                                    onChange={(value) => setPassword(value)}
+                                />
                             </Grid>
                         </Grid>
                         <Typography variant="body1" color="error">
                             {errorMessage}
                         </Typography>
                         <Button
-                            type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{mt: 3, mb: 2}}
+                            sx={{marginTop: 3, marginBottom: 2}}
+                            onClick={handleSubmit}
                         >
                             Register
                         </Button>

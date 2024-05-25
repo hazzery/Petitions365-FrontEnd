@@ -7,22 +7,24 @@ import {InputAdornment} from "@mui/material";
 
 
 interface PasswordInputProps {
-    name: string,
+    required?: boolean,
     label: string,
-    required?: boolean
+    value: string,
+    onChange: (value: string) => void
 }
 
 export default function PasswordInput(
-    {name, label, required}: PasswordInputProps
+    {required = false, label, value, onChange}: PasswordInputProps
 ): React.ReactElement {
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
     return (
         <TextField
-            required={required}
             fullWidth
-            name={name}
+            required={required}
             label={label}
+            value={value}
+            onChange={(event) => onChange(event.target.value)}
             type={showPassword ? "text" : "password"}
             autoComplete="new-password"
             InputProps={{
