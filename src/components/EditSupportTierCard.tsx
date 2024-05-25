@@ -17,11 +17,14 @@ interface EditSupportTierProps {
     removeSupportTierCard: (index: number) => void,
     petitionId: number,
     index: number,
-    onlySupportTier: boolean
+    onlySupportTier: boolean,
+    reFetch: () => void
 }
 
 export default function EditSupportTierCard(
-    {supportTier, numberOfSupporters, removeSupportTierCard, petitionId, index, onlySupportTier}: EditSupportTierProps
+    {
+        supportTier, numberOfSupporters, removeSupportTierCard, petitionId, index, onlySupportTier, reFetch
+    }: EditSupportTierProps
 ): React.ReactElement {
     const [title, setTitle] = useStringValidation({required: true, maxLength: 128}, supportTier?.title ?? "");
     const [description, setDescription] = useStringValidation({
@@ -59,8 +62,9 @@ export default function EditSupportTierCard(
                     })
                     .catch(() => null);
                 showSuccess();
+                reFetch();
             })
-            .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
+            .catch(() => setErrorMessage("Support tier titles must be unique"));
     }
 
     function updateSupportTier(): void {
@@ -69,13 +73,19 @@ export default function EditSupportTierCard(
             return;
         }
         editSupportTier(petitionId, supportTier.supportTierId as number, title.value, description.value, cost)
-            .then(showSuccess)
+            .then(() => {
+                showSuccess();
+                reFetch();
+            })
             .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
     }
 
     function removeSupportTier(): void {
         deleteSupportTier(petitionId, supportTier.supportTierId as number)
-            .then(() => removeSupportTierCard(index))
+            .then(() => {
+                removeSupportTierCard(index);
+                reFetch();
+            })
             .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
     }
 

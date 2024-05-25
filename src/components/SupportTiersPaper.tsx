@@ -2,10 +2,10 @@ import React from "react";
 import {Paper} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import {AbstractSupportTier, Supporter, SupportTier} from "../model/responseBodies.ts";
+import {AbstractSupportTier, PetitionDetails, Supporter, SupportTier} from "../model/responseBodies.ts";
 import EditSupportTierCard from "./EditSupportTierCard.tsx";
 import Button from "@mui/material/Button";
-import {getSupportersOfPetition} from "../model/api.ts";
+import {getPetitionDetails, getSupportersOfPetition} from "../model/api.ts";
 import {AxiosResponse} from "axios";
 
 interface SupportTiersPaperProps {
@@ -16,11 +16,14 @@ interface SupportTiersPaperProps {
 export default function SupportTiersPaper(
     {supportTiers, petitionId}: SupportTiersPaperProps
 ): React.ReactElement {
+    const [concreteSupportTiers, setConcreteSupportTiers] = React.useState<Array<SupportTier>>(supportTiers);
     const [supportTierCards, setSupportTierCards] = React.useState<Array<AbstractSupportTier>>(supportTiers);
     const [supportersMap, setSupportersMap] = React.useState<Map<number, Array<Supporter>>>(new Map());
+    const [reFetch, setReFetch] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         setSupportTierCards(supportTiers);
+        setConcreteSupportTiers(supportTiers);
     }, [supportTiers]);
 
     React.useEffect(() => {
@@ -37,6 +40,12 @@ export default function SupportTiersPaper(
             })
             .catch(() => null);
     }, [petitionId]);
+
+    React.useEffect(() => {
+        getPetitionDetails(Number(petitionId))
+            .then((response: AxiosResponse<PetitionDetails>) => setConcreteSupportTiers(response.data.supportTiers))
+            .catch(() => null);
+    }, [petitionId, reFetch]);
 
     function addSupportTier(): void {
         const newSupportTier = {title: "", description: "", cost: "" as const};
@@ -77,7 +86,10 @@ export default function SupportTiersPaper(
                             removeSupportTierCard={(index: number) => {
                                 setSupportTierCards(supportTierCards.filter((_, i) => i !== index));
                             }}
-                            onlySupportTier={supportTiers.length === 1 && supportTier.supportTierId !== undefined}
+                            onlySupportTier={
+                                concreteSupportTiers.length === 1 && supportTier.supportTierId !== undefined
+                            }
+                            reFetch={() => setReFetch(!reFetch)}
                         />
                     )
                 }
