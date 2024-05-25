@@ -13,11 +13,11 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
+import useFieldValidation from "../hooks/useFieldValidation.ts";
+import PasswordInput from "../components/PasswordInput.tsx";
 import NavBar from "../components/NavBar.tsx";
 import {UserLogin} from "../model/responseBodies.ts";
 import {login} from "../model/api.ts";
-import PasswordInput from "../components/PasswordInput.tsx";
-import useFieldValidation from "../hooks/useFieldValidation.ts";
 
 
 // The majority of this code was taken from the Material-UI example at
@@ -29,6 +29,7 @@ export default function Login() {
     const navigate = useNavigate();
     const [email, setEmail] = useFieldValidation({required: true, email: true, maxLength: 256});
     const [password, setPassword] = useFieldValidation({required: true, minLength: 6, maxLength: 64});
+    const [errorMessage, setErrorMessage] = React.useState<string | undefined>();
     const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
 
     React.useEffect(() => {
@@ -48,7 +49,7 @@ export default function Login() {
                 localStorage.setItem('userId', String(response.data.userId));
                 navigate('/petitions');
             })
-            .catch(() => null);
+            .catch(() => setErrorMessage("Incorrect email or password"));
     }
 
     return (
@@ -88,6 +89,12 @@ export default function Login() {
                             error={formSubmitted && Boolean(password.error)}
                             helperText={formSubmitted && password.error}
                         />
+                        {
+                            errorMessage &&
+                            <Typography variant="body1" color="error" sx={{marginTop: "15px"}}>
+                                {errorMessage}
+                            </Typography>
+                        }
                         <Button
                             fullWidth
                             variant="contained"
