@@ -46,6 +46,9 @@ export default function Register() {
 
     function handleSubmit() {
         setFormSubmitted(true);
+        if (firstName.error || lastName.error || email.error || password.error) {
+            return;
+        }
         register(
             email.value, firstName.value, lastName.value, password.value
         ).then(() => {
