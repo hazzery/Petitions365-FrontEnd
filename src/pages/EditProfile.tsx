@@ -218,10 +218,10 @@ export default function EditProfile(): React.ReactElement {
                             {errorMessage}
                         </Typography>
                         <Button
-                            type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{mt: 3, mb: 2}}
+                            sx={{marginTop: 3, marginBottom: 2}}
+                            onClick={handleSubmit}
                         >
                             Update Profile
                         </Button>
