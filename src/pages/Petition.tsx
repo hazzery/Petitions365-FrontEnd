@@ -386,19 +386,19 @@ export default function Petition() {
                         <Grid item xs={12} sm={12}>
                             <SupportersGrid supporters={supporters} supportTiers={supportTiers}/>
                         </Grid>
+                        <Grid item xs={12} sm={12}>
+                            <PetitionsGrid
+                                petitions={similarPetitions}
+                                categoryMap={categoryMap}
+                                title={
+                                    <Typography variant="h6" component="div" sx={{marginTop: '15px'}}>
+                                        Similar Petitions
+                                    </Typography>
+                                }
+                                children={undefined}
+                            />
+                        </Grid>
                     </Grid>
-                    <Box sx={{padding: 2, marginTop: 4}}>
-                        <PetitionsGrid
-                            petitions={similarPetitions}
-                            categoryMap={categoryMap}
-                            title={
-                                <Typography variant="h6" component="div" sx={{marginTop: '15px'}}>
-                                    Similar Petitions
-                                </Typography>
-                            }
-                            children={undefined}
-                        />
-                    </Box>
                 </Box>
             </Container>
         </ThemeProvider>
