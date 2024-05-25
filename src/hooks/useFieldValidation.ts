@@ -23,13 +23,17 @@ export default function useFieldValidation(
     useEffect(() => {
         let newError = null;
 
+        // email regex from Morgan English's code for the SENG65 reference server
+
         if (rules.required && value.trim() === '') {
             newError = 'This field is required';
         } else if (rules.maxLength && value.length > rules.maxLength) {
             newError = `This field cannot exceed ${rules.maxLength} characters`;
         } else if (rules.minLength && value.length < rules.minLength) {
             newError = `This field must be at least ${rules.minLength} characters`;
-        } else if (rules.email && !value.match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
+        } else if (rules.email && !value.match(
+            /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i
+        )) {
             newError = 'Invalid email format';
         }
 
