@@ -27,8 +27,8 @@ const defaultTheme = createTheme();
 export default function CreatePetition(): React.ReactElement {
     const navigate = useNavigate();
 
-    const [title, setTitle] = useFieldValidation({required: true});
-    const [description, setDescription] = useFieldValidation({required: true});
+    const [title, setTitle] = useFieldValidation({required: true, maxLength: 128});
+    const [description, setDescription] = useFieldValidation({required: true, maxLength: 1024});
     const [category, setCategory] = React.useState<number | undefined>();
 
     const [petitionImage, setPetitionImage] = React.useState<File | null>(null);
