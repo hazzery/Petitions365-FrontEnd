@@ -210,6 +210,7 @@ export default function EditProfile(): React.ReactElement {
                                     label="Current Password"
                                     value={password.value}
                                     onChange={(value) => setPassword(value)}
+                                    helperText={formSubmitted && currentPassword.error}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -218,6 +219,7 @@ export default function EditProfile(): React.ReactElement {
                                     label="New Password"
                                     value={currentPassword.value}
                                     onChange={(value) => setCurrentPassword(value)}
+                                    helperText={formSubmitted && password.error}
                                 />
                             </Grid>
                         </Grid>
