@@ -45,7 +45,7 @@ export default function EditProfile(): React.ReactElement {
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [userImage, setUserImage] = React.useState<File | null>(null);
     const inputRef = React.useRef<HTMLInputElement | null>(null);
-    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+    const [anchorImageMenu, setAnchorImageMenu] = React.useState<null | HTMLElement>(null);
     const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
 
     const userId = parseInt(localStorage.getItem("userId") as string);
@@ -90,22 +90,18 @@ export default function EditProfile(): React.ReactElement {
     }
 
     function handleAvatarClick(event: React.MouseEvent<HTMLElement>) {
-        setAnchorElUser(event.currentTarget);
-    }
-
-    function closeProfileImageMenu() {
-        setAnchorElUser(null);
+        setAnchorImageMenu(event.currentTarget);
     }
 
     function handleUploadImageClick() {
         inputRef.current?.click();
-        closeProfileImageMenu();
+        setAnchorImageMenu(null);
     }
 
     function handleRemoveImageClick() {
         setUserAvatarUrl("");
         setUserImage(null);
-        closeProfileImageMenu();
+        setAnchorImageMenu(null);
     }
 
     function handleFileChange(event: React.ChangeEvent<HTMLInputElement>): void {
@@ -149,7 +145,7 @@ export default function EditProfile(): React.ReactElement {
                     <Menu
                         sx={{marginTop: '45px'}}
                         id="menu-appbar"
-                        anchorEl={anchorElUser}
+                        anchorEl={anchorImageMenu}
                         anchorOrigin={{
                             vertical: 'top',
                             horizontal: 'right',
@@ -159,8 +155,8 @@ export default function EditProfile(): React.ReactElement {
                             vertical: 'top',
                             horizontal: 'right',
                         }}
-                        open={Boolean(anchorElUser)}
-                        onClose={closeProfileImageMenu}
+                        open={Boolean(anchorImageMenu)}
+                        onClose={() => setAnchorImageMenu(null)}
                     >
                         <MenuItem key="uploadImage" onClick={handleUploadImageClick}>
                             <Typography textAlign="center">Upload new profile image</Typography>
