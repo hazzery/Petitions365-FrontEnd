@@ -43,7 +43,7 @@ const defaultTheme = createTheme();
 
 export default function Petition() {
     const {petitionId} = useParams();
-    const [petitionIdNumber] = React.useState<number>(parseInt(petitionId as string));
+    const [petitionIdNumber, setPetitionIdNumber] = React.useState<number>(parseInt(petitionId as string));
     const navigate = useNavigate();
     const [creationDate, setCreationDate] = React.useState<string>("");
     const [imageURL, setImageURL] = React.useState<string>("");
@@ -67,6 +67,16 @@ export default function Petition() {
     //     return <NotFound/>;
     // }
     React.useEffect(() => {
+        if (isNaN(petitionIdNumber)) {
+            navigate("/not-found");
+        }
+    }, [petitionIdNumber, navigate]);
+
+    React.useEffect(() => {
+        setPetitionIdNumber(parseInt(petitionId as string));
+    }, [petitionId]);
+
+    React.useEffect(() => {
         getPetitionDetails(petitionIdNumber)
             .then((response: AxiosResponse<PetitionDetails>) => {
                 setCreationDate(response.data.creationDate);
@@ -86,6 +96,7 @@ export default function Petition() {
                 setTitle(error.response.status.toString());
                 setDescription(error.response.statusText);
             });
+        window.scrollTo(0, 0);
     }, [petitionIdNumber]);
 
     React.useEffect(() => {
@@ -157,7 +168,7 @@ export default function Petition() {
     }
 
     function removePetition(): void {
-        deletePetition(Number(petitionId))
+        deletePetition(petitionIdNumber)
             .then(() => navigate("/petitions"))
             .catch(() => null);
     }
