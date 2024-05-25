@@ -177,6 +177,11 @@ export default function Petition() {
                 key={index}
                 supportTier={supportTier}
                 onClick={() => supportSupportTier(supportTier.supportTierId)}
+                sx={{
+                    ":hover": {
+                        backgroundColor: "#f0f0f0"
+                    }
+                }}
             />
         );
     }
