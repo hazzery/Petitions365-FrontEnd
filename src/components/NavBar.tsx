@@ -31,12 +31,9 @@ export default function NavBar(): React.ReactElement {
     }
 
     function handleLogout() {
-        logout()
-            .then(() => {
-                localStorage.clear();
-                navigate('/login');
-            })
-            .catch(() => null);
+        logout().catch(() => null);
+        localStorage.clear();
+        navigate('/login');
     }
 
     function handleMyPetitions() {
