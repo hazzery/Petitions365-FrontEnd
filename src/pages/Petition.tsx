@@ -1,5 +1,4 @@
 import React from "react";
-
 import CssBaseline from "@mui/material/CssBaseline";
 import GroupIcon from "@mui/icons-material/Group";
 import Typography from "@mui/material/Typography";
@@ -7,7 +6,6 @@ import PaidIcon from "@mui/icons-material/Paid";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
-import Modal from "@mui/material/Modal";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
@@ -15,6 +13,12 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Card, CardMedia, Paper} from "@mui/material";
 import {AxiosResponse} from "axios";
 
+import SupportTierCard from "../components/SupportTierCard.tsx";
+import SelectTierModal from "../components/SelectTierModal.tsx";
+import SupportersGrid from "../components/SupportersGrid.tsx";
+import PetitionsGrid from "../components/PetitionsGrid.tsx";
+import BoxModal from "../components/BoxModal.tsx";
+import NavBar from "../components/NavBar.tsx";
 import {
     deletePetition,
     getAllCategories,
@@ -22,7 +26,6 @@ import {
     getPetitionDetails,
     getSupportersOfPetition,
     petitionImageUrl,
-    supportPetition,
     userImageUrl
 } from "../model/api.ts";
 import {
@@ -33,11 +36,7 @@ import {
     Supporter,
     SupportTier
 } from "../model/responseBodies.ts";
-import SupportTierCard from "../components/SupportTierCard.tsx";
-import PetitionsGrid from "../components/PetitionsGrid.tsx";
-import NavBar from "../components/NavBar.tsx";
 import {formatDate} from "../model/util.ts";
-import SupportersGrid from "../components/SupportersGrid.tsx";
 
 
 const defaultTheme = createTheme();
@@ -148,40 +147,11 @@ export default function Petition() {
 
     }, []);
 
-    function supportSupportTier(supportTierId: number): void {
-        supportPetition(Number(petitionId), supportTierId)
-            .then(() => setShowSupportModal(false))
-            .catch(() => null);
-    }
-
     function supportTierCards(): React.ReactElement[] {
         return supportTiers.map(
             (supportTier: SupportTier, index: number) => <SupportTierCard
                 key={index}
                 supportTier={supportTier}
-            />
-        );
-    }
-
-    function supportableTierCards(): React.ReactElement[] {
-        const supportedTiers = supporters.filter(
-            (supporter: Supporter) => supporter.supporterId === parseInt(localStorage.getItem("userId") as string)
-        ).map((supporter: Supporter) => supporter.supportTierId);
-
-        const supportableTiers = supportTiers.filter(
-            (supportTier: SupportTier) => !supportedTiers.includes(supportTier.supportTierId)
-        );
-
-        return supportableTiers.map(
-            (supportTier: SupportTier, index: number) => <SupportTierCard
-                key={index}
-                supportTier={supportTier}
-                onClick={() => supportSupportTier(supportTier.supportTierId)}
-                sx={{
-                    ":hover": {
-                        backgroundColor: "#f0f0f0"
-                    }
-                }}
             />
         );
     }
@@ -206,32 +176,13 @@ export default function Petition() {
                         Delete Petition
                     </Button>
                 }
-                <Modal
-                    open={showDeleteModal}
-                    onClose={() => setShowDeleteModal(false)}
-                    aria-labelledby="modal-modal-title"
-                >
-                    <Box sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 500,
-                        bgcolor: 'background.paper',
-                        borderRadius: '20px',
-                        boxShadow: 24,
-                        p: 4,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 2
-                    }}>
+                <BoxModal open={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
                             Are you sure you want to delete this petition?
                         </Typography>
                         <Button variant="contained" color="error" onClick={removePetition}>Delete</Button>
                         <Button variant="contained" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
-                    </Box>
-                </Modal>
+                </BoxModal>
             </>
         );
     }
@@ -258,28 +209,13 @@ export default function Petition() {
                 <Button variant="contained" color="primary" onClick={() => setShowSupportModal(true)}>
                     Support this petition
                 </Button>
-                <Modal open={showSupportModal} onClose={() => setShowSupportModal(false)}>
-                    <Box sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 500,
-                        bgcolor: 'background.paper',
-                        borderRadius: '20px',
-                        boxShadow: 24,
-                        p: 4,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 2,
-                        alignItems: 'center'
-                    }}>
-                        <Typography variant="h6" component="h2">
-                            Select a tier to support
-                        </Typography>
-                        {supportableTierCards()}
-                    </Box>
-                </Modal>
+                <SelectTierModal
+                    open={showSupportModal}
+                    onClose={() => setShowSupportModal(false)}
+                    supporters={supporters}
+                    supportTiers={supportTiers}
+                    petitionId={Number(petitionId)}
+                />
             </>
         );
     }
