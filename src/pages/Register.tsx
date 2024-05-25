@@ -16,8 +16,8 @@ import {AxiosResponse} from "axios";
 import PasswordInput from "../components/PasswordInput.tsx";
 import NavBar from "../components/NavBar.tsx";
 import {login, register, uploadUserImage} from "../model/api.ts";
-import {formatServerResponse} from "../model/util.ts";
 import {UserLogin} from "../model/responseBodies.ts";
+import useFieldValidation from "../hooks/useFieldValidation.ts";
 
 
 // The returned JSX has been modified from the Material-UI template at:
@@ -27,14 +27,14 @@ const defaultTheme = createTheme();
 
 export default function Register() {
     const navigate = useNavigate();
-    const [firstName, setFirstName] = React.useState<string>('');
-    const [lastName, setLastName] = React.useState<string>('');
-    const [email, setEmail] = React.useState<string>('');
-    const [password, setPassword] = React.useState<string>('');
+    const [firstName, setFirstName] = useFieldValidation({required: true, maxLength: 64});
+    const [lastName, setLastName] = useFieldValidation({required: true, maxLength: 64});
+    const [email, setEmail] = useFieldValidation({required: true, maxLength: 256, email: true});
+    const [password, setPassword] = useFieldValidation({required: true, minLength: 6});
+
     const [userImage, setUserImage] = React.useState<File | null>(null);
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
     const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
     const inputRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -46,8 +46,10 @@ export default function Register() {
 
     function handleSubmit() {
         setFormSubmitted(true);
-        register(email, firstName, lastName, password).then(() => {
-            login(email, password)
+        register(
+            email.value, firstName.value, lastName.value, password.value
+        ).then(() => {
+            login(email.value, password.value)
                 .then((response: AxiosResponse<UserLogin>) => {
                     const userId = response.data.userId;
                     localStorage.setItem('token', response.data.token);
@@ -59,11 +61,7 @@ export default function Register() {
                 })
                 .catch(() => null);
             navigate('/petitions');
-        }).catch((error) => {
-            setErrorMessage(
-                formatServerResponse(error.response.statusText)
-            );
-        });
+        }).catch(() => null);
     }
 
     function handleAvatarClick() {
@@ -78,28 +76,6 @@ export default function Register() {
             setUserImage(null);
             setUserImageUrl(null);
         }
-    }
-
-    function firstNameError() {
-        return formSubmitted && (
-            firstName.length === 0 || firstName.length > 64
-        );
-    }
-
-    function lastNameError() {
-        return formSubmitted && (
-            lastName.length === 0 || lastName.length > 64
-        );
-    }
-
-    function emailError() {
-        // email regex from https://stackoverflow.com/a/46181/12311071
-        return formSubmitted && (
-            email.length === 0 || email.length > 256
-            || !email.toLowerCase().match(
-                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            )
-        );
     }
 
     return (
@@ -145,9 +121,10 @@ export default function Register() {
                                     autoFocus
                                     label="First Name"
                                     autoComplete="given-name"
-                                    value={firstName}
+                                    value={firstName.value}
                                     onChange={(event) => setFirstName(event.target.value)}
-                                    error={firstNameError()}
+                                    error={formSubmitted && Boolean(firstName.error)}
+                                    helperText={formSubmitted && firstName.error}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -156,9 +133,10 @@ export default function Register() {
                                     fullWidth
                                     label="Last Name"
                                     autoComplete="family-name"
-                                    value={lastName}
+                                    value={lastName.value}
                                     onChange={(event) => setLastName(event.target.value)}
-                                    error={lastNameError()}
+                                    error={formSubmitted && Boolean(lastName.error)}
+                                    helperText={formSubmitted && lastName.error}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -167,23 +145,23 @@ export default function Register() {
                                     fullWidth
                                     label="Email Address"
                                     autoComplete="email"
-                                    value={email}
+                                    value={email.value}
                                     onChange={(event) => setEmail(event.target.value)}
-                                    error={emailError()}
+                                    error={formSubmitted && Boolean(email.error)}
+                                    helperText={formSubmitted && email.error}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <PasswordInput
                                     required
                                     label="Password"
-                                    value={password}
+                                    value={password.value}
                                     onChange={(value) => setPassword(value)}
+                                    error={formSubmitted && Boolean(password.error)}
+                                    helperText={formSubmitted && password.error}
                                 />
                             </Grid>
                         </Grid>
-                        <Typography variant="body1" color="error">
-                            {errorMessage}
-                        </Typography>
                         <Button
                             fullWidth
                             variant="contained"
