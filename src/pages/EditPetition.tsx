@@ -12,6 +12,7 @@ import {MenuItem, Paper} from "@mui/material";
 import {AxiosResponse} from "axios";
 
 import SupportTiersPaper from "../components/SupportTiersPaper.tsx";
+import useStringValidation from "../hooks/useStringValidation.ts";
 import UploadableImage from "../components/UploadableImage.tsx";
 import NavBar from "../components/NavBar.tsx";
 import {
@@ -31,13 +32,14 @@ export default function EditPetition(): React.ReactElement {
     const {petitionId} = useParams();
     const navigate = useNavigate();
 
-    const [title, setTitle] = React.useState<string>("");
-    const [description, setDescription] = React.useState<string>("");
-    const [categoryId, setCategoryId] = React.useState<number>(NaN);
+    const [title, setTitle] = useStringValidation({required: true, maxLength: 128});
+    const [description, setDescription] = useStringValidation({required: true, maxLength: 1024});
+    const [categoryId, setCategoryId] = React.useState<number | "">("");
     const [image, setImage] = React.useState<File | null>(null);
     const [supportTiers, setSupportTiers] = React.useState<Array<SupportTier>>([]);
 
-    const [errorMessage, setErrorMessage] = React.useState<string>("");
+    const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     const [categories, setCategories] = React.useState<Array<Category>>([]);
 
     React.useEffect(() => {
@@ -54,7 +56,7 @@ export default function EditPetition(): React.ReactElement {
         getAllCategories()
             .then((response: AxiosResponse<Array<Category>>) => setCategories(response.data))
             .catch(() => null);
-    }, [petitionId]);
+    }, [petitionId, setDescription, setTitle]);
 
     function categoryOptions(): React.ReactElement[] {
         return categories.map((category: Category) => (
@@ -65,7 +67,20 @@ export default function EditPetition(): React.ReactElement {
     }
 
     function handleSavePetition(): void {
-        editPetition(Number(petitionId), title, description, categoryId)
+        setFormSubmitted(true);
+
+        if (categoryId === "") {
+            setErrorMessage("Please select a category");
+            return;
+        } else {
+            setErrorMessage(null);
+        }
+
+        if (title.error || description.error) {
+            return;
+        }
+
+        editPetition(Number(petitionId), title.value, description.value, categoryId)
             .then(() => {
                 if (image) {
                     uploadPetitionImage(Number(petitionId), image)
@@ -105,8 +120,10 @@ export default function EditPetition(): React.ReactElement {
                                     autoFocus
                                     name="petitionTitle"
                                     label="Title"
-                                    value={title}
+                                    value={title.value}
                                     onChange={(event: ChangeEvent<HTMLInputElement>) => setTitle(event.target.value)}
+                                    error={formSubmitted && Boolean(title.error)}
+                                    helperText={formSubmitted && title.error}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -115,7 +132,9 @@ export default function EditPetition(): React.ReactElement {
                                     multiline
                                     name="petitionDescription"
                                     label="Description"
-                                    value={description}
+                                    value={description.value}
+                                    error={formSubmitted && Boolean(description.error)}
+                                    helperText={formSubmitted && description.error}
                                     onChange={
                                         (event: ChangeEvent<HTMLTextAreaElement>) => setDescription(event.target.value)
                                     }
@@ -127,7 +146,7 @@ export default function EditPetition(): React.ReactElement {
                                     fullWidth
                                     name="category"
                                     label="Category"
-                                    value={!isNaN(categoryId) ? categoryId : ""}
+                                    value={categoryId}
                                     onChange={
                                         (event: ChangeEvent<HTMLInputElement>) => setCategoryId(parseInt(event.target.value))
                                     }
