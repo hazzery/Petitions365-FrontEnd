@@ -35,6 +35,7 @@ export default function Register() {
     const [userImage, setUserImage] = React.useState<File | null>(null);
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
     const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = React.useState<string | undefined>();
 
     const inputRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -64,7 +65,7 @@ export default function Register() {
                 })
                 .catch(() => null);
             navigate('/petitions');
-        }).catch(() => null);
+        }).catch(() => setErrorMessage("Email address already in use"));
     }
 
     function handleAvatarClick() {
@@ -163,6 +164,14 @@ export default function Register() {
                                     error={formSubmitted && Boolean(password.error)}
                                     helperText={formSubmitted && password.error}
                                 />
+                            </Grid>
+                            <Grid item xs={12}>
+                                {
+                                    errorMessage &&
+                                    <Typography variant="body1" color="error" sx={{marginTop: 0}}>
+                                        {errorMessage}
+                                    </Typography>
+                                }
                             </Grid>
                         </Grid>
                         <Button
