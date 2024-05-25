@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 
+import useFieldValidation from "../hooks/useFieldValidation.ts";
 import CostInput from "./CostInput.tsx";
 
 
@@ -14,7 +15,7 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
-    bgcolor: 'background.paper',
+    backgroundColor: 'background.paper',
     borderRadius: 4,
     boxShadow: 24,
     p: 4,
@@ -32,9 +33,21 @@ interface CreateSupportTierProps {
 export default function CreateSupportTier(
     {open, handleClose, addSupportTier}: CreateSupportTierProps
 ): React.ReactElement {
-    const [title, setTitle] = React.useState<string>("");
-    const [description, setDescription] = React.useState<string>("");
+    const [title, setTitle] = useFieldValidation({required: true, maxLength: 128});
+    const [description, setDescription] = useFieldValidation({required: true, maxLength: 1024});
     const [cost, setCost] = React.useState<number | "">("");
+
+    const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
+
+    function handleSubmit() {
+        setFormSubmitted(true);
+
+        if (title.error || description.error) {
+            return;
+        }
+
+        addSupportTier(title.value, description.value, cost as number);
+    }
 
     return (
         <div>
@@ -51,15 +64,19 @@ export default function CreateSupportTier(
                         required
                         fullWidth
                         label="Title"
-                        value={title}
+                        value={title.value}
                         onChange={(event) => setTitle(event.target.value)}
+                        error={formSubmitted && Boolean(title.error)}
+                        helperText={formSubmitted && title.error}
                     />
                     <TextField
                         required
                         fullWidth
                         label="Description"
-                        value={description}
+                        value={description.value}
                         onChange={(event) => setDescription(event.target.value)}
+                        error={formSubmitted && Boolean(description.error)}
+                        helperText={formSubmitted && description.error}
                     />
                     <CostInput
                         required
@@ -71,7 +88,7 @@ export default function CreateSupportTier(
                         fullWidth
                         variant="contained"
                         color="primary"
-                        onClick={() => addSupportTier(title, description, cost as number)}
+                        onClick={handleSubmit}
                     >
                         Create
                     </Button>
