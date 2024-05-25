@@ -2,12 +2,13 @@ import React from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {Alert, Card, CardActions, CardContent} from "@mui/material";
-
-import CostInput from "./CostInput.tsx";
-import {AbstractSupportTier, PetitionDetails} from "../model/responseBodies.ts";
-import {createSupportTier, deleteSupportTier, editSupportTier, getPetitionDetails} from "../model/api.ts";
-import {formatServerResponse} from "../model/util.ts";
 import {AxiosResponse} from "axios";
+
+import useStringValidation from "../hooks/useStringValidation.ts";
+import CostInput from "./CostInput.tsx";
+import {createSupportTier, deleteSupportTier, editSupportTier, getPetitionDetails} from "../model/api.ts";
+import {AbstractSupportTier, PetitionDetails} from "../model/responseBodies.ts";
+import {formatServerResponse} from "../model/util.ts";
 
 
 interface EditSupportTierProps {
@@ -22,9 +23,14 @@ interface EditSupportTierProps {
 export default function EditSupportTierCard(
     {supportTier, numberOfSupporters, removeSupportTierCard, petitionId, index, onlySupportTier}: EditSupportTierProps
 ): React.ReactElement {
-    const [title, setTitle] = React.useState<string>(supportTier?.title ?? "");
-    const [description, setDescription] = React.useState<string>(supportTier?.description ?? "");
+    const [title, setTitle] = useStringValidation({required: true, maxLength: 128}, supportTier?.title ?? "");
+    const [description, setDescription] = useStringValidation({
+        required: true,
+        maxLength: 1024
+    }, supportTier?.description ?? "");
     const [cost, setCost] = React.useState<number | "">(supportTier?.cost ?? "");
+
+    const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [success, setSuccess] = React.useState<boolean>(false);
 
@@ -35,12 +41,17 @@ export default function EditSupportTierCard(
     }
 
     function addSupportTier(): void {
-        createSupportTier(petitionId, title, description, cost as number)
+        if (title.error || description.error || cost === "") {
+            setFormSubmitted(true);
+            return;
+        }
+
+        createSupportTier(petitionId, title.value, description.value, cost)
             .then(() => {
                 getPetitionDetails(petitionId)
                     .then((response: AxiosResponse<PetitionDetails>) => {
                         for (const tier of response.data.supportTiers) {
-                            if (tier.title === title) {
+                            if (tier.title === title.value) {
                                 supportTier.supportTierId = tier.supportTierId;
                                 break;
                             }
@@ -53,7 +64,11 @@ export default function EditSupportTierCard(
     }
 
     function updateSupportTier(): void {
-        editSupportTier(petitionId, supportTier.supportTierId as number, title, description, cost as number)
+        if (title.error || description.error || cost === "") {
+            setFormSubmitted(true);
+            return;
+        }
+        editSupportTier(petitionId, supportTier.supportTierId as number, title.value, description.value, cost)
             .then(showSuccess)
             .catch((error) => setErrorMessage(formatServerResponse(error.response.statusText)));
     }
@@ -106,27 +121,32 @@ export default function EditSupportTierCard(
                     required
                     fullWidth
                     label="Title"
-                    value={title}
+                    value={title.value}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => setTitle(event.target.value)}
                     disabled={!editable()}
+                    error={formSubmitted && Boolean(title.error)}
+                    helperText={formSubmitted && title.error}
                 />
                 <TextField
                     required
                     fullWidth
                     multiline
                     label="Description"
-                    value={description}
+                    value={description.value}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDescription(event.target.value)}
                     InputProps={{sx: {height: "150px", alignItems: "flex-start"}}}
                     disabled={!editable()}
+                    error={formSubmitted && Boolean(description.error)}
+                    helperText={formSubmitted && description.error}
                 />
                 <CostInput
-                    fullWidth
                     required
+                    fullWidth
                     label="Cost"
                     defaultValue={cost}
                     onChange={setCost}
                     disabled={!editable()}
+                    formSubmitted={formSubmitted}
                 />
                 <Alert severity="error" sx={{display: errorMessage === "" ? "none" : "block", width: "100%"}}>
                     {errorMessage}
