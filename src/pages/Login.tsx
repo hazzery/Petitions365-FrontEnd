@@ -13,7 +13,7 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
-import useFieldValidation from "../hooks/useFieldValidation.ts";
+import useStringValidation from "../hooks/useStringValidation.ts";
 import PasswordInput from "../components/PasswordInput.tsx";
 import NavBar from "../components/NavBar.tsx";
 import {UserLogin} from "../model/responseBodies.ts";
@@ -27,8 +27,8 @@ const defaultTheme = createTheme();
 
 export default function Login() {
     const navigate = useNavigate();
-    const [email, setEmail] = useFieldValidation({required: true, email: true, maxLength: 256});
-    const [password, setPassword] = useFieldValidation({required: true, minLength: 6, maxLength: 64});
+    const [email, setEmail] = useStringValidation({required: true, email: true, maxLength: 256});
+    const [password, setPassword] = useStringValidation({required: true, minLength: 6, maxLength: 64});
     const [errorMessage, setErrorMessage] = React.useState<string | undefined>();
     const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
 

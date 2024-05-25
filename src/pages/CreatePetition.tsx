@@ -14,7 +14,7 @@ import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
 import CreateSupportTier from "../components/CreateSupportTier.tsx";
-import useFieldValidation from "../hooks/useFieldValidation.ts";
+import useStringValidation from "../hooks/useStringValidation.ts";
 import SupportTierCard from "../components/SupportTierCard.tsx";
 import UploadableImage from "../components/UploadableImage.tsx";
 import NavBar from "../components/NavBar.tsx";
@@ -27,8 +27,8 @@ const defaultTheme = createTheme();
 export default function CreatePetition(): React.ReactElement {
     const navigate = useNavigate();
 
-    const [title, setTitle] = useFieldValidation({required: true, maxLength: 128});
-    const [description, setDescription] = useFieldValidation({required: true, maxLength: 1024});
+    const [title, setTitle] = useStringValidation({required: true, maxLength: 128});
+    const [description, setDescription] = useStringValidation({required: true, maxLength: 1024});
     const [category, setCategory] = React.useState<number | "">("");
 
     const [petitionImage, setPetitionImage] = React.useState<File | null>(null);

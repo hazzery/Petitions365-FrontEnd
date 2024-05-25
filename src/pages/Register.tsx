@@ -17,7 +17,7 @@ import PasswordInput from "../components/PasswordInput.tsx";
 import NavBar from "../components/NavBar.tsx";
 import {login, register, uploadUserImage} from "../model/api.ts";
 import {UserLogin} from "../model/responseBodies.ts";
-import useFieldValidation from "../hooks/useFieldValidation.ts";
+import useStringValidation from "../hooks/useStringValidation.ts";
 
 
 // The returned JSX has been modified from the Material-UI template at:
@@ -27,10 +27,10 @@ const defaultTheme = createTheme();
 
 export default function Register() {
     const navigate = useNavigate();
-    const [firstName, setFirstName] = useFieldValidation({required: true, maxLength: 64});
-    const [lastName, setLastName] = useFieldValidation({required: true, maxLength: 64});
-    const [email, setEmail] = useFieldValidation({required: true, maxLength: 256, email: true});
-    const [password, setPassword] = useFieldValidation({required: true, minLength: 6});
+    const [firstName, setFirstName] = useStringValidation({required: true, maxLength: 64});
+    const [lastName, setLastName] = useStringValidation({required: true, maxLength: 64});
+    const [email, setEmail] = useStringValidation({required: true, maxLength: 256, email: true});
+    const [password, setPassword] = useStringValidation({required: true, minLength: 6});
 
     const [userImage, setUserImage] = React.useState<File | null>(null);
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);

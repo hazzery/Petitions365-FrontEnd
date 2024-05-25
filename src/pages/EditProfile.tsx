@@ -15,7 +15,7 @@ import {Divider, Paper} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
-import useFieldValidation from "../hooks/useFieldValidation.ts";
+import useStringValidation from "../hooks/useStringValidation.ts";
 import PasswordInput from "../components/PasswordInput.tsx";
 import NavBar from "../components/NavBar.tsx";
 import {
@@ -36,11 +36,11 @@ const defaultTheme = createTheme();
 export default function EditProfile(): React.ReactElement {
     const navigate = useNavigate();
 
-    const [userFirstName, setUserFirstName] = useFieldValidation({required: true, maxLength: 64});
-    const [userLastName, setUserLastName] = useFieldValidation({required: true, maxLength: 64});
-    const [userEmail, setUserEmail] = useFieldValidation({required: true, maxLength: 256, email: true});
-    const [password, setPassword] = useFieldValidation({required: true, minLength: 6, maxLength: 64});
-    const [currentPassword, setCurrentPassword] = useFieldValidation({required: true, minLength: 6, maxLength: 64});
+    const [userFirstName, setUserFirstName] = useStringValidation({required: true, maxLength: 64});
+    const [userLastName, setUserLastName] = useStringValidation({required: true, maxLength: 64});
+    const [userEmail, setUserEmail] = useStringValidation({required: true, maxLength: 256, email: true});
+    const [password, setPassword] = useStringValidation({required: true, minLength: 6, maxLength: 64});
+    const [currentPassword, setCurrentPassword] = useStringValidation({required: true, minLength: 6, maxLength: 64});
 
     const [userAvatarUrl, setUserAvatarUrl] = React.useState<string>("");
     const [errorMessage, setErrorMessage] = React.useState<string>("");

@@ -14,7 +14,7 @@ interface ValidationState {
     error: string | null
 }
 
-export default function useFieldValidation(
+export default function useStringValidation(
     rules: ValidationRules, initialValue: string = ''
 ): [ValidationState, React.Dispatch<React.SetStateAction<string>>] {
     const [value, setValue] = useState<string>(initialValue);

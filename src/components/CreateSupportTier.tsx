@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 
-import useFieldValidation from "../hooks/useFieldValidation.ts";
+import useStringValidation from "../hooks/useStringValidation.ts";
 import CostInput from "./CostInput.tsx";
 
 
@@ -33,8 +33,8 @@ interface CreateSupportTierProps {
 export default function CreateSupportTier(
     {open, handleClose, addSupportTier}: CreateSupportTierProps
 ): React.ReactElement {
-    const [title, setTitle] = useFieldValidation({required: true, maxLength: 128});
-    const [description, setDescription] = useFieldValidation({required: true, maxLength: 1024});
+    const [title, setTitle] = useStringValidation({required: true, maxLength: 128});
+    const [description, setDescription] = useStringValidation({required: true, maxLength: 1024});
     const [cost, setCost] = React.useState<number | "">("");
 
     const [formSubmitted, setFormSubmitted] = React.useState<boolean>(false);
