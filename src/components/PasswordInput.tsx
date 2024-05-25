@@ -11,11 +11,12 @@ interface PasswordInputProps {
     label: string,
     value: string,
     onChange: (value: string) => void,
-    helperText?: React.ReactNode
+    helperText?: React.ReactNode,
+    error?: boolean
 }
 
 export default function PasswordInput(
-    {required = false, label, value, onChange, helperText}: PasswordInputProps
+    {required = false, label, value, onChange, helperText, error}: PasswordInputProps
 ): React.ReactElement {
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
@@ -29,6 +30,7 @@ export default function PasswordInput(
             type={showPassword ? "text" : "password"}
             autoComplete="new-password"
             helperText={helperText}
+            error={error}
             InputProps={{
                 endAdornment: <InputAdornment position="end">
                     <IconButton
