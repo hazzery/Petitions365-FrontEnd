@@ -29,8 +29,6 @@ export default function PetitionsGrid(
     return (
         <Paper sx={{
             padding: '20px',
-            maxWidth: '75vw',
-            width: '75vw',
             alignItems: 'center',
             display: 'flex',
             flexDirection: 'column',
@@ -40,7 +38,7 @@ export default function PetitionsGrid(
             <Box sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                rowGap: '40px',
+                gap: '30px',
                 justifyContent: 'center',
                 width: '100%'
             }}>
