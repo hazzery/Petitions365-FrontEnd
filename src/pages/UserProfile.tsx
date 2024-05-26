@@ -11,8 +11,8 @@ import {AxiosResponse} from "axios";
 import {Paper} from "@mui/material";
 
 import NavBar from "../components/NavBar.tsx";
-import {checkUserImage, getUser, userImageUrl} from "../model/api.ts";
 import {UserDetails} from "../model/responseBodies.ts";
+import {getUser, userImageUrl} from "../model/api.ts";
 
 
 const defaultTheme = createTheme();
@@ -22,7 +22,7 @@ export default function UserProfile(): React.ReactElement {
     const [userFirstName, setUserFirstName] = React.useState<string>("");
     const [userLastName, setUserLastName] = React.useState<string>("");
     const [userEmail, setUserEmail] = React.useState<string>("");
-    const [userAvatarUrl, setUserAvatarUrl] = React.useState<string>("");
+    const [userHasImage, setUserHasImage] = React.useState<boolean>(true);
 
     const userId = parseInt(localStorage.getItem("userId") as string);
     React.useEffect(() => {
@@ -33,9 +33,6 @@ export default function UserProfile(): React.ReactElement {
                 setUserEmail(response.data.email);
             })
             .catch(() => navigate("/login"));
-        checkUserImage(userId)
-            .then(() => setUserAvatarUrl(userImageUrl(userId)))
-            .catch(() => setUserAvatarUrl(""));
     }, [navigate, userId]);
 
     return (
@@ -55,10 +52,14 @@ export default function UserProfile(): React.ReactElement {
                         height: 100
                     }}>
                         {
-                            userAvatarUrl ?
-                                <img src={userAvatarUrl} alt="User profile avatar"
-                                     style={{objectFit: 'cover', width: '100%', height: '100%'}}/> :
-                                <AccountCircleIcon sx={{fontSize: 120}} color="action"/>
+                            userHasImage
+                                ? <img
+                                    src={userImageUrl(userId)}
+                                    alt="User profile avatar"
+                                    onError={() => setUserHasImage(false)}
+                                    style={{objectFit: 'cover', width: '100%', height: '100%'}}
+                                />
+                                : <AccountCircleIcon sx={{fontSize: 120}} color="action"/>
                         }
                     </Avatar>
                     <Typography variant="h3">
