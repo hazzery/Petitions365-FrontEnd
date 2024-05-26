@@ -119,15 +119,6 @@ export function petitionImageUrl(petitionID: number): string {
 }
 
 /**
- * Fetches the image of a petition. Will succeed if the petition has an image set and fail if it does not.
- *
- * @param petitionID The ID number of the petition to fetch the image for.
- */
-export function checkPetitionImage(petitionID: number): Promise<AxiosResponse> {
-    return Axios.get(petitionImageUrl(petitionID));
-}
-
-/**
  * Uploads an image for a petition.
  *
  * @param petitionID The ID number of the petition to upload the image for.
@@ -162,15 +153,6 @@ export function uploadUserImage(userId: number, image: File): Promise<AxiosRespo
         "Content-Type": image.type
     };
     return Axios.put(userImageUrl(userId), image, {headers});
-}
-
-/**
- * Fetches the image of a user. Will succeed if the user has an image set and fail if they do not.
- *
- * @param userId The ID number of the user to fetch the image for.
- */
-export function checkUserImage(userId: number): Promise<AxiosResponse> {
-    return Axios.get(userImageUrl(userId));
 }
 
 /**
