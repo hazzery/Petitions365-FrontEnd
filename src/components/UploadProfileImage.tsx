@@ -9,11 +9,12 @@ import Avatar from "@mui/material/Avatar";
 interface ImageProps {
     imageUrl?: string | undefined,
     alt: string,
-    setImage: (image: File | null) => void
+    setImage: (image: File | null) => void,
+    setShouldDeleteImage: (shouldDelete: boolean) => void
 }
 
 export default function UploadProfileImage(
-    {imageUrl, alt, setImage}: ImageProps
+    {imageUrl, alt, setImage, setShouldDeleteImage}: ImageProps
 ): React.ReactElement {
     const inputRef = React.useRef<HTMLInputElement>(null);
     const [url, setUrl] = React.useState<string | null>(imageUrl ?? null);
@@ -38,6 +39,7 @@ export default function UploadProfileImage(
         setUrl("");
         setImage(null);
         setAnchorImageMenu(null);
+        setShouldDeleteImage(true);
     }
 
     return (

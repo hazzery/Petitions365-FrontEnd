@@ -43,6 +43,7 @@ export default function EditProfile(): React.ReactElement {
     const [userImage, setUserImage] = React.useState<File | null>(null);
     const [profileFormSubmitted, setProfileFormSubmitted] = React.useState<boolean>(false);
     const [passwordFormSubmitted, setPasswordFormSubmitted] = React.useState<boolean>(false);
+    const [shouldDeleteImage, setShouldDeleteImage] = React.useState<boolean>(false);
 
     const userId = parseInt(localStorage.getItem("userId") as string);
 
@@ -72,7 +73,7 @@ export default function EditProfile(): React.ReactElement {
         if (userImage !== null) {
             uploadUserImage(userId, userImage)
                 .catch(() => null);
-        } else {
+        } else if (shouldDeleteImage) {
             removeUserProfileImage(userId)
                 .catch(() => null);
         }
@@ -106,6 +107,7 @@ export default function EditProfile(): React.ReactElement {
                         imageUrl={userImageUrl(userId)}
                         alt={"User profile image"}
                         setImage={setUserImage}
+                        setShouldDeleteImage={setShouldDeleteImage}
                     />
                     <Box sx={{marginTop: 3}}>
                         <Grid container spacing={2}>
