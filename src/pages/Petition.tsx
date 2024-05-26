@@ -51,6 +51,7 @@ export default function Petition() {
     const [categoryMap, setCategoryMap] = React.useState<Map<number, string>>(new Map());
     const [showDeleteModal, setShowDeleteModal] = React.useState(false);
     const [showSupportModal, setShowSupportModal] = React.useState(false);
+    const [shouldReFetch, setShouldReFetch] = React.useState(false);
 
     React.useEffect(() => {
         setPetitionIdNumber(parseInt(petitionId as string));
@@ -67,13 +68,13 @@ export default function Petition() {
             .then((response: AxiosResponse<PetitionDetails>) => setPetitionDetails(response.data))
             .catch(() => null);
         window.scrollTo(0, 0);
-    }, [petitionIdNumber]);
+    }, [petitionIdNumber, shouldReFetch]);
 
     React.useEffect(() => {
         getSupportersOfPetition(petitionIdNumber)
             .then((response: AxiosResponse<Array<Supporter>>) => setSupporters(response.data))
             .catch(() => null);
-    }, [petitionIdNumber]);
+    }, [petitionIdNumber, shouldReFetch]);
 
     React.useEffect(() => {
         function mergePetitionListPromises(
@@ -196,6 +197,7 @@ export default function Petition() {
                     supporters={supporters}
                     supportTiers={petitionDetails.supportTiers}
                     petitionId={Number(petitionId)}
+                    causeReFetch={() => setShouldReFetch(!shouldReFetch)}
                 />
             </>
         );

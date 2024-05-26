@@ -48,7 +48,8 @@ interface SelectTierModalProps {
     onClose: () => void,
     supporters: Supporter[],
     supportTiers: SupportTier[],
-    petitionId: number
+    petitionId: number,
+    causeReFetch: () => void
 }
 
 export default function SelectTierModal(
@@ -57,7 +58,8 @@ export default function SelectTierModal(
         onClose,
         supporters,
         supportTiers,
-        petitionId
+        petitionId,
+        causeReFetch
     }: SelectTierModalProps
 ): React.ReactElement {
     const [selectedSupportTier, setSelectedSupportTier] = React.useState<SupportTier | null>(null);
@@ -87,6 +89,7 @@ export default function SelectTierModal(
                     }}
                     supportTier={selectedSupportTier}
                     petitionId={petitionId}
+                    causeReFetch={causeReFetch}
                 />
             }
             <Button variant="contained" onClick={onClose}>
@@ -101,17 +104,21 @@ interface SupportMessageModalProps {
     open: boolean,
     onClose: () => void,
     supportTier: SupportTier,
-    petitionId: number
+    petitionId: number,
+    causeReFetch: () => void
 }
 
 function SupportMessageModal(
-    {open, onClose, supportTier, petitionId}: SupportMessageModalProps
+    {open, onClose, supportTier, petitionId, causeReFetch}: SupportMessageModalProps
 ): React.ReactElement {
     const [message, setMessage] = React.useState<string>("");
 
     function supportSupportTier(supportTierId: number, message: string): void {
         supportPetition(petitionId, supportTierId, message)
-            .then(onClose)
+            .then(() => {
+                causeReFetch();
+                onClose();
+            })
             .catch(() => null);
     }
 
