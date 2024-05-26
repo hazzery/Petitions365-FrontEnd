@@ -1,13 +1,9 @@
 import React from "react";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
-import Avatar from "@mui/material/Avatar";
-import Menu from "@mui/material/Menu";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
@@ -20,7 +16,6 @@ import PasswordInput from "../components/PasswordInput.tsx";
 import NavBar from "../components/NavBar.tsx";
 import {
     changeUserPassword,
-    checkUserImage,
     getUser,
     removeUserProfileImage,
     updateUserDetails,
@@ -29,6 +24,7 @@ import {
 } from "../model/api.ts";
 import {UserDetails} from "../model/responseBodies.ts";
 import {formatServerResponse} from "../model/util.ts";
+import UploadProfileImage from "../components/UploadProfileImage.tsx";
 
 
 const defaultTheme = createTheme();
@@ -42,12 +38,9 @@ export default function EditProfile(): React.ReactElement {
     const [password, setPassword] = useStringValidation({required: true, minLength: 6, maxLength: 64});
     const [currentPassword, setCurrentPassword] = useStringValidation({required: true, minLength: 6, maxLength: 64});
 
-    const [userAvatarUrl, setUserAvatarUrl] = React.useState<string>("");
     const [editProfileErrorMessage, setEditProfileErrorMessage] = React.useState<string>("");
     const [changePasswordErrorMessage, setChangePasswordErrorMessage] = React.useState<string>("");
     const [userImage, setUserImage] = React.useState<File | null>(null);
-    const inputRef = React.useRef<HTMLInputElement | null>(null);
-    const [anchorImageMenu, setAnchorImageMenu] = React.useState<null | HTMLElement>(null);
     const [profileFormSubmitted, setProfileFormSubmitted] = React.useState<boolean>(false);
     const [passwordFormSubmitted, setPasswordFormSubmitted] = React.useState<boolean>(false);
 
@@ -61,10 +54,6 @@ export default function EditProfile(): React.ReactElement {
                 setUserEmail(response.data.email);
             })
             .catch(() => navigate("/login"));
-
-        checkUserImage(userId)
-            .then(() => setUserAvatarUrl(userImageUrl(userId)))
-            .catch(() => setUserAvatarUrl(""));
     }, [navigate, setUserEmail, setUserFirstName, setUserLastName, userId]);
 
     function handleEditProfile() {
@@ -83,7 +72,7 @@ export default function EditProfile(): React.ReactElement {
         if (userImage !== null) {
             uploadUserImage(userId, userImage)
                 .catch(() => null);
-        } else if (userAvatarUrl === "") {
+        } else {
             removeUserProfileImage(userId)
                 .catch(() => null);
         }
@@ -101,25 +90,6 @@ export default function EditProfile(): React.ReactElement {
             .catch((error) => setChangePasswordErrorMessage(formatServerResponse(error.response.statusText)));
     }
 
-    function handleNewImage() {
-        inputRef.current?.click();
-        setAnchorImageMenu(null);
-    }
-
-    function handleRemoveImage() {
-        setUserAvatarUrl("");
-        setUserImage(null);
-        setAnchorImageMenu(null);
-    }
-
-    function handleFileChange(event: React.ChangeEvent<HTMLInputElement>): void {
-        const files = event.target.files;
-        if (files && files.length > 0) {
-            setUserImage(files[0]);
-            setUserAvatarUrl(URL.createObjectURL(files[0]));
-        }
-    }
-
     return (
         <ThemeProvider theme={defaultTheme}>
             <NavBar/>
@@ -131,48 +101,12 @@ export default function EditProfile(): React.ReactElement {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}>
-                    <Avatar onClick={(event) => setAnchorImageMenu(event.currentTarget)} sx={{
-                        cursor: 'pointer',
-                        marginTop: 2,
-                        width: 100,
-                        height: 100
-                    }}>
-                        <input
-                            type="file"
-                            ref={inputRef}
-                            style={{display: 'none'}}
-                            onChange={handleFileChange}
-                        />
-                        {
-                            userAvatarUrl ?
-                                <img src={userAvatarUrl} alt="User"
-                                     style={{objectFit: 'cover', width: '100%', height: '100%'}}/> :
-                                <AccountCircleIcon sx={{fontSize: 120}} color="action"/>
-                        }
-                    </Avatar>
-                    <Menu
-                        sx={{marginTop: '45px'}}
-                        id="menu-appbar"
-                        anchorEl={anchorImageMenu}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        keepMounted
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        open={Boolean(anchorImageMenu)}
-                        onClose={() => setAnchorImageMenu(null)}
-                    >
-                        <MenuItem key="uploadImage" onClick={handleNewImage}>
-                            <Typography textAlign="center">Upload new profile image</Typography>
-                        </MenuItem>
-                        <MenuItem key="removeImage" onClick={handleRemoveImage}>
-                            <Typography textAlign="center">Remove profile image</Typography>
-                        </MenuItem>
-                    </Menu>
+
+                    <UploadProfileImage
+                        imageUrl={userImageUrl(userId)}
+                        alt={"User profile image"}
+                        setImage={setUserImage}
+                    />
                     <Box sx={{marginTop: 3}}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
