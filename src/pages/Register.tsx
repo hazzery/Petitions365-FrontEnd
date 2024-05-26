@@ -13,11 +13,11 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
 
+import useStringValidation from "../hooks/useStringValidation.ts";
 import PasswordInput from "../components/PasswordInput.tsx";
 import NavBar from "../components/NavBar.tsx";
 import {login, register, uploadUserImage} from "../model/api.ts";
 import {UserLogin} from "../model/responseBodies.ts";
-import useStringValidation from "../hooks/useStringValidation.ts";
 
 
 // The returned JSX has been modified from the Material-UI template at:
