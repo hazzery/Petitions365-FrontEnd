@@ -23,7 +23,6 @@ import {
     userImageUrl
 } from "../model/api.ts";
 import {UserDetails} from "../model/responseBodies.ts";
-import {formatServerResponse} from "../model/util.ts";
 import UploadProfileImage from "../components/UploadProfileImage.tsx";
 
 
@@ -68,7 +67,7 @@ export default function EditProfile(): React.ReactElement {
             userId, userEmail.value, userFirstName.value, userLastName.value,
         )
             .then(() => navigate('/profile'))
-            .catch(() => setEditProfileErrorMessage("Invalid current password"));
+            .catch(() => setEditProfileErrorMessage("Email in use by another user"));
 
         if (userImage !== null) {
             uploadUserImage(userId, userImage)
@@ -88,7 +87,7 @@ export default function EditProfile(): React.ReactElement {
 
         changeUserPassword(userId, password.value, currentPassword.value)
             .then(() => navigate('/profile'))
-            .catch((error) => setChangePasswordErrorMessage(formatServerResponse(error.response.statusText)));
+            .catch(() => setChangePasswordErrorMessage("Invalid current password"));
     }
 
     return (
