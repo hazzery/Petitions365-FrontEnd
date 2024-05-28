@@ -17,7 +17,8 @@ import {
     Pagination,
     Paper,
     Select,
-    SelectChangeEvent
+    SelectChangeEvent,
+    useTheme
 } from "@mui/material";
 import {AxiosResponse} from "axios";
 
@@ -39,6 +40,7 @@ const petitionSortOrdersMap = new Map<SortOrder, string>([
 const petitionSortOrders = Array.from(petitionSortOrdersMap.keys());
 
 export default function Petitions() {
+    const theme = useTheme();
     const [petitions, setPetitions] = React.useState<Array<PetitionOverview>>([]);
     const [categories, setCategories] = React.useState<Array<Category>>([]);
     const [categoryMap, setCategoryMap] = React.useState<Map<number, string>>(new Map<number, string>());
@@ -166,8 +168,8 @@ export default function Petitions() {
                         variant="contained"
                         color="inherit"
                         sx={{
-                            backgroundColor: '#fff',
-                            color: 'primary.main',
+                            backgroundColor: theme.palette.mode === "light" ? theme.palette.common.white : undefined,
+                            color: theme.palette.primary.main,
                             marginRight: 1
                         }}
                         onClick={() => setShowFilterBar(!showFilterBar)}
