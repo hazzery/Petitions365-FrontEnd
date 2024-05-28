@@ -1,6 +1,5 @@
 import React from "react";
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
@@ -8,7 +7,6 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import {createPetition, getAllCategories, uploadPetitionImage} from "../model/api.ts";
-import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {MenuItem, Paper} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {AxiosResponse} from "axios";
@@ -17,12 +15,9 @@ import CreateSupportTier from "../components/CreateSupportTier.tsx";
 import useStringValidation from "../hooks/useStringValidation.ts";
 import SupportTierCard from "../components/SupportTierCard.tsx";
 import UploadableImage from "../components/UploadableImage.tsx";
-import NavBar from "../components/NavBar.tsx";
 import {Category, PetitionCreation, SupportTier} from "../model/responseBodies.ts";
 import {formatServerResponse} from "../model/util.ts";
 
-
-const defaultTheme = createTheme();
 
 export default function CreatePetition(): React.ReactElement {
     const navigate = useNavigate();
@@ -110,100 +105,96 @@ export default function CreatePetition(): React.ReactElement {
     }
 
     return (
-        <ThemeProvider theme={defaultTheme}>
-            <NavBar/>
-            <Container component="main">
-                <CssBaseline/>
-                <Paper sx={{
-                    padding: '30px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}>
-                    <Typography component="h1" variant="h5">
-                        New Petition
-                    </Typography>
-                    <Box sx={{marginTop: 3}}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                                <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                                    <UploadableImage
-                                        alt="Upload petition image here"
-                                        setImage={setPetitionImage}
+        <Container component="main">
+            <Paper sx={{
+                padding: '30px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+            }}>
+                <Typography component="h1" variant="h5">
+                    New Petition
+                </Typography>
+                <Box sx={{marginTop: 3}}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                                <UploadableImage
+                                    alt="Upload petition image here"
+                                    setImage={setPetitionImage}
+                                />
+                            </Box>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        autoFocus
+                                        label="Title"
+                                        value={title.value}
+                                        onChange={(event) => setTitle(event.target.value)}
+                                        error={formSubmitted && Boolean(title.error)}
+                                        helperText={formSubmitted && title.error}
                                     />
-                                </Box>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            required
-                                            fullWidth
-                                            autoFocus
-                                            label="Title"
-                                            value={title.value}
-                                            onChange={(event) => setTitle(event.target.value)}
-                                            error={formSubmitted && Boolean(title.error)}
-                                            helperText={formSubmitted && title.error}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            required
-                                            fullWidth
-                                            multiline
-                                            label="Description"
-                                            value={description.value}
-                                            onChange={(event) => setDescription(event.target.value)}
-                                            error={formSubmitted && Boolean(description.error)}
-                                            helperText={formSubmitted && description.error}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            select
-                                            required
-                                            fullWidth
-                                            label="Category"
-                                            value={category}
-                                            onChange={(event) => setCategory(parseInt(event.target.value))}
-                                            error={formSubmitted && category == ""}
-                                            helperText={formSubmitted && category == "" && "Please select a category."}
-                                        >
-                                            {categoryOptions()}
-                                        </TextField>
-                                    </Grid>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        multiline
+                                        label="Description"
+                                        value={description.value}
+                                        onChange={(event) => setDescription(event.target.value)}
+                                        error={formSubmitted && Boolean(description.error)}
+                                        helperText={formSubmitted && description.error}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        select
+                                        required
+                                        fullWidth
+                                        label="Category"
+                                        value={category}
+                                        onChange={(event) => setCategory(parseInt(event.target.value))}
+                                        error={formSubmitted && category == ""}
+                                        helperText={formSubmitted && category == "" && "Please select a category."}
+                                    >
+                                        {categoryOptions()}
+                                    </TextField>
                                 </Grid>
                             </Grid>
-                            <Grid item xs={6} sx={{display: "flex", flexDirection: "column", gap: "10px"}}>
-                                {supportTierCards()}
-                                {supportTiers.length < 3 && <Button
-                                    fullWidth
-                                    variant="contained"
-                                    color={"secondary"}
-                                    onClick={() => setShowSupportTierModal(true)}
-                                    sx={{mt: 3, mb: 2}}
-                                >
-                                    Add Support Tier
-                                </Button>}
-                            </Grid>
                         </Grid>
-                        <CreateSupportTier
-                            open={showSupportTierModal}
-                            handleClose={() => setShowSupportTierModal(false)}
-                            addSupportTier={addSupportTier}
-                        />
-                        <Typography variant="body1" color="error">
-                            {errorMessage && formatServerResponse(errorMessage)}
-                        </Typography>
-                        <Button
-                            variant="contained"
-                            sx={{marginTop: 3, marginBottom: 2, width: '50%'}}
-                            onClick={handleSubmit}
-                        >
-                            Create
-                        </Button>
-                    </Box>
-                </Paper>
-            </Container>
-        </ThemeProvider>
+                        <Grid item xs={6} sx={{display: "flex", flexDirection: "column", gap: "10px"}}>
+                            {supportTierCards()}
+                            {supportTiers.length < 3 && <Button
+                                fullWidth
+                                variant="contained"
+                                color={"secondary"}
+                                onClick={() => setShowSupportTierModal(true)}
+                                sx={{mt: 3, mb: 2}}
+                            >
+                                Add Support Tier
+                            </Button>}
+                        </Grid>
+                    </Grid>
+                    <CreateSupportTier
+                        open={showSupportTierModal}
+                        handleClose={() => setShowSupportTierModal(false)}
+                        addSupportTier={addSupportTier}
+                    />
+                    <Typography variant="body1" color="error">
+                        {errorMessage && formatServerResponse(errorMessage)}
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        sx={{marginTop: 3, marginBottom: 2, width: '50%'}}
+                        onClick={handleSubmit}
+                    >
+                        Create
+                    </Button>
+                </Box>
+            </Paper>
+        </Container>
     );
 }

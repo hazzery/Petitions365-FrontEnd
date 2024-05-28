@@ -1,5 +1,4 @@
 import React from "react";
-import CssBaseline from "@mui/material/CssBaseline";
 import GroupIcon from "@mui/icons-material/Group";
 import Typography from "@mui/material/Typography";
 import PaidIcon from "@mui/icons-material/Paid";
@@ -8,7 +7,6 @@ import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {useNavigate, useParams} from "react-router-dom";
 import {Card, CardMedia, Paper} from "@mui/material";
 import {AxiosResponse} from "axios";
@@ -18,7 +16,6 @@ import SelectTierModal from "../components/SelectTierModal.tsx";
 import SupportersGrid from "../components/SupportersGrid.tsx";
 import PetitionsGrid from "../components/PetitionsGrid.tsx";
 import BoxModal from "../components/BoxModal.tsx";
-import NavBar from "../components/NavBar.tsx";
 import {
     deletePetition,
     getAllCategories,
@@ -38,8 +35,6 @@ import {
 } from "../model/responseBodies.ts";
 import {formatDate} from "../model/util.ts";
 
-
-const defaultTheme = createTheme();
 
 export default function Petition() {
     const {petitionId} = useParams();
@@ -156,11 +151,11 @@ export default function Petition() {
                     </Button>
                 }
                 <BoxModal open={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Are you sure you want to delete this petition?
-                        </Typography>
-                        <Button variant="contained" color="error" onClick={removePetition}>Delete</Button>
-                        <Button variant="contained" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Are you sure you want to delete this petition?
+                    </Typography>
+                    <Button variant="contained" color="error" onClick={removePetition}>Delete</Button>
+                    <Button variant="contained" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
                 </BoxModal>
             </>
         );
@@ -204,137 +199,127 @@ export default function Petition() {
     }
 
     if (petitionDetails === undefined) {
-        return <>
-            <ThemeProvider theme={defaultTheme}>
-                <NavBar/>
-                <Container component="main">
-                    <CssBaseline/>
-                </Container>
-            </ThemeProvider>
-        </>;
+        return <Container component="main">
+        </Container>;
     }
 
     return (
-        <ThemeProvider theme={defaultTheme}>
-            <NavBar/>
-            <Container component="main">
-                <CssBaseline/>
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}>
-                    <Typography variant="h2" component="div">
-                        {petitionDetails.title}
-                    </Typography>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} sm={6} sx={{display: 'flex'}}>
-                            <Paper sx={{padding: 2, flex: 1}}>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} sm={8} sx={{display: 'flex', justifyContent: 'center'}}>
-                                        <CardMedia
-                                            component="img"
-                                            image={petitionImageUrl(petitionIdNumber)}
-                                            alt="petition"
-                                            sx={{
-                                                width: '80%',
-                                                objectFit: 'cover'
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={4} sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                        <Avatar
-                                            src={userImageUrl(petitionDetails.ownerId)}
-                                            alt="User profile image"
-                                            sx={{
-                                                width: 60,
-                                                height: 60,
-                                                borderRadius: '50%',
-                                            }}
-                                        />
-                                        <Typography variant="body2" color="text.primary" sx={{ml: 1}}>
-                                            {`${petitionDetails.ownerFirstName} ${petitionDetails.ownerLastName}`}
-                                        </Typography>
-                                        <Typography variant="body2" component="div">
-                                            {formatDate(petitionDetails.creationDate)}
-                                        </Typography>
-                                    </Grid>
+        <Container component="main">
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+            }}>
+                <Typography variant="h2" component="div">
+                    {petitionDetails.title}
+                </Typography>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6} sx={{display: 'flex'}}>
+                        <Paper sx={{padding: 2, flex: 1}}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} sm={8} sx={{display: 'flex', justifyContent: 'center'}}>
+                                    <CardMedia
+                                        component="img"
+                                        image={petitionImageUrl(petitionIdNumber)}
+                                        alt="petition"
+                                        sx={{
+                                            width: '80%',
+                                            objectFit: 'cover'
+                                        }}
+                                    />
                                 </Grid>
-                                <Typography variant="body1" component="div">
-                                    {petitionDetails.description}
-                                </Typography>
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={12} sm={6} sx={{display: 'flex'}}>
-                            <Paper sx={{padding: 2, flex: 1}}>
-                                <Box sx={{display: 'flex', justifyContent: 'space-evenly', marginBottom: '15px'}}>
-                                    <Box sx={{alignItems: 'center', display: 'flex'}}>
-                                        <GroupIcon/>
-                                        <Typography variant="body1" sx={{marginLeft: 1}}>
-                                            {`Supporters: ${petitionDetails.numberOfSupporters}`}
-                                        </Typography>
-                                    </Box>
-                                    <Box sx={{alignItems: 'center', display: 'flex'}}>
-                                        <PaidIcon/>
-                                        <Typography variant="body1" sx={{marginLeft: 1}}>
-                                            {`Money Raised: ${petitionDetails.moneyRaised !== null ? petitionDetails.moneyRaised : 0}`}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                                <Typography variant="h5" component="div">
-                                    Support Tiers
-                                </Typography>
-                                <Box sx={{
-                                    alignItems: 'center',
+                                <Grid item xs={12} sm={4} sx={{
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    gap: '20px'
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
                                 }}>
-                                    {supportTierCards()}
-                                </Box>
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={12} sm={12}>
-                            <Card sx={{
-                                padding: 2,
-                                display: "flex",
-                                columnGap: "20px",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                width: "100%"
-                            }}>
-                                {
-                                    petitionDetails.ownerId === parseInt(localStorage.getItem("userId") as string)
-                                        ? <>{ownerActionButtons()}</>
-                                        : localStorage.getItem("userId") === null
-                                            ? <>{unauthenticatedUserActionButtons()}</>
-                                            : <>{supporterActionButtons()}</>
-                                }
-                            </Card>
-                        </Grid>
-                        <Grid item xs={12} sm={12}>
-                            <SupportersGrid supporters={supporters} supportTiers={petitionDetails.supportTiers}/>
-                        </Grid>
-                        <Grid item xs={12} sm={12}>
-                            <PetitionsGrid
-                                petitions={similarPetitions}
-                                categoryMap={categoryMap}
-                                title={
-                                    <Typography variant="h6" component="div" sx={{marginTop: '15px'}}>
-                                        Similar Petitions
+                                    <Avatar
+                                        src={userImageUrl(petitionDetails.ownerId)}
+                                        alt="User profile image"
+                                        sx={{
+                                            width: 60,
+                                            height: 60,
+                                            borderRadius: '50%',
+                                        }}
+                                    />
+                                    <Typography variant="body2" color="text.primary" sx={{ml: 1}}>
+                                        {`${petitionDetails.ownerFirstName} ${petitionDetails.ownerLastName}`}
                                     </Typography>
-                                }
-                                children={undefined}
-                            />
-                        </Grid>
+                                    <Typography variant="body2" component="div">
+                                        {formatDate(petitionDetails.creationDate)}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <Typography variant="body1" component="div">
+                                {petitionDetails.description}
+                            </Typography>
+                        </Paper>
                     </Grid>
-                </Box>
-            </Container>
-        </ThemeProvider>
+                    <Grid item xs={12} sm={6} sx={{display: 'flex'}}>
+                        <Paper sx={{padding: 2, flex: 1}}>
+                            <Box sx={{display: 'flex', justifyContent: 'space-evenly', marginBottom: '15px'}}>
+                                <Box sx={{alignItems: 'center', display: 'flex'}}>
+                                    <GroupIcon/>
+                                    <Typography variant="body1" sx={{marginLeft: 1}}>
+                                        {`Supporters: ${petitionDetails.numberOfSupporters}`}
+                                    </Typography>
+                                </Box>
+                                <Box sx={{alignItems: 'center', display: 'flex'}}>
+                                    <PaidIcon/>
+                                    <Typography variant="body1" sx={{marginLeft: 1}}>
+                                        {`Money Raised: ${petitionDetails.moneyRaised !== null ? petitionDetails.moneyRaised : 0}`}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                            <Typography variant="h5" component="div">
+                                Support Tiers
+                            </Typography>
+                            <Box sx={{
+                                alignItems: 'center',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '20px'
+                            }}>
+                                {supportTierCards()}
+                            </Box>
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={12} sm={12}>
+                        <Card sx={{
+                            padding: 2,
+                            display: "flex",
+                            columnGap: "20px",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            width: "100%"
+                        }}>
+                            {
+                                petitionDetails.ownerId === parseInt(localStorage.getItem("userId") as string)
+                                    ? <>{ownerActionButtons()}</>
+                                    : localStorage.getItem("userId") === null
+                                        ? <>{unauthenticatedUserActionButtons()}</>
+                                        : <>{supporterActionButtons()}</>
+                            }
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={12}>
+                        <SupportersGrid supporters={supporters} supportTiers={petitionDetails.supportTiers}/>
+                    </Grid>
+                    <Grid item xs={12} sm={12}>
+                        <PetitionsGrid
+                            petitions={similarPetitions}
+                            categoryMap={categoryMap}
+                            title={
+                                <Typography variant="h6" component="div" sx={{marginTop: '15px'}}>
+                                    Similar Petitions
+                                </Typography>
+                            }
+                            children={undefined}
+                        />
+                    </Grid>
+                </Grid>
+            </Box>
+        </Container>
     );
 }

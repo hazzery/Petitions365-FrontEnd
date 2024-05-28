@@ -1,4 +1,8 @@
+import React from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import CssBaseline from '@mui/material/CssBaseline';
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import {createTheme, ThemeProvider} from '@mui/material/styles';
 
 import CreatePetition from "./pages/CreatePetition.tsx";
 import EditPetition from "./pages/EditPetition.tsx";
@@ -12,12 +16,26 @@ import NotFound from "./pages/NotFound.tsx";
 import Landing from "./pages/Landing.tsx";
 import Login from "./pages/Login.tsx";
 import './App.css';
+import NavBar from "./components/NavBar.tsx";
 
 export default function App() {
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+    const theme = React.useMemo(
+        () =>
+            createTheme({
+                palette: {
+                    mode: prefersDarkMode ? 'dark' : 'light',
+                },
+            }),
+        [prefersDarkMode],
+    );
 
     return (
-        <div className="App">
+        <ThemeProvider theme={theme}>
+            <CssBaseline/>
             <Router>
+                <NavBar/>
                 <div>
                     <Routes>
                         <Route path="/" element={<Landing/>}/>
@@ -34,6 +52,6 @@ export default function App() {
                     </Routes>
                 </div>
             </Router>
-        </div>
+        </ThemeProvider>
     );
 }
