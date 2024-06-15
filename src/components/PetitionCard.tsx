@@ -2,7 +2,7 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import Box from '@mui/material/Box';
-import {Card, CardMedia} from "@mui/material";
+import {Card, CardMedia, useTheme} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 
 import {petitionImageUrl, userImageUrl} from "../model/api.ts";
@@ -29,6 +29,9 @@ export default function PetitionCard(
         ownerFirstName,
         ownerLastName
     } = petitionOverview;
+
+    const theme = useTheme();
+
     return (
         <Card onClick={() => navigate("/petition/" + petitionId)} sx={{
             padding: 2,
@@ -36,7 +39,7 @@ export default function PetitionCard(
             position: 'relative',
             cursor: 'pointer',
             ":hover": {
-                backgroundColor: "#f0f0f0"
+                backgroundColor: theme.palette.action.focus
             }
         }}>
             <CardMedia
